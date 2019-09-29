@@ -2,6 +2,10 @@
 #Created by: Michael Zhang
 #Created on: 29/9/2019
 
+#Date module for message_sendlater function
+import datetime
+
+
 """
 Sends a message from authorised_user to the channel specified by channel_id automatically at a specified
 time in the future
@@ -18,8 +22,19 @@ ValueErrors:
 - Time sent is a time in the past
 """
 def message_sendlater(token, channel_id, message, time_sent):
-    pass
+    
+    #Valid token is "123456"
+    if valid_token(token) == False:
+        return "Token Error"
+    elif valid_channel(channel_id) == False:
+        return "Channel Error"
+    elif len(message) > 1000:
+        return "Message Error"
+    elif(time_sent < datetime.datetime.now()):
+        return "Time Error"
 
+    return "Successful"
+    
 
 
 """
@@ -145,3 +160,21 @@ def message_unpin(token, message_id):
 
 
 
+
+# Checks the validity of a token
+def valid_token(token):
+    if token == "123456":
+        # Active token
+        return True
+    else:
+        # Inactive token
+        return False
+
+
+# Checks that the channel_id belongs to a existing channel
+# 1 = valid channel_id, anything else is a invalid channel_id
+def valid_channel(channel_id):
+    if channel_id == 1:
+        return True
+    else:
+        return False
