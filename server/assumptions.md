@@ -10,7 +10,7 @@ User will enter invalid (email, password, first name, last name) and correct (em
 Need to improve on possible names as people should not have features such as numbered names
 
 # auth_passwordreset_request
-User will enter invalid (email) and valid (email)
+User will enter incorrect (email), correct (email), invalid (email) and valid (email)
 
 # auth_passwordreset_reset
 User will enter invalid (reset code, password) and valid (reset code, password)
