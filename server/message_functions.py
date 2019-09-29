@@ -18,6 +18,7 @@ ValueErrors:
 - Time sent is a time in the past
 """
 def message_sendlater(token, channel_id, message, time_sent):
+    pass
 
 
 
@@ -33,6 +34,7 @@ ValueErrors:
 - Message is more than 1000 Characters
 """
 def message_send(token, channel_id, message):
+    pass
 
 
 
@@ -49,6 +51,7 @@ AccessErrors:
 - User does not have permission to remove that row
 """
 def message_remove(token, message_id):
+    pass    
 
 
 
@@ -66,6 +69,7 @@ ValueErrors:
     2) If the authorised user is an admin, is any message within a channel that the authorised user has joined
 """
 def message_edit(token, message_id, message):
+    pass
 
 
 
@@ -83,6 +87,9 @@ ValueErrors:
 - Message with ID message_id already contains a active react with ID react_id
 """
 def message_react(token, message_id, react_id):
+    pass
+
+
 
 """
 Given a message within a channel the authorised user is part of, remove a "react" to that particular message
@@ -98,6 +105,7 @@ ValueErrors:
 - Message with ID message_id does not contain an active react with ID react_id
 """
 def message_unreact(token, message_id, react_id):
+    pass    
 
 
 
@@ -116,6 +124,7 @@ AccessErrors:
 - The authorised user is not a member of the channel that the message is within
 """
 def message_pin(token, message_id):
+    pass
 
 
 
@@ -131,8 +140,8 @@ ValueErrors:
 - The authorised user is not a admin
 - Message with ID message_id is already unpinned
 """
-def message_unpin(token, message_id);
-
+def message_unpin(token, message_id):
+    pass
 
 
 
