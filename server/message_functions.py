@@ -2,9 +2,9 @@
 #Created by: Michael Zhang
 #Created on: 29/9/2019
 
-#Date module for message_sendlater function
+#Date module for representing time
 import datetime
-
+import pytest
 
 """
 Sends a message from authorised_user to the channel specified by channel_id automatically at a specified
@@ -23,19 +23,18 @@ ValueErrors:
 """
 def message_sendlater(token, channel_id, message, time_sent):
     
-    #Valid token is "123456"
+    #A exception is thrown if any values are invalid
     if valid_token(token) == False:
-        return "Token Error"
+        raise ValueError("Invalid Token")
     elif valid_channel(channel_id) == False:
-        return "Channel Error"
+        raise ValueError("Invalid Channel ID")
     elif len(message) > 1000:
-        return "Message Error"
+        raise ValueError("Message length too long")
     elif(time_sent < datetime.datetime.now()):
-        return "Time Error"
+        raise ValueError("Time sent was in the past")
 
-    return "Successful"
+    #The message is valid and will be sent to the channel at the specific time
     
-
 
 """
 Send a message from authorised_user to the channel specified by channel_id
@@ -49,9 +48,16 @@ ValueErrors:
 - Message is more than 1000 Characters
 """
 def message_send(token, channel_id, message):
-    pass
+    
+    #A exception is thrown if any values are invalid
+    if valid_token(token) == False:
+        raise ValueError("Invalid Token")
+    elif valid_channel(channel_id) == False:
+        raise ValueError("Invalid Channel ID")
+    elif len(message) > 1000:
+        raise ValueError("Message length too long")
 
-
+    #The message is valid and is sent to the channel
 
 """
 Given a message ID, the message is removed
@@ -170,11 +176,18 @@ def valid_token(token):
         # Inactive token
         return False
 
-
 # Checks that the channel_id belongs to a existing channel
 # 1 = valid channel_id, anything else is a invalid channel_id
 def valid_channel(channel_id):
     if channel_id == 1:
+        return True
+    else:
+        return False
+
+#Checks that the message_id belongs to a existing channel
+# 1 = valid message_id, anything else is a invalid message_id
+def valid_message_id(message_id):
+    if message_id == 1:
         return True
     else:
         return False
