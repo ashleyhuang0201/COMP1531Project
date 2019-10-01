@@ -5,6 +5,7 @@
 #Date module for representing time
 import datetime
 import pytest
+from Error import AccessError
 
 """
 Sends a message from authorised_user to the channel specified by channel_id automatically at a specified
@@ -23,7 +24,6 @@ ValueErrors:
 """
 def message_sendlater(token, channel_id, message, time_sent):
     
-    #A exception is thrown if any values are invalid
     if valid_token(token) == False:
         raise ValueError("Invalid Token")
     elif valid_channel(channel_id) == False:
@@ -34,7 +34,8 @@ def message_sendlater(token, channel_id, message, time_sent):
         raise ValueError("Time sent was in the past")
 
     #The message is valid and will be sent to the channel at the specific time
-    
+    pass
+
 """
 Send a message from authorised_user to the channel specified by channel_id
 
@@ -72,14 +73,20 @@ AccessErrors:
 """
 def message_remove(token, message_id):
 
-    if valid_token(token) == False:
-        raise ValueError("Invalid Token")
-    elif valid_message_id(message_id) == False:    
+    #(message_id: token)
+    messages = {1: "123456", 2: "123456"}
+
+    #Message based on ID does not exits
+    if valid_message_id(messages, message_id) == False:
         raise ValueError("Invalid Message ID")
-    elif valid_permission(token, message_id) == False:
-        raise Exception("User does not have permission")
+    elif valid_token(token) == False:
+        raise ValueError("Invalid Token")
+    elif valid_permission(token, messages, message_id) == False:
+        raise AccessError("User does not have permission")
 
     #The message is removed from the channel
+    del messages[message_id]
+
 
 """
 Given a message, update it's text with new text
@@ -96,16 +103,20 @@ ValueErrors:
 """
 def message_edit(token, message_id, message):
 
-    if valid_token(token) == False:
-        raise ValueError("Invalid Token")
-    elif valid_message_id(message_id) == False:    
+    #(message_id: token)
+    messages = {1: "123456", 2: "123456"}
+
+    if valid_message_id(messages, message_id) == False:
         raise ValueError("Invalid Message ID")
-    elif valid_permission(token, message_id) == False:
-        raise Exception("User does not have permission")
+    elif valid_token(token) == False:
+        raise ValueError("Invalid Token")
+    elif valid_permission(token, messages, message_id) == False:
+        raise AccessError("User does not have permission")
     elif len(message) > 1000:
         raise ValueError("Message length too long")
     
     #The message is edited
+    messages[message_id] = message
 
 
 """
@@ -123,10 +134,10 @@ ValueErrors:
 """
 def message_react(token, message_id, react_id):
 
-    #React status of messages
-    messages_reacts = [0,0,1]
+    #message_id: react status
+    messages_reacts = {1:0, 2:0, 3:1}
     
-    if valid_message_id(message_id) == False:
+    if valid_message_id(messages_reacts, message_id) == False:
         raise ValueError("Invalid Message ID")
     elif valid_react_id(react_id) == False:
         raise ValueError("Invalid React ID")
@@ -152,10 +163,10 @@ ValueErrors:
 """
 def message_unreact(token, message_id, react_id):
     
-    #React status of messages
-    messages_reacts = [0,0,1]
+    #message_id: react status
+    messages_reacts = {1:0, 2:0, 3:1}
 
-    if valid_message_id(message_id) == False:
+    if valid_message_id(messages_reacts, message_id) == False:
         raise ValueError("Invalid Message ID")
     elif valid_react_id(react_id) == False:
         raise ValueError("Invalid React ID")
@@ -181,17 +192,17 @@ AccessErrors:
 """
 def message_pin(token, message_id):
 
-    #Message pin status
-    messages_pinned = [0,0,1]
+    #message_id: pinned status
+    messages_pinned = {1:0, 2:0, 3:1}
 
-    if valid_message_id(message_id) == False:
+    if valid_message_id(messages_pinned, message_id) == False:
         raise ValueError("Invalid Message ID")
     elif token != "admin_member" and token != "admin_nonmember":
         raise ValueError("Not an admin")
     elif messages_pinned[message_id] == 1:
         raise ValueError("Message is already pinned")
     elif token == "admin_nonmember":
-        raise Exception("User is not a member of the channel")
+        raise AccessError("User is not a member of the channel")
 
     messages_pinned[message_id] == 1
 
@@ -209,19 +220,22 @@ ValueErrors:
 """
 def message_unpin(token, message_id):
 
-    #Message pin status
-    messages_pinned = [0,0,1]
+    #message_id: pinned status
+    messages_pinned = {1:0, 2:0, 3:1}
 
-    if valid_message_id(message_id) == False:
+    if valid_message_id(messages_pinned, message_id) == False:
         raise ValueError("Invalid Message ID")
     elif token != "admin_member" and token != "admin_nonmember":
         raise ValueError("Not an admin")
     elif messages_pinned[message_id] == 0:
         raise ValueError("Message is already unpinned")
     elif token == "admin_nonmember":
-        raise Exception("User is not a member of the channel")
+        raise AccessError("User is not a member of the channel")
 
     messages_pinned[message_id] == 0
+
+
+#Helper Funtions
 
 # Checks the validity of a token
 def valid_token(token):
@@ -232,36 +246,37 @@ def valid_token(token):
         # Inactive token
         return False
 
-# Checks that the channel_id belongs to a existing channel
-# 1 = valid channel_id, anything else is a invalid channel_id
-def valid_channel(channel_id):
-    if channel_id == 1:
+#Checks the validity of a message id
+def valid_message_id(messages, message_id):
+    if message_id in messages:
         return True
     else:
         return False
 
-#Checks that the message_id belongs to a existing channel
-# 1 = valid message_id, anything else is a invalid message_id
-def valid_message_id(message_id):
-    if message_id == 0 or message_id == 1 or message_id == 2:
-        return True
-    else:
-        return False
-
-def valid_permission(token, message_id):
-
-    #User is a owner
-    if token == "owner":
-        return True
-    #The message was a message sent by the user
-    elif message_id == int(token[0]):
-        return True
-
-    return False
-
+#Checks the validity of a react id
 def valid_react_id(react_id):
 
     if react_id == 1:
         return True
 
     return False
+
+# Checks that the channel_id belongs to a existing channel
+def valid_channel(channel_id):
+    if channel_id == 1:
+        return True
+    else:
+        return False
+
+#Checks that a user has permission to edit/remove a message
+def valid_permission(token, messages, message_id):
+
+    #User is a owner
+    if token == "owner":
+        return True
+    #The message was a message sent by the user
+    elif messages[message_id] == token:
+        return True
+
+    return False
+
