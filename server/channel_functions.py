@@ -4,9 +4,29 @@
 
 import pytest
 
-def channel_invite(token, channel_id, u_id):
-    pass
+'''
+Invites a user with user id u_id to join a channel (channel_id_)
 
+ValueError: 
+-when channel_id does not refer to a valid channel that the user is part of
+-u_id does not refer to a valid user
+
+'''
+def channel_invite(token, channel_id, u_id):
+    if valid_channel(channel_id) == False:
+        raise ValueError("Channel is not valid")
+    if valid_user(u_id) == False:
+        raise ValueError("User id is not valid")
+
+'''
+Provide basic details about the channel
+
+ValueError:
+- channel_id does not exist
+
+AccessError:
+- authorised user is not a member of channel (channel_id)
+'''
 
 def channel_details(token, channel_id):
     pass
@@ -35,6 +55,11 @@ def channels_listall(token):
 
 def channels_create(token, name, is_public):
     pass
+
+#Checks if the channel is a valid channel
+def valid_channel(channel_id):
+    pass
+
 
 
 
