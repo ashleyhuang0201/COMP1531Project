@@ -5,6 +5,7 @@
 #Date module for representing time
 import datetime
 import pytest
+from Error import AccessError
 
 """
 Sends a message from authorised_user to the channel specified by channel_id automatically at a specified
@@ -77,7 +78,7 @@ def message_remove(token, message_id):
     elif valid_message_id(message_id) == False:    
         raise ValueError("Invalid Message ID")
     elif valid_permission(token, message_id) == False:
-        raise Exception("User does not have permission")
+        raise AccessError("User does not have permission")
 
     #The message is removed from the channel
 
@@ -101,7 +102,7 @@ def message_edit(token, message_id, message):
     elif valid_message_id(message_id) == False:    
         raise ValueError("Invalid Message ID")
     elif valid_permission(token, message_id) == False:
-        raise Exception("User does not have permission")
+        raise AccessError("User does not have permission")
     elif len(message) > 1000:
         raise ValueError("Message length too long")
     
@@ -191,7 +192,7 @@ def message_pin(token, message_id):
     elif messages_pinned[message_id] == 1:
         raise ValueError("Message is already pinned")
     elif token == "admin_nonmember":
-        raise Exception("User is not a member of the channel")
+        raise AccessError("User is not a member of the channel")
 
     messages_pinned[message_id] == 1
 
@@ -219,7 +220,7 @@ def message_unpin(token, message_id):
     elif messages_pinned[message_id] == 0:
         raise ValueError("Message is already unpinned")
     elif token == "admin_nonmember":
-        raise Exception("User is not a member of the channel")
+        raise AccessError("User is not a member of the channel")
 
     messages_pinned[message_id] == 0
 

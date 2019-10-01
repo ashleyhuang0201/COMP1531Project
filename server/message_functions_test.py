@@ -5,6 +5,7 @@
 import datetime
 import pytest
 import message_functions as funcs
+from Error import AccessError
 
 # message_sendlater(token, channel_id, message, time_sent)
 def test_message_sendlater():
@@ -80,7 +81,7 @@ def test_message_remove():
         funcs.message_remove("123456", 99)
 
     #A user tries to remove a message not his
-    with pytest.raises(Exception, match = "User does not have permission"):
+    with pytest.raises(AccessError, match = "User does not have permission"):
         funcs.message_remove("223456", 1)
 
 
@@ -102,7 +103,7 @@ def test_message_edit():
         funcs.message_edit("123456", 99, "This is a valid message")
 
     #A user tries to edit a message not his
-    with pytest.raises(Exception, match = "User does not have permission"):
+    with pytest.raises(AccessError, match = "User does not have permission"):
         funcs.message_edit("223456", 1, "This is a valid message")
 
     #The edited message was too long
@@ -167,7 +168,7 @@ def test_message_pin():
         funcs.message_pin("admin_member", 2)
 
     #Admin is not a member of the channel
-    with pytest.raises(Exception, match = "User is not a member of the channel"):
+    with pytest.raises(AccessError, match = "User is not a member of the channel"):
         funcs.message_pin("admin_nonmember", 1)
 
 
@@ -189,7 +190,7 @@ def test_message_unpin():
         funcs.message_unpin("admin_member", 1)
 
     #Admin is not a member of the channel
-    with pytest.raises(Exception, match = "User is not a member of the channel"):
+    with pytest.raises(AccessError, match = "User is not a member of the channel"):
         funcs.message_unpin("admin_nonmember", 2)
 
 
