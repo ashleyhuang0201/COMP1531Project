@@ -74,21 +74,43 @@ def channel_leave(token, channel_id):
 def channel_join(token, channel_id):
     pass
 
+'''
+make user an owner of the channel
 
+ValueError:
+- if channel does not exist
+- when user is already the owner of the channel
+
+AccessError:
+- when the authorised user is not an owner of the slackr, or an owner of the channel
+'''
 def channel_addowner(token, channel_id, u_id):
-    pass
+    if valid_channel(channel_id) == false:
+        raise ValueError("Channel does not exist")
+    
 
 def channel_removeowner(token, channel_id, u_id):
     pass
 
 def channels_list(token):
-    pass
+    #if user token is part of channels 
+    #return channels
+
 
 def channels_listall(token):
-    pass
+    return channels
 
+'''
+Create a channel with the name that is either public or private
+ValueError:
+- name is more than 20 characters long
+
+'''
 def channels_create(token, name, is_public):
-    pass
+    if len(name) > 20
+        ValueError("Name is longer than 20 characters")
+    
+    
 
 #Checks if the channel is a valid channel
 def valid_channel(channel_id):
@@ -106,5 +128,7 @@ def valid_member(token, channel_id):
     else:
         return False
 
-
+#Returns true if owner, returns false if not owner
+def owner(token, channel_id):
+    
 
