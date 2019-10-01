@@ -29,7 +29,19 @@ AccessError:
 '''
 
 def channel_details(token, channel_id):
-    pass
+    if valid_channel(channel_id) == False:
+        raise ValueError("Channel does not exist")
+    
+    if valid_member(token, channel_id) == False:
+        raise AccessError("Authorised user is not a member of the channel")
+
+    #returned details 
+    name = "Channel name"
+    owner_members = "Ethan Jack"
+    all_members = "Ethan Jack, Jack Smith"
+
+    return name, owner_members, all_members
+    
 
 def channel_messages(token, channel_id, start):
     pass
@@ -60,6 +72,9 @@ def channels_create(token, name, is_public):
 def valid_channel(channel_id):
     pass
 
+#Checks if the user is a member of the channel
+def valid_member(token, channel_id):
+    pass
 
 
 
