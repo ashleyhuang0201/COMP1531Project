@@ -42,9 +42,31 @@ def channel_details(token, channel_id):
 
     return name, owner_members, all_members
     
+'''
+return up to 50 messages between index "start" and "start + 50".
+Message with 0 index is the most recent message
 
+end = start + 50
+
+if function has returned the least recent messages in the channel
+returns -1 in "end" to indicate there are no more msgs to load
+
+ValueError:
+- channel_id does not exist
+- start is greater than the total number of msgs in the channel
+
+AccessError:
+if user is not a member of the channel of channel_id
+'''
 def channel_messages(token, channel_id, start):
-    pass
+    if valid_member(token, channel_id) == False:
+        raise AccessError("Authorised user is not a member of the channel")
+    if valid_channel(channel_id) == False:
+        raise ValueError("Channel does not exist")
+    if start > length(messages)
+        raise ValueError("Message does not exist")
+
+    
 
 def channel_leave(token, channel_id):
     pass
@@ -70,11 +92,19 @@ def channels_create(token, name, is_public):
 
 #Checks if the channel is a valid channel
 def valid_channel(channel_id):
-    pass
+    if channel_id == "id":
+        return True
+    else:
+        return False
+
 
 #Checks if the user is a member of the channel
 def valid_member(token, channel_id):
-    pass
+    #if user is a member of the channel
+    if token == "all_members.channel_id FIX":
+        return True
+    else:
+        return False
 
 
 
