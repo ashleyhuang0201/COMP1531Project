@@ -16,7 +16,8 @@ def test_user_profile():
     u_id = user[0]
 
     #A valid user_id is provided, user details are returned
-    assert funcs.user_profile(token, u_id) == ("test@gmail.com", "Raydon", "Smith", "raydonsmith")
+    assert funcs.user_profile(token, u_id) ==  {"email":'test@gmail.com', "name_first":'Raydon',\
+                                                 "name_last":'Smith', "handle_str":'raydonsmith'}
 
     #A exception occurs when the user_id is invalid
     with pytest.raises(ValueError, match = "Invalid User ID"):
@@ -30,10 +31,10 @@ def test_profile_setname():
     token = user[1]
 
     #A valid first and last name is given
-    funcs.user_profile_setname(token, "Raydon", "Smith")
+    assert funcs.user_profile_setname(token, "Raydon", "Smith") == {}
 
     #A name of 50 length is valid
-    funcs.user_profile_setname(token, create_50_string(), create_50_string())
+    assert funcs.user_profile_setname(token, create_50_string(), create_50_string()) == {}
 
     #First name too long
     with pytest.raises(ValueError, match = "Name too long"):
@@ -51,7 +52,7 @@ def test_profile_setemail():
     token = user[1]
 
     #A valid email change
-    funcs.user_profile_setemail(token, "test1@gmail.com")
+    assert funcs.user_profile_setemail(token, "test1@gmail.com") == {}
 
     #A invalid email is given
     with pytest.raises(ValueError, match = "Invalid email"):
@@ -69,7 +70,7 @@ def test_profile_sethandle():
     token = user[1]
 
     #A valid handle is given
-    funcs.user_profile_sethandle(token, "a handle")
+    assert funcs.user_profile_sethandle(token, "a handle") == {}
 
     #A invalid handle is given
     with pytest.raises(ValueError, match = "Invalid Handle"):
@@ -83,7 +84,7 @@ def test_profiles_uploadphoto():
     token = user[1]
 
     #A valid photo is uploaded and cropped
-    funcs.user_profiles_uploadphoto(token, "img1", 10, 10, 20 ,20)
+    assert funcs.user_profiles_uploadphoto(token, "img1", 10, 10, 20 ,20) == {}
 
     #The url is invalid
     with pytest.raises(ValueError, match = "HTTP status not 200"):

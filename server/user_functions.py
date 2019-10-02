@@ -19,11 +19,10 @@ def user_profile(token, u_id):
         raise ValueError("Invalid User ID")
 
     #Dummy user profile returned
-    email = "test@gmail.com"
-    name_first = "Raydon"
-    name_last = "Smith"
-    handle_str = "raydonsmith"
-    return email, name_first, name_last, handle_str
+    profile = {"email":'test@gmail.com', "name_first":'Raydon',\
+    "name_last":'Smith', "handle_str":'raydonsmith'}
+
+    return profile
 
 """
 Update the authorised user's first and last name
@@ -39,6 +38,7 @@ def user_profile_setname(token, name_first, name_last):
         raise ValueError("Name too long")
 
     #Changes user's name in database
+    return {}
 
 """
 Updates the authorised user's email address
@@ -57,7 +57,7 @@ def user_profile_setemail(token, email):
         raise ValueError("Email already in use")
 
     #Changes user's email in database
-
+    return {}
 
 """
 Update the authorised user's handle
@@ -71,6 +71,7 @@ def user_profile_sethandle(token, handle_str):
         raise ValueError("Invalid Handle")
 
     #Changes user's handle in database
+    return {}
 
 """
 Given a URL of an image on the internet, crops the image within x and y co-oridinates
@@ -94,6 +95,7 @@ def user_profiles_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
 
    
     #The user's profile picture is changed
+    return {}
 
 #Helper functions
 
