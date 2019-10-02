@@ -4,6 +4,8 @@
 
 import pytest
 import re
+import auth_functions
+from Error import AccessError
 
 """
 For a valid user, returns information about their email, first name, last name, and handle
@@ -47,6 +49,7 @@ ValueError:
 
 """
 def user_profile_setemail(token, email):
+
     used_emails = ["test2@gmail.com", "test3@gmail.com"]
     if valid_email(email) == False:
         raise ValueError("Invalid email")
@@ -63,6 +66,7 @@ ValueError:
 - handle_str is more than 20 characters
 """
 def user_profile_sethandle(token, handle_str):
+    
     if len(handle_str) > 20:
         raise ValueError("Invalid Handle")
 
@@ -77,25 +81,21 @@ ValueError:
 
 """
 def user_profiles_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
-    #This function is a little hard to test, as we haven't implemented the url 
-    #dummy urls, where the tuple is x_start, y_start, x_end, y_end
-    urls = {"img1": (0,0,100,100), "img2":(0,0,50,50)}
+    #This function is a little hard to test, as we don't know how the image are to be handled
+    valid_urls = {"img1", "img2"}
 
-    if img_url in urls:
+    if img_url in valid_urls:
         pass
     else:
         raise ValueError("HTTP status not 200")
-    
-    if urls[img_url][0] > x_start:
-        raise ValueError("Crop bounds invalid")
-    elif urls[img_url][1] > y_start:
-        raise ValueError("Crop bounds invalid")
-    elif urls[img_url][2] < x_end:
-        raise ValueError("Crop bounds invalid")
-    elif urls[img_url][3] < y_end:
-        raise ValueError("Crop bounds invalid")
+
+    #Check that the crop co-ordinates are valid
+    pass
+
+   
     #The user's profile picture is changed
 
+#Helper functions
 
 # Checks if an email is a valid email
 def valid_email(email):  
@@ -105,7 +105,8 @@ def valid_email(email):
     else:
         return False
 
-def valid_user_id(user_id):
-    if user_id == 1:
+# Checks if a user_id is valid
+def valid_user_id(u_id):
+    if u_id  == "valid_u_id":
         return True
     return False
