@@ -8,18 +8,18 @@ def test_standup_start():
     with pytest.raises(AccessError, match = "Cannot Access Channel"):
         standup.standup_start("incorrect_or_invalid_token", "correct_and_valid_channel")
     
-    assert standup.standup_start("valid_token", "correct_and_valid_channel") == 900 # Successful start
+    assert standup.standup_start("valid_token", "correct_and_valid_channel") == 900
 
 def test_standup_send():
     with pytest.raises(ValueError, match = "Channel Does Not Exist"):
-        standup.standup_send("valid_token", "incorrect_or_invalid_channel_with_standup", "correct_and_valid_message") # Channel does not exist
+        standup.standup_send("valid_token", "incorrect_or_invalid_channel_with_standup", "correct_and_valid_message")
     with pytest.raises(ValueError, match = "Message Too Long"):
         long_string = string_creator(1001)
-        standup.standup_send("valid_token", "correct_and_valid_channel_with_standup", long_string) # Message too long
+        standup.standup_send("valid_token", "correct_and_valid_channel_with_standup", long_string)
     with pytest.raises(AccessError, match = "Cannot Access Channel"):
-        standup.standup_send("invalid_token", "correct_and_valid_channel_with_standup", "correct_and_valid_message") # User not apart of channel
+        standup.standup_send("invalid_token", "correct_and_valid_channel_with_standup", "correct_and_valid_message")
     with pytest.raises(AccessError, match = "Not Currently In Standup"):
-        standup.standup_send("valid_token", "correct_and_valid_channel", "correct_and_valid_message") # Not currently in standup
+        standup.standup_send("valid_token", "correct_and_valid_channel", "correct_and_valid_message")
 
 # Creates a variable length string
 def string_creator(length):
