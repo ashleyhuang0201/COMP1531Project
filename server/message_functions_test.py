@@ -19,10 +19,10 @@ def test_message_sendlater():
     channel = 1
 
     #A valid send later request is sent
-    funcs.message_sendlater(token, channel, "This is a valid message", datetime.datetime(2020,1,1))
+    assert funcs.message_sendlater(token, channel, "This is a valid message", datetime.datetime(2020,1,1)) == {}
 
     #A message of length 1000 characters is valid
-    funcs.message_sendlater(token, channel, create_long_string(), datetime.datetime(2020,1,1))
+    assert funcs.message_sendlater(token, channel, create_long_string(), datetime.datetime(2020,1,1)) == {}
 
     #A message of length greater than 1000 is valid
     with pytest.raises(ValueError, match = "Message length too long"):
@@ -56,10 +56,10 @@ def test_message_send():
     channel = 1
     
     #A valid send request is sent
-    funcs.message_send(token, channel, "This is a valid message")
+    assert funcs.message_send(token, channel, "This is a valid message") == {}
 
     #A message of length 1000 characters is valid
-    funcs.message_send(token, channel, create_long_string())
+    assert funcs.message_send(token, channel, create_long_string()) == {}
 
     #A invalid token is sent to the function (A invalid user is trying to use the function)
     with pytest.raises(ValueError, match = "Invalid Token"):
@@ -92,10 +92,10 @@ def test_message_remove():
     funcs.message_send(token, channel, "This is another valid message")
 
     #A owner removes a valid message
-    funcs.message_remove("owner", 1)
+    assert funcs.message_remove("owner", 1) == {}
 
     #A user removes his own message
-    funcs.message_remove(token, 1)
+    assert funcs.message_remove(token, 1) == {}
 
     #A owner tries to remove a invalid message based on message_id
     with pytest.raises(ValueError, match = "Invalid Message ID"):
@@ -118,10 +118,10 @@ def test_message_edit():
     token = user[1]
 
     #A owner edits a valid message
-    funcs.message_edit("owner", 1, "This is a valid message")
+    assert funcs.message_edit("owner", 1, "This is a valid message") == {}
 
     #A user edits his own message
-    funcs.message_edit(token, 1, "This is a valid message")
+    assert funcs.message_edit(token, 1, "This is a valid message") == {}
 
     #A owner tries to edit a invalid message based on message_id
     with pytest.raises(ValueError, match = "Invalid Message ID"):
@@ -148,7 +148,7 @@ def test_message_react():
     token = user[1]
     
     #A user successfully reacts
-    funcs.message_react(token, 1, 1)
+    assert funcs.message_react(token, 1, 1) == {}
 
     #A user tries to react to a invalid message based on message_id
     with pytest.raises(ValueError, match = "Invalid Message ID"):
@@ -171,7 +171,7 @@ def test_message_unreact():
     token = user[1]
 
     #A user successfully unreacts
-    funcs.message_unreact(token, 3, 1)
+    assert funcs.message_unreact(token, 3, 1) == {}
 
     #A user tries to unreact to a invalid message based on message_id
     with pytest.raises(ValueError, match = "Invalid Message ID"):
@@ -194,7 +194,7 @@ def test_message_pin():
     token = user[1]
 
     #A user successfully pins a message
-    funcs.message_pin("admin_member", 1)
+    assert funcs.message_pin("admin_member", 1) == {}
 
     #Message is invalid based on message_id
     with pytest.raises(ValueError, match = "Invalid Message ID"):
@@ -221,7 +221,7 @@ def test_message_unpin():
     token = user[1]
     
     #A user successfully unpins a message
-    funcs.message_unpin("admin_member", 3)
+    assert funcs.message_unpin("admin_member", 3) == {}
 
     #Message is invalid based on message_id
     with pytest.raises(ValueError, match = "Invalid Message ID"):
