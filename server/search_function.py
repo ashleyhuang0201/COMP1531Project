@@ -3,20 +3,28 @@
 # Created on: 2/10/2019
 
 import pytest
-import datetime
+import search_function_test as test
+import channel_functions as channel
 
-
-m1 = {'u_id' : 1, 'message' : 'First message', 'time_created' : datetime.datetime.now(), 'is_unread' : True}
-m2 = {'u_id' : 2, 'message' : 'Not First message', 'time_created' : datetime.datetime.now(), 'is_unread' : False}
-m3 = {'u_id' : 3, 'message' : 'Third message', 'time_created' : datetime.datetime.now(), 'is_unread' : True}
+matches = [];
 
 # Dummy search function and returns
 def search(token, query_str):
-    if (query_str == 'message'):
-        return [[m1, m2, m3]]
-    elif (query_str == 'First'):
-        return [[m1, m2]]
-    elif (query_str == 'Third'):
-        return [[m3]]
+    if (query_str == 'Multichannel'):
+        # Messages 'Multichannel search 2' and 'Multichannel search 1' respectively
+        # Ordered this way since I'm assuming search should return most recent 
+        # results first
+        matches.append(test.messages2[0])
+        matches.append(test.messages1[0])
+        return matches
+    elif (query_str == 'Singlechannel'):
+        # Messages 'Singlechannel search 2' and 'Singlechannel search 1' respectively
+        matches.append(test.messages1[2])
+        matches.append(test.messages1[3])
+        return matches
+    elif (query_str == 'Only'):
+        # Message 'Only this'
+        matches.append(test.messages1[1])
+        return matches
     else:
         return [[]]
