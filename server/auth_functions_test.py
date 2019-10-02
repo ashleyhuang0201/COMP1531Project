@@ -1,47 +1,40 @@
-import auth_functions as ph2 # Getting functions # Change ph2 to something else
+import auth_functions as auth
+import pytest
 
 # Testing Functions
 def test_auth_login():
-    # Valid login
-    assert ph2.auth_login("test@gmail.com", "password") == ("u_id", "123456"), "valid email and valid password"
-    # Invalid email
-    assert ph2.auth_login("test", "password") != ("u_id", "123456"), "invalid email"
-    # Invalid password
-    assert ph2.auth_login("test@gmail.com", "pass") != ("u_id", "123456"), "invalid password"
-    # Email not associated with user
-    assert ph2.auth_login("test1@gmail.com", "password") != ("u_id", "123456"), "invalid user"
-    # Password not associated with email
-    assert ph2.auth_login("test@gmail.com", "wrongpassword") != ("u_id", "123456"), "invalid password to user"
-    # No entry
-    assert ph2.auth_login("", "") != ("u_id", "123456"), "no entry"
+    assert auth.auth_login("registered_email", "registered_password") == {"u_id": "valid_u_id", "token": "valid_token"}
+
+    with pytest.raises(ValueError, match = "Invalid Email"):
+        auth.auth_login("invalid_email", "valid_password")
+    with pytest.raises(ValueError, match = "Email not registered"):
+        auth.auth_login("unregistered_email", "valid_password")
+    with pytest.raises(ValueError, match = "Password Incorrect"):
+        auth.auth_login("registered_email", "invalid_password")
 
 def test_auth_logout():
-    # How to test successful logout?
     pass
 
 def test_auth_register():
-    pass
-    # Valid login
-    assert ph2.auth_register("test@gmail.com", "password", "firstname", "lastname") == ("u_id", "123456"), "valid login"
-    # Invalid email
-    assert ph2.auth_register("test1@gmail.com", "password", "firstname", "lastname") != ("u_id", "123456"), "invalid email"
-    # Invalid password
-    assert ph2.auth_register("test@gmail.com", "ps", "firstname", "lastname") != ("u_id", "123456"), "invalid password"
-    # Invalid first name
-    assert ph2.auth_register("test@gmail.com", "password", "00110001001100100011001100110100001101010011011000110111", "lastname") != ("u_id", "123456"), "invalid first name"
-    # Invalid last name
-    assert ph2.auth_register("test@gmail.com", "password", "firstname", "00110001001100100011001100110100001101010011011000110111") != ("u_id", "123456"), "invalid last name"
-    # No entry
-    assert ph2.auth_register("", "", "", "") != ("u_id", "123456"), "no entry"
+    assert auth.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name") == {"u_id": "valid_u_id", "token": "valid_token"} # Valid Register
+
+    with pytest.raises(ValueError, match = "Invalid Email"):
+        auth.auth_register("invalid_email", "valid_password", "valid_first_name", "valid_last_name")
+    with pytest.raises(ValueError, match = "Email Already Registered"):
+        auth.auth_register("registered_email", "valid_password", "valid_first_name", "valid_last_name")
+    with pytest.raises(ValueError, match = "Password Not Strong"):
+        auth.auth_register("valid_correct_email", "invalid_password", "valid_first_name", "valid_last_name")
+    with pytest.raises(ValueError, match = "Invalid First Name"):
+        auth.auth_register("valid_correct_email", "valid_correct_password", "invalid_first_name", "valid_last_name")
+    with pytest.raises(ValueError, match = "Invalid Last Name"):
+        auth.auth_register("valid_correct_email", "valid_correct_password", "valid_first_name", "invalid_last_name")
 
 def test_auth_passwordreset_request():
-    # Valid email
-    ph2.auth_passwordreset_request("test@gmail.com")
-    # Invalid email
-    ph2.auth_passwordreset_request("invalid@gmail.com")
+    pass
 
 def test_auth_passwordreset_reset():
-    # Valid reset code and password
-    # Invalid reset code
-    # Invalid password
-    pass
+    auth.auth_passwordreset_reset("valid_reset_code", "valid_correct_password")
+    with pytest.raises(ValueError, match = "Invalid Reset Code"):
+        auth.auth_passwordreset_reset("invalid_reset_code", "valid_password")
+    with pytest.raises(ValueError, match = "Invalid Password"):
+        auth.auth_passwordreset_reset("valid_reset_code", "invalid_password")

@@ -34,7 +34,7 @@ def message_sendlater(token, channel_id, message, time_sent):
         raise ValueError("Time sent was in the past")
 
     #The message is valid and will be sent to the channel at the specific time
-    pass
+    return {}
 
 """
 Send a message from authorised_user to the channel specified by channel_id
@@ -58,6 +58,7 @@ def message_send(token, channel_id, message):
         raise ValueError("Message length too long")
 
     #The message is valid and is sent to the channel
+    return {}
 
 """
 Given a message ID, the message is removed
@@ -74,7 +75,7 @@ AccessErrors:
 def message_remove(token, message_id):
 
     #(message_id: token)
-    messages = {1: "123456", 2: "123456"}
+    messages = {1: "valid_token", 2: "valid_token"}
 
     #Message based on ID does not exits
     if valid_message_id(messages, message_id) == False:
@@ -86,6 +87,7 @@ def message_remove(token, message_id):
 
     #The message is removed from the channel
     del messages[message_id]
+    return {}
 
 
 """
@@ -104,7 +106,7 @@ ValueErrors:
 def message_edit(token, message_id, message):
 
     #(message_id: token)
-    messages = {1: "123456", 2: "123456"}
+    messages = {1: "valid_token", 2: "valid_token"}
 
     if valid_message_id(messages, message_id) == False:
         raise ValueError("Invalid Message ID")
@@ -117,7 +119,7 @@ def message_edit(token, message_id, message):
     
     #The message is edited
     messages[message_id] = message
-
+    return {}
 
 """
 Given a message within a channel the authorised user is part of, add a "react" to that particular message
@@ -147,7 +149,8 @@ def message_react(token, message_id, react_id):
 
     #React status of message is set
     messages_reacts[message_id] = 1
-    
+    return {}
+
 """
 Given a message within a channel the authorised user is part of, remove a "react" to that particular message
 
@@ -175,6 +178,7 @@ def message_unreact(token, message_id, react_id):
         raise ValueError("Message does not contains a active react")
     
     messages_reacts[message_id] = 0
+    return {}
 
 """
 Given a message within a channel, mark it as "pinned" to be given special display treatment by the frontend
@@ -205,6 +209,7 @@ def message_pin(token, message_id):
         raise AccessError("User is not a member of the channel")
 
     messages_pinned[message_id] == 1
+    return {}
 
 """
 Given a message within a channel, remove it's mark as unpinned
@@ -233,13 +238,14 @@ def message_unpin(token, message_id):
         raise AccessError("User is not a member of the channel")
 
     messages_pinned[message_id] == 0
+    return {}
 
 
 #Helper Funtions
 
 # Checks the validity of a token
 def valid_token(token):
-    if token == "123456" or token == "223456" or token == "owner":
+    if token == "123456" or token == "223456" or token == "owner" or token == "valid_token":
         # Active token
         return True
     else:
