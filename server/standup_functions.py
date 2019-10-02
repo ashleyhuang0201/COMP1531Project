@@ -45,7 +45,7 @@ def existing_channel(channel_id):
 
 # Checks if a user is apart of a channel
 def user_in_channel(token, channel_id):
-    if token == "correct_and_valid_token" and (channel_id == "correct_and_valid_channel" or channel_id == "correct_and_valid_channel_with_standup"):
+    if token == "valid_token" and (channel_id == "correct_and_valid_channel" or channel_id == "correct_and_valid_channel_with_standup"):
         return True
     else:
         return False
@@ -53,6 +53,7 @@ def user_in_channel(token, channel_id):
 # Checks if a message is more than 1000 character
 def greater_than_1000_characters(message):
     if len(message) > 1000:
+        print(len(message))
         return True
     else:
         return False

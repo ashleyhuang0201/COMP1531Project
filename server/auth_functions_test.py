@@ -8,7 +8,9 @@ def test_auth_login():
 
     with pytest.raises(ValueError, match = "Invalid Details"):
         auth.auth_login("invalid_email", "valid_password") # Invalid email
+    with pytest.raises(ValueError, match = "Invalid Details"):
         auth.auth_login("incorrect_email", "valid_password") # Invalid User
+    with pytest.raises(ValueError, match = "Invalid Details"):
         auth.auth_login("valid_correct_email", "invalid_password") # Wrong password
 
 def test_auth_logout():
@@ -20,9 +22,13 @@ def test_auth_register():
 
     with pytest.raises(ValueError, match = "Invalid Details"):
         auth.auth_register("invalid_email", "valid_password", "valid_first_name", "valid_last_name") # Invalid email
+    with pytest.raises(ValueError, match = "Invalid Details"):
         auth.auth_register("used_email", "valid_password", "valid_first_name", "valid_last_name") # Used email
+    with pytest.raises(ValueError, match = "Invalid Details"):
         auth.auth_register("valid_correct_email", "invalid_password", "valid_first_name", "valid_last_name") # Invalid password
+    with pytest.raises(ValueError, match = "Invalid Details"):
         auth.auth_register("valid_correct_email", "valid_correct_password", "invalid_first_name", "valid_last_name") # Invalid first name
+    with pytest.raises(ValueError, match = "Invalid Details"):
         auth.auth_register("valid_correct_email", "valid_correct_password", "valid_first_name", "invalid_last_name") # Invalid last name
 
 def test_auth_passwordreset_request():
@@ -34,4 +40,5 @@ def test_auth_passwordreset_reset():
 
     with pytest.raises(ValueError, match = "Invalid Details"):
         auth.auth_passwordreset_reset("invalid_reset_code", "valid_password") # Invalid reset code
+    with pytest.raises(ValueError, match = "Invalid Details"):
         auth.auth_passwordreset_reset("valid_reset_code", "invalid_password") # Invalid password
