@@ -3,7 +3,7 @@ import pytest
 
 # Testing Functions
 def test_auth_login():
-    assert auth.auth_login("registered_email", "registered_password") == ("valid_u_id", "valid_token") # Valid login
+    assert auth.auth_login("registered_email", "registered_password") == {"u_id": "valid_u_id", "token": "valid_token"} # Valid login
 
     with pytest.raises(ValueError, match = "Invalid Details"):
         auth.auth_login("invalid_email", "valid_password") # Invalid email
@@ -16,7 +16,7 @@ def test_auth_logout():
     pass
 
 def test_auth_register():
-    assert auth.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name") == ("valid_u_id", "valid_token") # Valid Register
+    assert auth.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name") == {"u_id": "valid_u_id", "token": "valid_token"} # Valid Register
 
     with pytest.raises(ValueError, match = "Invalid Details"):
         auth.auth_register("invalid_email", "valid_password", "valid_first_name", "valid_last_name") # Invalid email

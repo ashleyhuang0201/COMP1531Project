@@ -9,7 +9,7 @@ def auth_login(email, password):
     if correct_password(email, password) == False:
         raise ValueError("Invalid Details") # Password does not correspond to email
 
-    return ("valid_u_id", "valid_token") # Login Success
+    return {"u_id": "valid_u_id", "token": "valid_token"} # Login Success
 
 # Given an active token, invalidates the taken to log the user out. Given a non-valid token, does nothing
 def auth_logout(token):
@@ -30,7 +30,7 @@ def auth_register(email, password, name_first, name_last):
     if valid_name_last(name_last) == False:
         raise ValueError("Invalid Details") # Invalid last name
 
-    return ("valid_u_id", "valid_token") # Register success
+    return {"u_id": "valid_u_id", "token": "valid_token"} # Register success
 
 """
 Given an email address, if the user is a registered user, send's them a an 
