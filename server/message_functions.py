@@ -239,7 +239,7 @@ def message_unpin(token, message_id):
 
 # Checks the validity of a token
 def valid_token(token):
-    if token == "123456" or token == "223456" or token == "owner":
+    if token == "123456" or token == "223456" or token == "owner" or token == "valid_token":
         # Active token
         return True
     else:
@@ -272,7 +272,7 @@ def valid_channel(channel_id):
 def valid_permission(token, messages, message_id):
 
     #User is a owner
-    if token == "owner":
+    if token == "owner" or token == "valid_token":
         return True
     #The message was a message sent by the user
     elif messages[message_id] == token:

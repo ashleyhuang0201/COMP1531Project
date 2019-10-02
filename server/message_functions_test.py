@@ -12,7 +12,7 @@ from Error import AccessError
 def test_message_sendlater():
 
     #Initialisation
-    user = auth_functions.auth_register("test@gmail.com", "password", "Raydon", "Smith")
+    user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
     token = user[1]
     #Use function from channel_functions.py once Ashley implements them
     #channel = channels_create(token,"Name", True)
@@ -49,7 +49,7 @@ def test_message_sendlater():
 def test_message_send():
 
     #Initialisation
-    user = auth_functions.auth_register("test@gmail.com", "password", "Raydon", "Smith")
+    user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
     token = user[1]
     #Use function from channel_functions.py once Ashley implements them
     #channel = channels_create(token,"Name", True)
@@ -82,7 +82,7 @@ def test_message_send():
 def test_message_remove():
 
     #Initialisation
-    user = auth_functions.auth_register("test@gmail.com", "password", "Raydon", "Smith")
+    user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
     token = user[1]
     #Use function from channel_functions.py once Ashley implements them
     #channel = channels_create(token,"Name", True)
@@ -114,7 +114,7 @@ def test_message_remove():
 def test_message_edit():
 
     #Initialisation
-    user = auth_functions.auth_register("test@gmail.com", "password", "Raydon", "Smith")
+    user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
     token = user[1]
 
     #A owner edits a valid message
@@ -144,7 +144,7 @@ def test_message_edit():
 def test_message_react():
 
     #Initialisation
-    user = auth_functions.auth_register("test@gmail.com", "password", "Raydon", "Smith")
+    user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
     token = user[1]
     
     #A user successfully reacts
@@ -167,7 +167,7 @@ def test_message_react():
 def test_message_unreact():
     
     #Initialisation
-    user = auth_functions.auth_register("test@gmail.com", "password", "Raydon", "Smith")
+    user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
     token = user[1]
 
     #A user successfully unreacts
@@ -190,7 +190,7 @@ def test_message_unreact():
 def test_message_pin():
     
     #Initialisation
-    user = auth_functions.auth_register("test@gmail.com", "password", "Raydon", "Smith")
+    user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
     token = user[1]
 
     #A user successfully pins a message
@@ -217,7 +217,7 @@ def test_message_pin():
 def test_message_unpin():
 
     #Initialisation
-    user = auth_functions.auth_register("test@gmail.com", "password", "Raydon", "Smith")
+    user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
     token = user[1]
     
     #A user successfully unpins a message
@@ -243,9 +243,9 @@ def test_message_unpin():
 
 #Creates a string of 1000 characters for testing purposes
 def create_long_string():
-
-    with open('1000characters.txt', 'r') as file:
-        longstring = file.read()
+    longstring = ""
+    for i in range(1000):
+        longstring += "a"
     assert len(longstring) == 1000
 
     return longstring
