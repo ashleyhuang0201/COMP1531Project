@@ -13,7 +13,7 @@ def test_message_sendlater():
 
     #Initialisation
     user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
-    token = user[1]
+    token = user["token"]
     #Use function from channel_functions.py once Ashley implements them
     #channel = channels_create(token,"Name", True)
     channel = 1
@@ -50,7 +50,7 @@ def test_message_send():
 
     #Initialisation
     user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
-    token = user[1]
+    token = user["token"]
     #Use function from channel_functions.py once Ashley implements them
     #channel = channels_create(token,"Name", True)
     channel = 1
@@ -67,7 +67,7 @@ def test_message_send():
 
     #The channel based on ID does not exist
     with pytest.raises(ValueError, match = "Invalid Channel ID"):
-        funcs.message_send(token, 2, "This is a valid message")
+        funcs.message_send(token, 99, "This is a valid message")
     
     #A message of length greater than 1000 
     with pytest.raises(ValueError, match = "Message length too long"):
@@ -75,7 +75,7 @@ def test_message_send():
 
     #All errors (Token error is caught first)
     with pytest.raises(ValueError, match = "Invalid Token"):
-        funcs.message_send("111111", 2, "1" + create_long_string())
+        funcs.message_send("111111", 99, "1" + create_long_string())
 
 
 # message_remove(token, message_id)
@@ -83,7 +83,7 @@ def test_message_remove():
 
     #Initialisation
     user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
-    token = user[1]
+    token = user["token"]
     #Use function from channel_functions.py once Ashley implements them
     #channel = channels_create(token,"Name", True)
     channel = 1
@@ -115,7 +115,7 @@ def test_message_edit():
 
     #Initialisation
     user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
-    token = user[1]
+    token = user["token"]
 
     #A owner edits a valid message
     assert funcs.message_edit("owner", 1, "This is a valid message") == {}
@@ -145,7 +145,7 @@ def test_message_react():
 
     #Initialisation
     user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
-    token = user[1]
+    token = user["token"]
     
     #A user successfully reacts
     assert funcs.message_react(token, 1, 1) == {}
@@ -168,7 +168,7 @@ def test_message_unreact():
     
     #Initialisation
     user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
-    token = user[1]
+    token = user["token"]
 
     #A user successfully unreacts
     assert funcs.message_unreact(token, 3, 1) == {}
@@ -191,7 +191,7 @@ def test_message_pin():
     
     #Initialisation
     user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
-    token = user[1]
+    token = user["token"]
 
     #A user successfully pins a message
     assert funcs.message_pin("admin_member", 1) == {}
@@ -218,7 +218,7 @@ def test_message_unpin():
 
     #Initialisation
     user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
-    token = user[1]
+    token = user["token"]
     
     #A user successfully unpins a message
     assert funcs.message_unpin("admin_member", 3) == {}
