@@ -24,6 +24,7 @@ Users will enter reset code (valid, invalid) and password (invalid, valid)
 # message functions assumptions
 ## message_sendlater
 The function will be called with a token, a channel id, a message, and a time to be sent
+The channel based on ID will not be deleted in the time till the message is to be sent
 ## message_send
 The function will be called with a token, a channel id and a message
 ## message_remove
