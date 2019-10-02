@@ -1,7 +1,7 @@
 # General
 Passwords can be of infinite length
 
-Names can be of infinite length and can include any characters
+First and last name are less than 50 characters and can include any characters
 
 # auth_login
 Users will enter emails (correct, invalid, not registered) and passwords (correct, incorrect)
@@ -19,6 +19,12 @@ Users will enter email (incorrect, correct, invalid, valid)
 
 # auth_passwordreset_reset
 Users will enter reset code (valid, invalid) and password (invalid, valid)
+
+# message_* function assumptions
+## message_sendlater
+The function will be called with a token, a channel id, a message, and a time to be sent
+
+
 
 # standup_start
 Users will try start on channel ((non-existant, existing) and (apart of, not apart of))
