@@ -18,6 +18,7 @@ def channel_invite(token, channel_id, u_id):
     if valid_user(u_id) == False:
         raise ValueError("User id is not valid")
 
+    return {}
 '''
 Provide basic details about the channel
 
@@ -123,7 +124,7 @@ def valid_channel(channel_id):
 #Checks if the user is a member of the channel
 def valid_member(token, channel_id):
     #if user is a member of the channel
-    if token == "all_members.channel_id FIX":
+    if token == "all_members" :
         return True
     else:
         return False
