@@ -87,5 +87,7 @@ Users will try to send on channel ((non-existant, existing) and (apart of, not a
 ## Misc
 # search
 The function will be called with a token and a query string
+The function is expected to return a list in order of most recent messages matching the query where the most recent message is at index 0
+The function is expected to search all channels for query string
 # admin_userpermission_change
 The function will be called with a token, user id and a permission id
