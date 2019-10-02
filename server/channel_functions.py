@@ -104,9 +104,14 @@ AccessError:
 - when the authorised user is not an owner of the slackr, or an owner of the channel
 '''
 def channel_addowner(token, channel_id, u_id):
-    if valid_channel(channel_id) == false:
+    if valid_channel(channel_id) == False:
         raise ValueError("Channel does not exist")
+    if user_is_owner(channel_id, u_id) == True:
+        raise ValueError("User is already the owner of the channel")
+    if user_is_owner(channel_id, token) == False and user_is_slackrowner(token) == False:
+        raise AccessError("User is not an owner of slackr or an owner of the channel")
     
+    return {}
 
 def channel_removeowner(token, channel_id, u_id):
     pass
@@ -149,5 +154,18 @@ def valid_member(token, channel_id):
 
 #Returns true if owner, returns false if not owner
 def owner(token, channel_id):
+
+
+#Returns true if it is a private channel, returns false if not private
+def private_channel(channel_id):
+    if channel_id == "private_channel":
+        return True
+    else:
+        return False
     
+def user_is_owner(channel_id, token):
+    pass
+    
+def user_is_slackrowner(token):
+    pass
 
