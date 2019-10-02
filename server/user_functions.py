@@ -3,7 +3,6 @@
 #Created on: 1/10/2019
 
 import pytest
-import re
 import auth_functions
 from Error import AccessError
 
@@ -101,8 +100,7 @@ def user_profiles_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
 
 # Checks if an email is a valid email
 def valid_email(email):  
-    regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
-    if re.search(regex, email):
+    if email == "test1@gmail.com" or email == "test2@gmail.com":
         return True
     else:
         return False

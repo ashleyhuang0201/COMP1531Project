@@ -12,8 +12,8 @@ def test_user_profile():
     
     #Initialisation
     user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
-    token = user[1]
-    u_id = user[0]
+    token = user["token"]
+    u_id = user["u_id"]
 
     #A valid user_id is provided, user details are returned
     assert funcs.user_profile(token, u_id) ==  {"email":'test@gmail.com', "name_first":'Raydon',\
@@ -28,7 +28,7 @@ def test_profile_setname():
     
     #Initialisation
     user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
-    token = user[1]
+    token = user["token"]
 
     #A valid first and last name is given
     assert funcs.user_profile_setname(token, "Raydon", "Smith") == {}
@@ -49,7 +49,7 @@ def test_profile_setemail():
    
     #Initialisation
     user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
-    token = user[1]
+    token = user["token"]
 
     #A valid email change
     assert funcs.user_profile_setemail(token, "test1@gmail.com") == {}
@@ -67,7 +67,7 @@ def test_profile_sethandle():
     
     #Initialisation
     user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
-    token = user[1]
+    token = user["token"]
 
     #A valid handle is given
     assert funcs.user_profile_sethandle(token, "a handle") == {}
@@ -81,7 +81,7 @@ def test_profiles_uploadphoto():
     
     #Initialisation
     user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
-    token = user[1]
+    token = user["token"]
 
     #A valid photo is uploaded and cropped
     assert funcs.user_profiles_uploadphoto(token, "img1", 10, 10, 20 ,20) == {}
