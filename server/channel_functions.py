@@ -132,11 +132,17 @@ def channel_removeowner(token, channel_id, u_id):
         raise AccessError("User is not an owner of slackr or an owner of the channel")
 
     return {}
+
+'''
+Provides a list of all channels and details that the authorised user is part of
+'''
 def channels_list(token):
     #if user token is part of channels 
     #return channels
-
-
+    return channels
+'''
+Provides a list of channels and their associated details
+'''
 def channels_listall(token):
     return channels
 
@@ -149,7 +155,7 @@ ValueError:
 def channels_create(token, name, is_public):
     if len(name) > 20
         ValueError("Name is longer than 20 characters")
-    
+    return channel_id
     
 
 #Checks if the channel is a valid channel
