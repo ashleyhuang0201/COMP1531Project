@@ -108,14 +108,30 @@ def channel_addowner(token, channel_id, u_id):
         raise ValueError("Channel does not exist")
     if user_is_owner(channel_id, u_id) == True:
         raise ValueError("User is already the owner of the channel")
-    if user_is_owner(channel_id, token) == False and user_is_slackrowner(token) == False:
+    if user_is_owner(channel_id, token) == False or user_is_slackrowner(token) == False:
         raise AccessError("User is not an owner of slackr or an owner of the channel")
     
     return {}
 
-def channel_removeowner(token, channel_id, u_id):
-    pass
+'''
+Remove user with user id u_id an owner of this channel
+ValueError:
+- if channel_id does not exist
+- when user with u_id is not an owner of the channel
 
+AccessError:
+- when authorised user is not an owner of slackr, or an owner of the channel
+
+'''
+def channel_removeowner(token, channel_id, u_id):
+    if valid_channel(channel_id) == False:
+        raise ValueError("Channel does not exist")
+    if user_is_owner(channel_id, u_id) == False:
+        raise ValueError("User is not an owner of the channel")
+    if user_is_owner(channel_id, token) == False or user_is_slackrowner(token) == False:
+        raise AccessError("User is not an owner of slackr or an owner of the channel")
+
+    return {}
 def channels_list(token):
     #if user token is part of channels 
     #return channels
@@ -152,8 +168,6 @@ def valid_member(token, channel_id):
     else:
         return False
 
-#Returns true if owner, returns false if not owner
-def owner(token, channel_id):
 
 
 #Returns true if it is a private channel, returns false if not private
