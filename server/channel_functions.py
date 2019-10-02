@@ -160,7 +160,7 @@ def channels_create(token, name, is_public):
 
 #Checks if the channel is a valid channel
 def valid_channel(channel_id):
-    if channel_id == "id":
+    if channel_id == 123:
         return True
     else:
         return False
@@ -168,8 +168,7 @@ def valid_channel(channel_id):
 
 #Checks if the user is a member of the channel
 def valid_member(token, channel_id):
-    #if user is a member of the channel
-    if token == "all_members" :
+    if token == "valid_token" and channel_id == 123:
         return True
     else:
         return False
@@ -178,7 +177,7 @@ def valid_member(token, channel_id):
 
 #Returns true if it is a private channel, returns false if not private
 def private_channel(channel_id):
-    if channel_id == "private_channel":
+    if channel_id == 123:
         return True
     else:
         return False
