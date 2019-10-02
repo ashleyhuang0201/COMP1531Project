@@ -20,10 +20,23 @@ Users will enter email (incorrect, correct, invalid, valid)
 # auth_passwordreset_reset
 Users will enter reset code (valid, invalid) and password (invalid, valid)
 
-# message_* function assumptions
+# message functions assumptions
 ## message_sendlater
 The function will be called with a token, a channel id, a message, and a time to be sent
-
+## message_send
+The function will be called with a token, a channel id and a message
+## message_remove
+The function will be called with a token and a message id
+## message_edit
+The function will be called with a token, a message_id and a new message
+## message_react
+The function will be called with a token, a message id and a react id
+## message_unreact
+The function will be called with a token, a message id and a react id
+## message_pin
+The function will be called with a token and a message id
+## message_unpin
+The function will be called with a token and a message id
 
 
 # standup_start
