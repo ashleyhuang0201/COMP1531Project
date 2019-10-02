@@ -4,7 +4,6 @@
 
 import pytest
 import search_function_test as test
-import channel_functions as channel
 
 matches = [];
 
