@@ -3,12 +3,14 @@ Passwords can be of infinite length
 
 First and last name are less than 50 characters and can include any characters
 
+
 # auth functions assumptions
 ## auth_login
 Users will enter emails (correct, invalid, not registered) and passwords (correct, incorrect)
 
 Users will not enter emails (incorrrect) and passwords (invalid)
 
+Multiple users can login using the same account at the same time
 ## auth_logout
 Users will enter tokens (valid, invalid)
 
@@ -24,6 +26,7 @@ Users will enter reset code (valid, invalid) and password (invalid, valid)
 # message functions assumptions
 ## message_sendlater
 The function will be called with a token, a channel id, a message, and a time to be sent
+
 The channel based on ID will not be deleted in the time till the message is to be sent
 ## message_send
 The function will be called with a token, a channel id and a message
@@ -39,6 +42,22 @@ The function will be called with a token, a message id and a react id
 The function will be called with a token and a message id
 ## message_unpin
 The function will be called with a token and a message id
+
+# user functions assumptions
+## user_profile
+The function will be called with a token and a user id
+
+## user_profile_setname
+The function will be called with a token, a first name and a last name
+
+## user_profile_setemail
+The function will be called with a token and an email
+
+## user_profile_sethandle
+The function will be called with a token and a handle
+
+## user_proviles_uploadphoto
+The function will be called with a token, image url and crop co-ordinates
 
 # standup assumptions
 ## standup_start
