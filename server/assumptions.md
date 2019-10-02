@@ -1,16 +1,27 @@
+# General
+Passwords can be of infinite length
+
+Names can be of infinite length and can include any characters
+
 # auth_login
-User will enter incorrect (wrong email, wrong password), correct (correct email, correct password), invalid (no such email linked to user, not a possible email, incorrect password form) and valid details (registered email, correct password form)
+Users will enter emails (correct, invalid, not registered) and passwords (correct, incorrect)
+
+Users will not enter emails (incorrrect) and passwords (invalid)
 
 # auth_logout
-User will log out from active session or try to log out when they are already logged out
+Users will enter tokens (valid, invalid)
 
 # auth_register
-User will enter invalid (email, password, first name, last name) and correct (email, password, first name, last name) details
-
-Need to improve on possible names as people should not have features such as numbered names
+Users will enter emails (invalid, already registered, correct), passwords (invalid, valid), first name (invalid, valid) and last name (valid, invalid)
 
 # auth_passwordreset_request
-User will enter incorrect (email), correct (email), invalid (email) and valid (email)
+Users will enter email (incorrect, correct, invalid, valid)
 
 # auth_passwordreset_reset
-User will enter invalid (reset code, password) and valid (reset code, password)
+Users will enter reset code (valid, invalid) and password (invalid, valid)
+
+# standup_start
+Users will try start on channel ((non-existant, existing) and (apart of, not apart of))
+
+# standup_send
+Users will try to send on channel ((non-existant, existing) and (apart of, not apart of) and (standup time running, standup time stopped)), message (longer than 1000 characters, less than or equal to 1000)
