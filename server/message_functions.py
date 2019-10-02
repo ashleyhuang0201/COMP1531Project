@@ -74,7 +74,7 @@ AccessErrors:
 def message_remove(token, message_id):
 
     #(message_id: token)
-    messages = {1: "123456", 2: "123456"}
+    messages = {1: "valid_token", 2: "valid_token"}
 
     #Message based on ID does not exits
     if valid_message_id(messages, message_id) == False:
@@ -104,7 +104,7 @@ ValueErrors:
 def message_edit(token, message_id, message):
 
     #(message_id: token)
-    messages = {1: "123456", 2: "123456"}
+    messages = {1: "valid_token", 2: "valid_token"}
 
     if valid_message_id(messages, message_id) == False:
         raise ValueError("Invalid Message ID")
@@ -272,7 +272,7 @@ def valid_channel(channel_id):
 def valid_permission(token, messages, message_id):
 
     #User is a owner
-    if token == "owner" or token == "valid_token":
+    if token == "owner":
         return True
     #The message was a message sent by the user
     elif messages[message_id] == token:
