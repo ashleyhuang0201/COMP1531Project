@@ -37,11 +37,9 @@ def channel_details(token, channel_id):
         raise AccessError("Authorised user is not a member of the channel")
 
     #returned details 
-    name = "Channel name"
-    owner_members = "Ethan Jack"
-    all_members = "Ethan Jack, Jack Smith"
+    channel_details = {"name" : "Channel name", "owner_members": "Ethan Jack", "all_members": "Ethan Jack, Jack Smith"}
 
-    return name, owner_members, all_members
+    return channel_details
     
 '''
 return up to 50 messages between index "start" and "start + 50".
@@ -67,14 +65,34 @@ def channel_messages(token, channel_id, start):
     if start > length(messages)
         raise ValueError("Message does not exist")
 
+    return messages, start, end
     
-
+'''
+Given a channel ID, the user is removed as a member of the channel
+ValueError:
+- if channel_id does not exist
+'''
 def channel_leave(token, channel_id):
-    pass
-
+    if valid_channel(channel_id) == False:
+        raise ValueError("Channel does not exist")
+    
+    return {}
+    
+'''
+Given a channel_id of a channel that the authorised user can join
+adds them to that channel
+ValueError:
+- if channel_id does not exist
+AccessError:
+- if channel_id refers to a channel that is private (when the authorised user is not an admin)
+'''
 def channel_join(token, channel_id):
-    pass
+    if valid_channel(channel_id) == False:
+        raise ValueError("Channel does not exist")
+    if private_channel(channel_id) == True:
+        raise AccessError("Channel is private")
 
+    return {}
 '''
 make user an owner of the channel
 
