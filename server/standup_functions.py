@@ -8,24 +8,24 @@ to the message queue in the channel from the user who started the standup.
 """
 def standup_start(token, channel_id):
     if existing_channel(channel_id) == False:
-        raise ValueError("Invalid Details") # Channel does not exist
+        raise ValueError("Channel Does Not Exist")
     if user_in_channel(token, channel_id) == False:
-        raise AccessError("Invalid Access") # User not apart of channel
+        raise AccessError("Cannot Access Channel")
 
-    return 900 # Successful standup initiation
+    return 900
 
 """
 Sending a message to get buffered in the standup queue, assuming a standup is currently active
 """
 def standup_send(token, channel_id, message):
     if existing_channel(channel_id) == False:
-        raise ValueError("Invalid Details") # Channel does not exist
+        raise ValueError("Channel Does Not Exist")
     if greater_than_1000_characters(message) == True:
-        raise ValueError("Invalid Details") # Message too long
+        raise ValueError("Message Too Long")
     if user_in_channel(token, channel_id) == False:
-        raise AccessError("Invalid Access") # User not apart of channel
+        raise AccessError("Cannot Access Channel")
     if in_standup(channel_id) == False:
-        raise AccessError("Invalid Access") # Not currently in standup
+        raise AccessError("Not Currently In Standup")
 
     # Message sent to queue
 
