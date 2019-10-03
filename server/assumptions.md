@@ -3,7 +3,7 @@ Passwords can be of infinite length
 
 First and last name are less than 50 characters and can include any characters
 
-
+A channel is not destroyed if the last user leaves the channel
 # auth function assumptions
 ## auth_login
 Users will enter emails (correct, invalid, not registered) and passwords (correct, incorrect)
@@ -36,6 +36,8 @@ The function will be called with a token and a channel id
 The function will be called with a token, a channel id and a user id
 ## channel_removeowner
 The function will be called with a token, a channel id and a user id
+
+A user can remove themself as a owner. If the user was the last owner, the channel now has no owners
 ## channeLs_list
 The function will be called with a token
 ## channls_listall
