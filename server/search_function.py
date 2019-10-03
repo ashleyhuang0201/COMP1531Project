@@ -5,7 +5,7 @@
 import pytest
 import search_function_test as test
 
-matches = [];
+matches = []
 
 # Dummy search function and returns
 def search(token, query_str):

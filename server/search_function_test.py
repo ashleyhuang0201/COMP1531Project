@@ -29,7 +29,7 @@ messages2 = channel_messages(user['token'], channel2, 0)
 
 # Search for nothing and get nothing
 def test_search_none():
-    assert search(user['token'], '') == [{'messages': ]}
+    assert search(user['token'], '') == {'messages': []}
 
 # Search for message that shouldn't exist and get nothing
 def test_search_empty():
