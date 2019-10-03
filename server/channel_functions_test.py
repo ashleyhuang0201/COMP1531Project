@@ -6,31 +6,31 @@ import pytest
 import channel_functions as func
 
 def test_channel_invite():
-    pass
+    assert func.channel_invite(token, channel, id) == {}
 
 def test_channel_details():
-    pass
+    assert func.channel_details(token, channel) == {name, owner_members, all_members}
 
 def test_channel_messages():
-    pass
+    assert func.channel_messages(token, channel, start) == {messages, start, end}
 
 def test_channel_leave():
-    pass
+    assert func.channel_leave(token, channel) == {}
 
 def test_channel_join():
-    pass
+    assert func.channel_join(token, channel) == {}
 
 def test_channel_addowner():
-    pass
+    assert func.channel_addowner(token, channel, id) == {}
 
 def test_channel_removeowner():
-    pass
+    assert func.channel_removeowner(token, channel, id) == {}
 
 def test_channels_list():
-    pass
+    assert func.channels_list(token) == {channels}
 
 def test_channels_listall():
-    pass
+    assert func.channels_listall(token) == {channels}
 
 def test_channels_create():
-    pass
+    assert func.channels_create(token, name, is_public) == {channel}
