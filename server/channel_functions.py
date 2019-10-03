@@ -3,7 +3,7 @@
 # Created on: 1/10/2019
 
 import pytest
-
+from Error import AccessError
 '''
 Invites a user with user id u_id to join a channel (channel_id)
 
@@ -39,7 +39,7 @@ def channel_details(token, channel_id):
         raise AccessError("Authorised user is not a member of the channel")
 
     #returned details 
-    channel_details = {"name" : "Channel name", "owner_members": "Ethan Jack", "all_members": "Ethan Jack, Jack Smith"}
+    channel_details = {"name" : "ChannelName", "owner_members": "Ethan Jack", "all_members": "Ethan Jack, Jack Smith"}
 
     return channel_details
     
@@ -114,9 +114,10 @@ def channel_addowner(token, channel_id, u_id):
         raise ValueError("Channel does not exist")
     if user_is_owner(channel_id, u_id) == True:
         raise ValueError("User is already the owner of the channel")
-    if token_is_owner(channel_id, token) == False or token_is_slackrowner(token) == False:
-        raise AccessError("Authorised user is not an owner of slackr or an owner of the channel")
-    
+    if token_is_slackrowner(token) == False:
+        raise AccessError("Authorised user is not an owner of slackr")
+    if token_is_owner(channel_id, token) == False:
+        raise AccessError("Authorised user is not an owner of the channel")
     return {}
 
 '''
@@ -151,7 +152,7 @@ def channels_list(token):
 Provides a list of channels and their associated details
 '''
 def channels_listall(token):
-    return channels
+    return {"id" : 123, "name" : hello}
 
 '''
 Create a channel with the name that is either public or private
@@ -162,13 +163,15 @@ ValueError:
 def channels_create(token, name, is_public):
     if len(name) > 20:
         ValueError("Name is longer than 20 characters")
-    else:
+    elif is_public == True:
         return {"channel_id": "123"}
+    else:
+        return {"channel_id" : "1"}
     
 
 #Checks if the channel is a valid channel
 def valid_channel(channel_id):
-    if channel_id == "123":
+    if channel_id == "123" or channel_id == "1":
         return True
     else:
         return False
@@ -185,7 +188,7 @@ def valid_member(token, channel_id):
 
 #Returns true if it is a private channel, returns false if not private
 def private_channel(channel_id):
-    if channel_id == 123:
+    if channel_id == 1:
         return True
     else:
         return False
