@@ -91,8 +91,11 @@ def user_profiles_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
 
     #Check that the crop co-ordinates are valid
     pass
+    '''
+    if valid_crop(x_start, y_start, x_end, y_end) == False:
+        raise ValueError("Crop values invalid")
 
-   
+    '''
     #The user's profile picture is changed
     return {}
 
