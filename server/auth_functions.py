@@ -15,7 +15,7 @@ def auth_login(email, password):
 # Function slightly adjusted to changing token validity rather than deleting it
 # Is meant to return {} rather than token
 def auth_logout(token):
-    if valid_token(token) == True:
+    if valid_token(token["token"]) == True:
         token["token"] = "invalid_token"
 
     return token

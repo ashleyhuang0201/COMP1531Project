@@ -27,7 +27,7 @@ def standup_send(token, channel_id, message):
     if in_standup(channel_id) == False:
         raise AccessError("Not Currently In Standup")
 
-    # Message sent to queue
+    return {}
 
 # Checks if a channel exists
 def existing_channel(channel_id):

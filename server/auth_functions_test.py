@@ -14,12 +14,12 @@ def test_auth_login():
         auth.auth_login("registered_email", "invalid_password")
 
 def test_auth_logout():
-    login_details = auth_register(valid_correct_email, valid_correct_password, valid_name_first, valid_name_last)
+    login_details = auth.auth_register("valid_correct_email", "valid_correct_password", "valid_first_name", "valid_last_name")
 
     assert message.message_send(login_details["token"], 1, "Hi") == {}
     
-    with pytest.raise(ValueError, match = "Invalid Token"):
-        login_details = auth_logout(login_details)
+    with pytest.raises(ValueError, match = "Invalid Token"):
+        login_details = auth.auth_logout(login_details)
         message.message_send(login_details["token"], 1, "Hi")
 
 def test_auth_register():
