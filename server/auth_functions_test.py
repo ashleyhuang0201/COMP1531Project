@@ -18,7 +18,7 @@ def test_auth_logout():
 
     assert message.message_send(login_details["token"], 1, "Hi") == {}
     
-    with pytest.raises(ValueError, match = "Invalid Token"):
+    with pytest.raises(KeyError, match = "token"):
         login_details = auth.auth_logout(login_details)
         message.message_send(login_details["token"], 1, "Hi")
 
