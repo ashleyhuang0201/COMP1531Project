@@ -12,13 +12,12 @@ def auth_login(email, password):
     return {"u_id": "valid_u_id", "token": "valid_token"}
 
 # Given an active token, invalidates the taken to log the user out. Given a non-valid token, does nothing
-# Function slightly adjusted to changing token validity rather than deleting it
-# Is meant to return {} rather than token
 def auth_logout(token):
-    if valid_token(token) == True:
-        token["token"] = "invalid_token"
+    if valid_token(token["token"]) == True:
+        # Remove token from server
+        pass
 
-    return token
+    return {}
 
 # Given a user's first and last name, email address, and password, create a new account for them and return a new token for authentication in their session
 def auth_register(email, password, name_first, name_last):
@@ -53,7 +52,7 @@ def auth_passwordreset_reset(reset_code, new_password):
     if valid_password(new_password) == False:
         raise ValueError("Invalid Password")
 
-    # Reset password
+    return {}
 
 # Checks if an email is a valid email
 def valid_email(email):  

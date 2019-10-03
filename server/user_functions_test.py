@@ -92,6 +92,12 @@ def test_profiles_uploadphoto():
 
     #Add test cases for testing invalid crop co-ordinates
 
+    #Size of img2 = (0,0,100,200)
+    with pytest.raises(ValueError, match = "Crop values invalid"):
+        funcs.user_profiles_uploadphoto(token,"img2", 0, 0, 200, 300)
+
+
+
 #Helper funcions
 
 #Creates a string of length 50 characters

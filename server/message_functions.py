@@ -23,7 +23,10 @@ ValueErrors:
 - Time sent is a time in the past
 """
 def message_sendlater(token, channel_id, message, time_sent):
-    
+
+    #Dummy implementation    
+    channel_users = ["valid token"]
+
     if valid_token(token) == False:
         raise ValueError("Invalid Token")
     elif valid_channel(channel_id) == False:
@@ -32,6 +35,11 @@ def message_sendlater(token, channel_id, message, time_sent):
         raise ValueError("Message length too long")
     elif(time_sent < datetime.datetime.now()):
         raise ValueError("Time sent was in the past")
+    
+    if token in channel_users:
+        pass
+    else:
+        raise ValueError("User not member of channel")
 
     #The message is valid and will be sent to the channel at the specific time
     return {}
@@ -48,6 +56,9 @@ ValueErrors:
 - Message is more than 1000 Characters
 """
 def message_send(token, channel_id, message):
+
+    #Dummy implementation
+    channel_users = ["valid token"]
     
     #A exception is thrown if any values are invalid
     if valid_token(token) == False:
@@ -56,6 +67,11 @@ def message_send(token, channel_id, message):
         raise ValueError("Invalid Channel ID")
     elif len(message) > 1000:
         raise ValueError("Message length too long")
+
+    if token in channel_users:
+        pass
+    else:
+        raise ValueError("User not member of channel")
 
     #The message is valid and is sent to the channel
     return {}
@@ -74,8 +90,8 @@ AccessErrors:
 """
 def message_remove(token, message_id):
 
-    #(message_id: token)
-    messages = {1: "valid_token", 2: "valid_token"}
+    #Dummy implementation
+    messages = {1: "valid_token", 2: "valid_token", 3: "valid_token"}
 
     #Message based on ID does not exits
     if valid_message_id(messages, message_id) == False:
@@ -105,8 +121,8 @@ ValueErrors:
 """
 def message_edit(token, message_id, message):
 
-    #(message_id: token)
-    messages = {1: "valid_token", 2: "valid_token"}
+    #Dummy implementation
+    messages = {1: "valid_token", 2: "valid_token", 3: "valid_token"}
 
     if valid_message_id(messages, message_id) == False:
         raise ValueError("Invalid Message ID")
@@ -136,8 +152,8 @@ ValueErrors:
 """
 def message_react(token, message_id, react_id):
 
-    #message_id: react status
-    messages_reacts = {1:0, 2:0, 3:1}
+    #Dummy implementation
+    messages_reacts = {1:0, 2:0, 3:0}
     
     if valid_message_id(messages_reacts, message_id) == False:
         raise ValueError("Invalid Message ID")
@@ -166,7 +182,7 @@ ValueErrors:
 """
 def message_unreact(token, message_id, react_id):
     
-    #message_id: react status
+    #Dummy implementation
     messages_reacts = {1:0, 2:0, 3:1}
 
     if valid_message_id(messages_reacts, message_id) == False:
@@ -196,8 +212,9 @@ AccessErrors:
 """
 def message_pin(token, message_id):
 
-    #message_id: pinned status
+    #Dummy implementation
     messages_pinned = {1:0, 2:0, 3:1}
+    channel_users = ["valid token"]
 
     if valid_message_id(messages_pinned, message_id) == False:
         raise ValueError("Invalid Message ID")
@@ -207,6 +224,11 @@ def message_pin(token, message_id):
         raise ValueError("Message is already pinned")
     elif token == "admin_nonmember":
         raise AccessError("User is not a member of the channel")
+
+    if token in channel_users:
+        pass
+    else:
+        raise ValueError("User not member of channel")
 
     messages_pinned[message_id] == 1
     return {}
@@ -225,8 +247,9 @@ ValueErrors:
 """
 def message_unpin(token, message_id):
 
-    #message_id: pinned status
+    #Dummy implementations
     messages_pinned = {1:0, 2:0, 3:1}
+    channel_users = ["valid token"]
 
     if valid_message_id(messages_pinned, message_id) == False:
         raise ValueError("Invalid Message ID")
@@ -236,6 +259,11 @@ def message_unpin(token, message_id):
         raise ValueError("Message is already unpinned")
     elif token == "admin_nonmember":
         raise AccessError("User is not a member of the channel")
+
+    if token in channel_users:
+        pass
+    else:
+        raise ValueError("User not member of channel")
 
     messages_pinned[message_id] == 0
     return {}

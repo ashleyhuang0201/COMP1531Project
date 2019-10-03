@@ -2,26 +2,31 @@
 #Created by: Michael Zhang
 #Created on: 29/9/2019
 
+#Import functions for testing
 import datetime
 import pytest
 import message_functions as funcs
 import auth_functions
+import channel_functions
+import search_function
 from Error import AccessError
+
 
 # message_sendlater(token, channel_id, message, time_sent)  
 def test_message_sendlater():
 
     #Initialisation
+    #Create a user
     user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
     token = user["token"]
-    #Use function from channel_functions.py once Ashley implements them
-    #channel = channels_create(token,"Name", True)
-    channel = 1
+    #User creates a channel
+    channel = channel_functions.channels_create(token,"Name", True)
+    #Init finished
 
-    #A valid send later request is sent
+    #User sends message to created channel
     assert funcs.message_sendlater(token, channel, "This is a valid message", datetime.datetime(2020,1,1)) == {}
 
-    #A message of length 1000 characters is valid
+    #Sending a message of length 1000 is valid
     assert funcs.message_sendlater(token, channel, create_long_string(), datetime.datetime(2020,1,1)) == {}
 
     #A message of length greater than 1000 is valid
@@ -44,21 +49,29 @@ def test_message_sendlater():
     with pytest.raises(ValueError, match = "Invalid Token"):
         funcs.message_sendlater("111111", 99, "1" + create_long_string(), datetime.datetime(2019,1,1))
         
+    #User leaves channel
+    channel_functions.channel_leave(token, channel)
+
+    #User cannot send message to channel he is not apart of
+    with pytest.raises(ValueError, match = "User not member of channel"):
+        funcs.message_sendlater(token, channel, "This is a valid message", datetime.datetime(2020,1,1))
+
 
 # message_send(token, channel_id, message)
 def test_message_send():
 
     #Initialisation
+    #Create an user
     user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
     token = user["token"]
-    #Use function from channel_functions.py once Ashley implements them
-    #channel = channels_create(token,"Name", True)
-    channel = 1
+    #User creates a channel
+    channel = channel_functions.channels_create(token,"Name", True)
+    #Init finished
     
-    #A valid send request is sent
+    #User sends message to created channel
     assert funcs.message_send(token, channel, "This is a valid message") == {}
 
-    #A message of length 1000 characters is valid
+    #Sending a message of length 1000 is valid
     assert funcs.message_send(token, channel, create_long_string()) == {}
 
     #A invalid token is sent to the function (A invalid user is trying to use the function)
@@ -77,25 +90,46 @@ def test_message_send():
     with pytest.raises(ValueError, match = "Invalid Token"):
         funcs.message_send("111111", 99, "1" + create_long_string())
 
+    #User leaves channel
+    channel_functions.channel_leave(token, channel)
+
+    #User cannot send message to channel he is not apart of
+    with pytest.raises(ValueError, match = "User not member of channel"):
+        funcs.message_send(token, channel, "This is a valid message")
+
 
 # message_remove(token, message_id)
 def test_message_remove():
 
     #Initialisation
+    #Create users
     user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
     token = user["token"]
-    #Use function from channel_functions.py once Ashley implements them
-    #channel = channels_create(token,"Name", True)
-    channel = 1
 
+    owner = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
+    owner_token = owner["token"]
+
+    #owner that creates the channel and so is the owner
+    channel = channel_functions.channels_create(owner_token,"Name", True)
+
+    #user joins the channel
+    channel_functions.channel_join(token,channel)
+
+    #user sends 3 messages
     funcs.message_send(token, channel, "This is a valid message")
     funcs.message_send(token, channel, "This is another valid message")
+    funcs.message_send(owner_token, channel, "This is not your message")
+    #Init finished
 
-    #A owner removes a valid message
-    assert funcs.message_remove("owner", 1) == {}
+    #Gets message_id of "This is a valid message"
+    message_id = search_function.search(token,"This is a valid message")[0]['messages_id']
+    #owner successfully removes a message
+    assert funcs.message_remove(owner_token, message_id) == {}
 
-    #A user removes his own message
-    assert funcs.message_remove(token, 1) == {}
+    #Gets message_id of "This is another valid message"
+    message_id = search_function.search(token,"This is another valid message")[0]['messages_id']
+    #user successfully removes his own message
+    assert funcs.message_remove(token, message_id) == {}
 
     #A owner tries to remove a invalid message based on message_id
     with pytest.raises(ValueError, match = "Invalid Message ID"):
@@ -105,23 +139,47 @@ def test_message_remove():
     with pytest.raises(ValueError, match = "Invalid Message ID"):
         funcs.message_remove(token, 99)
 
-    #A user tries to remove a message not his
+    #Gets message_id of "This is another valid message"
+    message_id = search_function.search(token,"This is not your message")[0]['messages_id']
+
+    #user tries to remove a message not his
     with pytest.raises(AccessError, match = "User does not have permission"):
-        funcs.message_remove("223456", 1)
+        funcs.message_remove(token, message_id)
 
 
 # message_edit(token, message_id, message)
 def test_message_edit():
 
     #Initialisation
+    #Create users
     user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
     token = user["token"]
 
-    #A owner edits a valid message
-    assert funcs.message_edit("owner", 1, "This is a valid message") == {}
+    owner = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
+    owner_token = owner["token"]
 
+    #owner that creates the channel and so is the owner
+    channel = channel_functions.channels_create(owner_token,"Name", True)
+
+    #user joins the channel
+    channel_functions.channel_join(token,channel)
+
+    #user sends 3 messages
+    funcs.message_send(token, channel, "This is a valid message")
+    funcs.message_send(token, channel, "This is another valid message")
+    funcs.message_send(owner_token, channel, "This is not your message")
+    #Init finished
+
+    #Gets message_id of "This is a valid message"
+    message_id = search_function.search(token,"This is a valid message")[0]['messages_id']
+    #A owner edits a message
+    assert funcs.message_edit(owner_token, message_id, "This is a valid edit") == {}
+    #Gets message_id of "This is another valid message"
+
+    #Gets message_id of "This is another valid message"
+    message_id = search_function.search(token,"This is another valid message")[0]['messages_id']
     #A user edits his own message
-    assert funcs.message_edit(token, 1, "This is a valid message") == {}
+    assert funcs.message_edit(token, message_id, "This is another valid edit") == {}
 
     #A owner tries to edit a invalid message based on message_id
     with pytest.raises(ValueError, match = "Invalid Message ID"):
@@ -131,13 +189,15 @@ def test_message_edit():
     with pytest.raises(ValueError, match = "Invalid Message ID"):
         funcs.message_edit(token, 99, "This is a valid message")
 
+    #Gets message_id of "This is not your message"
+    message_id = search_function.search(token,"This is not your message")[0]['messages_id']
     #A user tries to edit a message not his
     with pytest.raises(AccessError, match = "User does not have permission"):
-        funcs.message_edit("223456", 1, "This is a valid message")
+        funcs.message_edit(token, message_id, "This is a valid message")
 
     #The edited message was too long
     with pytest.raises(ValueError, match = "Message length too long"):
-        funcs.message_edit("owner", 1, "1" + create_long_string())
+        funcs.message_edit("owner", message_id, "1" + create_long_string())
 
 
 # message_react(token, message_id, react_id)
@@ -146,9 +206,18 @@ def test_message_react():
     #Initialisation
     user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
     token = user["token"]
+    #User creates a channel
+    channel = channel_functions.channels_create(token,"Name", True)
+
+    funcs.message_send(token, channel, "This is a valid message")
+    funcs.message_send(token, channel, "This is another valid message")
+    funcs.message_send(token, channel, "This is a third message")
+    #Init finished
     
+    #Gets message_id of "This is a valid message"
+    message_id = search_function.search(token,"This is a valid message")[0]['messages_id']
     #A user successfully reacts
-    assert funcs.message_react(token, 1, 1) == {}
+    assert funcs.message_react(token, message_id, 1) == {}
 
     #A user tries to react to a invalid message based on message_id
     with pytest.raises(ValueError, match = "Invalid Message ID"):
@@ -156,11 +225,13 @@ def test_message_react():
 
     #A user tries to react to a message already reacted to
     with pytest.raises(ValueError, match = "Message contains a active react"):
-        funcs.message_react(token, 3, 1)
+        funcs.message_react(token, message_id, 1)
 
+    #Gets message_id of "This is another valid message"
+    message_id = search_function.search(token,"This is another valid message")[0]['messages_id']
     #A user uses a invalid react id
     with pytest.raises(ValueError, match = "Invalid React ID"):
-        funcs.message_react(token, 1, 99)
+        funcs.message_react(token, message_id, 99)
 
 
 # message_unreact(token, message_id, react_id)
@@ -170,8 +241,20 @@ def test_message_unreact():
     user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
     token = user["token"]
 
+    #User creates a channel
+    channel = channel_functions.channels_create(token,"Name", True)
+
+    funcs.message_send(token, channel, "This is a valid message")
+    funcs.message_send(token, channel, "This is another valid message")
+    funcs.message_send(token, channel, "This is a third message")
+    #Init finished
+    
+    # A message is reacted to
+    message_id = search_function.search(token,"This is a valid message")['messages']
+    funcs.message_react(token, message_id, 1)
+
     #A user successfully unreacts
-    assert funcs.message_unreact(token, 3, 1) == {}
+    assert funcs.message_unreact(token, message_id, 1) == {}
 
     #A user tries to unreact to a invalid message based on message_id
     with pytest.raises(ValueError, match = "Invalid Message ID"):
@@ -179,8 +262,10 @@ def test_message_unreact():
 
     #A user tries to unreact to a message that is not reacted to
     with pytest.raises(ValueError, match = "Message does not contains a active react"):
-        funcs.message_unreact(token, 1, 1)
+        funcs.message_unreact(token, message_id, 1)
 
+    # message is reacted to again
+    funcs.message_react(token, message_id, 1)
     #A user uses a invalid react id
     with pytest.raises(ValueError, match = "Invalid React ID"):
         funcs.message_unreact(token, 1, 99)
@@ -190,54 +275,100 @@ def test_message_unreact():
 def test_message_pin():
     
     #Initialisation
+    #Create users
     user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
     token = user["token"]
 
-    #A user successfully pins a message
-    assert funcs.message_pin("admin_member", 1) == {}
+    owner = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
+    owner_token = owner["token"]
 
-    #Message is invalid based on message_id
-    with pytest.raises(ValueError, match = "Invalid Message ID"):
-        funcs.message_pin("admin_member", 99)
+    #owner that creates the channel and so is the owner
+    channel = channel_functions.channels_create(owner_token,"Name", True)
 
+    #user joins the channel
+    channel_functions.channel_join(token,channel)
+
+    #user sends 3 messages
+    funcs.message_send(token, channel, "This is a valid message")
+    funcs.message_send(token, channel, "This is another valid message")
+    funcs.message_send(owner_token, channel, "This is not your message")
+    #Init finished
+    
+    #Gets message_id of "This is a valid message"
+    message_id = search_function.search(token,"This is a valid message")[0]['messages_id']
     #A user is not an admin
     with pytest.raises(ValueError, match = "Not an admin"):
-        funcs.message_pin(token, 1)
+        funcs.message_pin(token, message_id)
+
+    #A admin user successfully pins a message
+    assert funcs.message_pin(owner_token, message_id) == {}
+    
+    #Message is invalid based on message_id
+    with pytest.raises(ValueError, match = "Invalid Message ID"):
+        funcs.message_pin(owner_token, 99)
 
     #Message is already pinned
     with pytest.raises(ValueError, match = "Message is already pinned"):
-        funcs.message_pin("admin_member", 3)
+        funcs.message_pin(owner_token, message_id)
 
+    #Admin leaves channel
+    channel_functions.channel_leave(owner_token, channel)
+
+    #Gets message_id of "This is another valid message"
+    message_id = search_function.search(token,"This is another valid message")[0]['messages_id']
     #Admin is not a member of the channel
     with pytest.raises(AccessError, match = "User is not a member of the channel"):
-        funcs.message_pin("admin_nonmember", 1)
+        funcs.message_pin(owner_token, message_id)
 
 
 # message_unpin(token, message_id)
 def test_message_unpin():
 
     #Initialisation
+    #Create users
     user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
     token = user["token"]
+
+    owner = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
+    owner_token = owner["token"]
+
+    #owner that creates the channel and so is the owner
+    channel = channel_functions.channels_create(owner_token,"Name", True)
+
+    #user joins the channel
+    channel_functions.channel_join(token,channel)
+
+    #user sends 3 messages
+    funcs.message_send(token, channel, "This is a valid message")
+    funcs.message_send(token, channel, "This is another valid message")
+    funcs.message_send(owner_token, channel, "This is not your message")
+    #Init finished
     
+    #Gets message_id of "This is a valid message"
+    message_id = search_function.search(token,"This is a valid message")[0]['messages_id']
+    #A user is not an admin
+    with pytest.raises(ValueError, match = "Not an admin"):
+        funcs.message_unpin(token, message_id)
+
     #A user successfully unpins a message
-    assert funcs.message_unpin("admin_member", 3) == {}
+    assert funcs.message_unpin(owner_token, message_id) == {}
 
     #Message is invalid based on message_id
     with pytest.raises(ValueError, match = "Invalid Message ID"):
-        funcs.message_unpin("admin_member", 99)
-
-    #A user is not an admin
-    with pytest.raises(ValueError, match = "Not an admin"):
-        funcs.message_unpin(token, 3)
+        funcs.message_unpin(owner_token, 99)
 
     #Message is already pinned
     with pytest.raises(ValueError, match = "Message is already unpinned"):
-        funcs.message_unpin("admin_member", 1)
+        funcs.message_unpin(owner_token, message_id)
 
+    #Admin leaves channel
+    channel_functions.channel_leave(owner_token, channel)
+
+    #Gets message_id of "This is another valid message"
+    message_id = search_function.search(token,"This is another valid message")[0]['messages_id']
     #Admin is not a member of the channel
     with pytest.raises(AccessError, match = "User is not a member of the channel"):
-        funcs.message_unpin("admin_nonmember", 3)
+        funcs.message_unpin(owner_token, message_id)
 
 #Helper Functions
 
