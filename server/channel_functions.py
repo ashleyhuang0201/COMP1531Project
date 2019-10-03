@@ -13,8 +13,10 @@ ValueError:
 
 '''
 def channel_invite(token, channel_id, u_id):
-    if valid_channel(channel_id) == False or valid_member(token, channel_id) == False:
-        raise ValueError("Channel is not valid or User is not part of the channel")
+    if valid_channel(channel_id) == False:
+        raise ValueError("Channel is not valid")
+    if valid_member(token, channel_id) == False:
+        raise ValueError("User is not part of the channel")
     if valid_user(u_id) == False:
         raise ValueError("User id is not valid")
 
@@ -57,6 +59,8 @@ ValueError:
 AccessError:
 if user is not a member of the channel of channel_id
 '''
+
+'''
 def channel_messages(token, channel_id, start):
 
     if valid_channel(channel_id) == False:
@@ -68,6 +72,7 @@ def channel_messages(token, channel_id, start):
     
     return messages, start, end
     
+'''
 '''
 Given a channel ID, the user is removed as a member of the channel
 ValueError:
@@ -155,14 +160,15 @@ ValueError:
 
 '''
 def channels_create(token, name, is_public):
-    if len(name) > 20
+    if len(name) > 20:
         ValueError("Name is longer than 20 characters")
-    return channel_id
+    else:
+        return {"channel_id": "123"}
     
 
 #Checks if the channel is a valid channel
 def valid_channel(channel_id):
-    if channel_id == 123:
+    if channel_id == "123":
         return True
     else:
         return False
@@ -170,7 +176,7 @@ def valid_channel(channel_id):
 
 #Checks if the user is a member of the channel
 def valid_member(token, channel_id):
-    if token == "valid_token" and channel_id == 123:
+    if token == "valid_token" or token == "valid_u_id" and channel_id == 123:
         return True
     else:
         return False
@@ -206,3 +212,8 @@ def token_is_owner(channel_id, token):
     else:
         return False
 
+def valid_user(u_id):
+    if u_id == "valid_u_id":
+        return True
+    else:
+        return False
