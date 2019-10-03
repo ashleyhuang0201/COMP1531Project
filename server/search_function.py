@@ -15,15 +15,12 @@ def search(token, query_str):
         # results first
         matches.append(test.messages2[0])
         matches.append(test.messages1[0])
-        return matches
     elif (query_str == '93336255 Singlechannel match '):
         # Messages 'Singlechannel search 2' and 'Singlechannel search 1' respectively
         matches.append(test.messages1[2])
         matches.append(test.messages1[3])
-        return matches
     elif (query_str == '93336256 Only this'):
         # Message 'Only this'
         matches.append(test.messages1[1])
-        return matches
-    else:
-        return []
+
+    return {'messages': matches}
