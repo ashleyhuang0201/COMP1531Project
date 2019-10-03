@@ -5,6 +5,7 @@
 import pytest
 import channel_functions as func
 from auth_functions import auth_register
+from Error import AccessError
 
 
 def test_channel_invite():
@@ -34,25 +35,111 @@ def test_channel_invite():
     with pytest.raises(ValueError, match = "Invalid user"):
         func.channel_invite(token1, channel_ids, "invalid_id")
     
-'''
 
 def test_channel_details():
-    assert func.channel_details(token, channel) == {name, owner_members, all_members}
+    
+    user1 = auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
+    token1 = user1["token"]
 
+    #create a channel 
+    channel = func.channels_create(token1, "TestChannel", True)
+    channel_ids = channel["channel_id"]
+
+    assert func.channel_details(token1, channel_ids) == {"name" : "ChannelName", "owner_members": "Ethan Jack", "all_members": "Ethan Jack, Jack Smith"}
+    
+    #if user is not a member of the channel
+    with pytest.raises(AccessError, match = "Authorised user is not a member of the channel"):
+        func.channel_details("12345", channel_ids)
+   
+    #if given an invalid channel_id
+    with pytest.raises(ValueError, match = "Invalid channel_id"):
+        func.channel_details(token1, 100)
+
+    
+    
+'''
 def test_channel_messages():
+
+    user1 = auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
+    token1 = user1["token"]
+
+    #create a channel 
+    channel = func.channels_create(token1, "TestChannel", True)
+    channel_ids = channel["channel_id"]
+    FIX DIS REEEEE
     assert func.channel_messages(token, channel, start) == {messages, start, end}
 
+    with pytest.raises(ValueError, match = "Invalid channel_id"):
+        func.channel_messages(token1, 100, start)
+
+    
+'''
 def test_channel_leave():
-    assert func.channel_leave(token, channel) == {}
-    #call channel_list(token) 
-    #use assert to check whether the user is removed
+    #can an owner leave channel
+    user1 = auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
+    token1 = user1["token"]
+
+    #create a channel 
+    channel = func.channels_create(token1, "TestChannel", True)
+    channel_ids = channel["channel_id"]
+
+    assert func.channel_leave(token1, channel_ids) == {}
+
+    #if given an invalid channel_id
+    with pytest.raises(ValueError, match = "Invalid channel_id"):
+        func.channel_leave(token1, 100)
+
+
+    #call channel_list(token) ?? from piazza
+    #use assert to check whether the user is removed???
 
 def test_channel_join():
-    assert func.channel_join(token, channel) == {}
+
+    user1 = auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
+    token1 = user1["token"]
+
+    user2 = auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
+    token2 = user2["token"]
+    userid2 = user2["u_id"]
+
+    #user 2 create a channel 
+    channel = func.channels_create(token2, "TestChannel", True)
+    channel_ids = channel["channel_id"]
+
+    #user 2 create a channel 
+    channel2 = func.channels_create(token2, "TestChannel2", False)
+    channel_private = channel2["channel_id"]
+
+    #user 1 joining user2's channel
+    assert func.channel_join(token1, channel_ids) == {}
+
+
+    #if given an invalid channel_id
+    with pytest.raises(ValueError, match = "Invalid channel_id"):
+        func.channel_join(token1, 100)
+
+    #if channel is private and user is not the admin
+    #with pytest.raises(AccessError, match = "Channel is private and user is not admin"):
+        #func.channel_join(token1, channel_private)
+    # WHY DOESNT DIS WORK YIKES
+
 
 def test_channel_addowner():
-    assert func.channel_addowner(token, channel, id) == {}
+    user1 = auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
+    token1 = user1["token"]
+    userid1 = user1["u_id"]
 
+    user2 = auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
+    token2 = user2["token"]
+    userid2 = user2["u_id"]
+
+    #user 1 create a channel (123)
+    channel = func.channels_create(token1, "TestChannel", True)
+    channel_ids = channel["channel_id"]
+
+    #assert func.channel_addowner(token1, channel_ids, userid2) == {}
+
+'''
 def test_channel_removeowner():
     assert func.channel_removeowner(token, channel, id) == {}
 
