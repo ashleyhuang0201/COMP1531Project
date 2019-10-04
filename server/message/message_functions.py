@@ -5,7 +5,7 @@
 #Date module for representing time
 import datetime
 import pytest
-from ..helper.Error import AccessError
+from server.helper.Error import AccessError
 
 """
 Sends a message from authorised_user to the channel specified by channel_id automatically at a specified

@@ -4,8 +4,8 @@
 
 import pytest
 from . import user_functions as funcs
-from ..auth import auth_functions
-from ..helper.Error import AccessError
+from server.auth import auth_functions
+from server.helper.Error import AccessError
 
 
 def test_user_profile():

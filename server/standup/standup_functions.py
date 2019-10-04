@@ -1,4 +1,4 @@
-from ..helper.Error import AccessError
+from server.helper.Error import AccessError
 
 """
 For a given channel, start the standup period whereby for the next 15 minutes 

@@ -1,5 +1,5 @@
-from . import auth_functions as auth
-from ..message import message_functions as message
+from server.auth import auth_functions as auth
+from server.message import message_functions as message
 import pytest
 
 # Testing Functions

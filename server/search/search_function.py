@@ -3,7 +3,7 @@
 # Created on: 2/10/2019
 
 import pytest
-from . import search_function_test as test
+from server.search import search_function_test as test
 
 matches = []
 
