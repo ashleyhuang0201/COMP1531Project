@@ -13,7 +13,7 @@ def auth_login(email, password):
 
 # Given an active token, invalidates the taken to log the user out. Given a non-valid token, does nothing
 def auth_logout(token):
-    if valid_token(token["token"]) == True:
+    if valid_token(token) == True:
         # Remove token from server
         pass
 

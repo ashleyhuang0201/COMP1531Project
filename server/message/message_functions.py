@@ -58,7 +58,7 @@ ValueErrors:
 def message_send(token, channel_id, message):
 
     #Dummy implementation
-    channel_users = ["valid token"]
+    channel_users = ["valid token", "valid_token"]
     
     #A exception is thrown if any values are invalid
     if valid_token(token) == False:
