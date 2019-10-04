@@ -1,5 +1,3 @@
-import re
-
 # Given a registered users' email and password and generates a valid token for the user to remain authenticated
 def auth_login(email, password):
     if valid_email(email) == False:
