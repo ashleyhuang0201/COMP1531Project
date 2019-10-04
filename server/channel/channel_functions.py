@@ -113,10 +113,9 @@ def channel_addowner(token, channel_id, u_id):
         raise ValueError("Channel does not exist")
     if user_is_owner(channel_id, u_id) == True:
         raise ValueError("User is already the owner of the channel")
-    if token_is_slackrowner(token) == False:
-        raise AccessError("Authorised user is not an owner of slackr")
-    if token_is_owner(channel_id, token) == False:
-        raise AccessError("Authorised user is not an owner of the channel")
+    if token_is_slackrowner(token) == False and token_is_owner(channel_id, token) == False:
+        raise AccessError("Authorised user is not an owner of the channel or not an owner of slackr")
+    
     return {}
 
 '''
@@ -134,9 +133,8 @@ def channel_removeowner(token, channel_id, u_id):
         raise ValueError("Channel does not exist")
     if user_is_owner(channel_id, u_id) == False:
         raise ValueError("User is not an owner of the channel")
-    if token_is_owner(channel_id, token) == False or token_is_slackrowner(token) == False:
-        raise AccessError("Authorised user is not an owner of slackr or an owner of the channel")
-
+    if token_is_owner(channel_id, token) == False and token_is_slackrowner(token) == False:
+        raise AccessError("Authorised user is not an owner of the channel or not an owner of slackr")
     return {}
 
 '''
@@ -145,8 +143,9 @@ Provides a list of all channels and details that the authorised user is part of
 def channels_list(token):
     #if user token is part of channels 
     
-    #return channels
-    return channels
+    #return channels    
+    return {"channels"}
+
 '''
 Provides a list of channels and their associated details
 '''
@@ -161,10 +160,11 @@ ValueError:
 '''
 def channels_create(token, name, is_public):
     if len(name) > 20:
-        ValueError("Name is longer than 20 characters")
-    elif is_public is True:
+        raise ValueError("Name is longer than 20 characters")
+    elif is_public == True:
         return {"channel_id": 123}
     else:
+        #if private
         return {"channel_id" : 1}
     
 
@@ -178,7 +178,7 @@ def valid_channel(channel_id):
 
 #Checks if the user is a member of the channel
 def valid_member(token, channel_id):
-    if token == "valid_token" or token == "valid_u_id" and channel_id == 123:
+    if token == "valid_token" or token == "valid_u_id" or token == "slackrowner" or token == "owner" and channel_id == 123:
         return True
     else:
         return False
@@ -194,7 +194,7 @@ def private_channel(channel_id):
     
 #if user with u_id is an owner of channel, return true
 def user_is_owner(channel_id, u_id):
-    if u_id == "owner" and channel_id == 123:
+    if u_id == 100 and channel_id == 123:
         return True
     else:
         return False
@@ -215,7 +215,8 @@ def token_is_owner(channel_id, token):
         return False
 
 def valid_user(u_id):
-    if u_id == "valid_u_id":
+    if u_id == 000 or u_id == 100:
         return True
     else:
         return False
+
