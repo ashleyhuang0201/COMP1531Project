@@ -101,12 +101,13 @@ def test_channel_join():
     user2 = auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
     token2 = user2["token"]
     userid2 = user2["u_id"]
-
+    
     #user 2 create a channel 
     channel = func.channels_create(token2, "TestChannel", True)
     channel_ids = channel["channel_id"]
+    
 
-    #user 2 create a channel 
+    #user 2 create a private channel 
     channel2 = func.channels_create(token2, "TestChannel2", False)
     channel_private = channel2["channel_id"]
 
@@ -119,9 +120,8 @@ def test_channel_join():
         func.channel_join(token1, 100)
 
     #if channel is private and user is not the admin
-    #with pytest.raises(AccessError, match = "Channel is private and user is not admin"):
-        #func.channel_join(token1, channel_private)
-    # WHY DOESNT DIS WORK YIKES
+    with pytest.raises(AccessError, match = "Channel is private and user is not admin"):
+        func.channel_join(token1, channel_private)
 
 
 def test_channel_addowner():
@@ -137,7 +137,7 @@ def test_channel_addowner():
     channel = func.channels_create(token1, "TestChannel", True)
     channel_ids = channel["channel_id"]
 
-    #assert func.channel_addowner(token1, channel_ids, userid2) == {}
+    assert func.channel_addowner(token1, channel_ids, userid2) == {}
 
 '''
 def test_channel_removeowner():
