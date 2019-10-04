@@ -1,5 +1,5 @@
-import auth_functions as auth
-import message_functions as message
+from . import auth_functions as auth
+from ..message import message_functions as message
 import pytest
 
 # Testing Functions

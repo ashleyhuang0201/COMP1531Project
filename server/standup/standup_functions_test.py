@@ -1,6 +1,6 @@
-import standup_functions as standup
+from . import standup_functions as standup
 import pytest
-from Error import AccessError
+from ..helper.Error import AccessError
 
 def test_standup_start():
     assert standup.standup_start("valid_token", "correct_and_valid_channel") == 900

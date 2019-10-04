@@ -3,8 +3,8 @@
 #Created on: 1/10/2019
 
 import pytest
-import auth_functions
-from Error import AccessError
+from ..auth import auth_functions
+from ..helper.Error import AccessError
 
 """
 For a valid user, returns information about their email, first name, last name, and handle

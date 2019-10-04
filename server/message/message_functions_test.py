@@ -5,11 +5,11 @@
 #Import functions for testing
 import datetime
 import pytest
-import message_functions as funcs
-import auth_functions
-import channel_functions
-import search_function
-from Error import AccessError
+from ..message import message_functions as funcs
+from ..auth import auth_functions
+from ..channel import channel_functions
+from ..search import search_function
+from ..helper.Error import AccessError
 
 
 # message_sendlater(token, channel_id, message, time_sent)  

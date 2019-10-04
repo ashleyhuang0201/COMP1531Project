@@ -3,9 +3,9 @@
 #Created on 2/10/2019
 
 import pytest
-import channel_functions as func
-from auth_functions import auth_register
-from Error import AccessError
+from . import channel_functions as func
+from ..auth.auth_functions import auth_register
+from ..helper.Error import AccessError
 
 
 def test_channel_invite():

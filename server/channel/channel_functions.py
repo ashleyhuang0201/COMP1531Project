@@ -3,7 +3,7 @@
 # Created on: 1/10/2019
 
 import pytest
-from Error import AccessError
+from ..helper.Error import AccessError
 '''
 Invites a user with user id u_id to join a channel (channel_id)
 

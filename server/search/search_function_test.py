@@ -3,10 +3,10 @@
 # Created on: 2/10/2019
 
 import pytest
-from search_function import search
-from message_functions import message_send
-from auth_functions import auth_register
-from channel_functions import channels_create, channel_messages
+from .search_function import search
+from ..message.message_functions import message_send
+from ..auth.auth_functions import auth_register
+from ..channel.channel_functions import channels_create, channel_messages
 
 ##### Initialize some messages to be searched #####
 # Create test user

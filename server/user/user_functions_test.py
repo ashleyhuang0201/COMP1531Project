@@ -3,9 +3,9 @@
 #Created on: 1/10/2019
 
 import pytest
-import user_functions as funcs
-import auth_functions
-from Error import AccessError
+from . import user_functions as funcs
+from ..auth import auth_functions
+from ..helper.Error import AccessError
 
 
 def test_user_profile():
