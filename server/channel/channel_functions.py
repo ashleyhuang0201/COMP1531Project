@@ -60,19 +60,18 @@ AccessError:
 if user is not a member of the channel of channel_id
 '''
 
-'''
 def channel_messages(token, channel_id, start):
 
     if valid_channel(channel_id) == False:
         raise ValueError("Channel does not exist")
-    if start > len(messages)
+    if start > len(messages):
         raise ValueError("Message does not exist")
     if valid_member(token, channel_id) == False:
         raise AccessError("Authorised user is not a member of the channel")
     
     return messages, start, end
     
-'''
+
 '''
 Given a channel ID, the user is removed as a member of the channel
 ValueError:
