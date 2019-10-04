@@ -141,16 +141,16 @@ def channel_removeowner(token, channel_id, u_id):
 Provides a list of all channels and details that the authorised user is part of
 '''
 def channels_list(token):
-    #if user token is part of channels 
+    #if token is part of channels 
     
     #return channels    
-    return {"channels"}
+    return {"id" : 123, "name" : "TestChannel"}
 
 '''
 Provides a list of channels and their associated details
 '''
 def channels_listall(token):
-    return {"id" : 123, "name" : hello}
+    return {"id" : 123, "name" : "TestChannel"}
 
 '''
 Create a channel with the name that is either public or private
