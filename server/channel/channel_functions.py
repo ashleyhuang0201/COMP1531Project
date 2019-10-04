@@ -162,15 +162,15 @@ ValueError:
 def channels_create(token, name, is_public):
     if len(name) > 20:
         ValueError("Name is longer than 20 characters")
-    elif is_public == True:
-        return {"channel_id": "123"}
+    elif is_public is True:
+        return {"channel_id": 123}
     else:
-        return {"channel_id" : "1"}
+        return {"channel_id" : 1}
     
 
 #Checks if the channel is a valid channel
 def valid_channel(channel_id):
-    if channel_id == "123" or channel_id == "1":
+    if channel_id == 123 or channel_id == 1:
         return True
     else:
         return False
