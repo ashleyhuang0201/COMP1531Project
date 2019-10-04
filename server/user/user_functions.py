@@ -5,6 +5,7 @@
 import pytest
 from server.auth import auth_functions
 from server.helper.Error import AccessError
+from server.helper.valid_checks import valid_email, valid_user_id
 
 """
 For a valid user, returns information about their email, first name, last name, and handle
@@ -98,18 +99,3 @@ def user_profiles_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
     '''
     #The user's profile picture is changed
     return {}
-
-#Helper functions
-
-# Checks if an email is a valid email
-def valid_email(email):  
-    if email == "test1@gmail.com" or email == "test2@gmail.com":
-        return True
-    else:
-        return False
-
-# Checks if a user_id is valid
-def valid_user_id(u_id):
-    if u_id  == "valid_u_id":
-        return True
-    return False
