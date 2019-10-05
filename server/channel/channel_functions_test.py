@@ -209,15 +209,28 @@ def test_channels_list():
     token1 = user1["token"] 
     userid1 = user1["u_id"]
 
+    user2 = auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
+    token1 = user2["token"] 
+    userid2 = user2["u_id"]
+
     #user1 create a channel (123) 
     channel = func.channels_create(token1, "TestChannel", True)
     channel_ids = channel["channel_id"]
 
-    func.channel_join(token1, channel_ids)
+    #user2 create a channel
+    channel2 = func.channels_create(token2, "TestChannel2", True)
+    channel_ids2 = channel2["channel_id"]
    
-
     assert func.channels_list(token1) == {"id" : 123, "name" : "TestChannel"}
 
+    assert func.channels_list(token2) == {"id" : 123, "name" : "TestChannel2"}
+
+    #user2 creates another channel
+    channel3 = func.channels_create(token2, "TestChannel3", True)
+    channel_ids3 = channel3["channel_id"]
+    
+    #assert token2 is in two channels
+    assert func.channels_list(token2) == {"id" : 123, "name" : "TestChannel2"}, {"id" : 123, "name" : "TestChannel3"}
 
 def test_channels_listall():
 
@@ -233,9 +246,9 @@ def test_channels_listall():
     #creating another channel
     channel2 = func.channels_create(token1, "TestChannel2", False)
     channel_ids = channel2["channel_id"]
-
+    
     assert func.channels_list(token1) == {"id": 123, "name" : "TestChannel1"}, {"id": 1, "name": "TestChannel2"}
-
+    
 
 def test_channels_create():
     user1 = auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
