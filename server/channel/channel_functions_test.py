@@ -225,11 +225,16 @@ def test_channels_listall():
     token1 = user1["token"] 
     userid1 = user1["u_id"]
 
-    
-    channel = func.channels_create(token1, "TestChannel", True)
+    channel = func.channels_create(token1, "TestChannel1", True)
     channel_ids = channel["channel_id"]
 
-    assert func.channels_list(token1) == {"id" : 123, "name" : "TestChannel"}
+    assert func.channels_list(token1) == {"id" : 123, "name" : "TestChannel1"}
+    
+    #creating another channel
+    channel2 = func.channels_create(token1, "TestChannel2", False)
+    channel_ids = channel2["channel_id"]
+
+    assert func.channels_list(token1) == {"id": 123, "name" : "TestChannel1"}, {"id": 1, "name": "TestChannel2"}
 
 
 def test_channels_create():
@@ -242,12 +247,14 @@ def test_channels_create():
     channel_ids = channel["channel_id"]
 
 
-    assert func.channels_create(token1, "hello world", True) == {"channel_id" : 123}
-    assert func.channels_create(token1, "hi world", False) == {"channel_id" : 1}
+    assert func.channels_create(token1, "Channel1", True) == {"channel_id" : 123}
+    assert func.channels_create(token1, "Channel2", False) == {"channel_id" : 1}
 
+    #public channel, name longer than 20 characters
     with pytest.raises(ValueError, match = "Name is more than 20 characters long"):
         func.channels_create(token1, "asdbcdjsisjd222isjdisjdisjdisjdijsi", True)
 
+    #private channel, name longer than 20 characters
     with pytest.raises(ValueError, match = "Name is more than 20 characters long"):
         func.channels_create(token1, "asdbcdjsisjd222isjdisjdisjdisjdijsi", False)
 
