@@ -109,7 +109,7 @@ def test_channel_messages():
     
 
 def test_channel_leave():
-    #can an owner leave channel
+    
     user1 = auth_register("valid_correct_email", "valid_correct_password",\
      "valid_correct_first_name", "valid_correct_last_name")
     token1 = user1["token"]
@@ -124,9 +124,6 @@ def test_channel_leave():
     with pytest.raises(ValueError, match = "Invalid channel_id"):
         func.channel_leave(token1, 100)
 
-
-    #call channel_list(token) ?? from piazza
-    #use assert to check whether the user is removed???
 
 def test_channel_join():
 
