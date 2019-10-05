@@ -56,12 +56,11 @@ def auth_passwordreset_reset(reset_code, new_password):
 
     return {}
 
-
 # Helper Functions
 # Checks if an email is a valid email
 def valid_email(email):  
-    if email == "valid_correct_email" or email == "valid_email" \
-         or  email == "correct_email" or email == "registered_email" \
+    if email == "validcorrect@g.com" or email == "vali@g.com" \
+         or  email == "correct@g.com" or email == "registered@g.com" \
               or email == "unregistered_email":
         return True
     else:
@@ -78,7 +77,7 @@ def valid_password(password):
 
 # Checks if a user is a valid user
 def correct_email(email):
-    if email == "valid_email" or email == "correct_email" \
+    if email == "vali@g.com" or email == "correct@g.com" \
          or email == "correct_valid_email":
         return True
     else:
@@ -86,14 +85,14 @@ def correct_email(email):
 
 # Checks if a user is a registered user
 def registered_email(email):
-    if email == "registered_email":
+    if email == "registered@g.com":
         return True
     else:
         return False
 
 # Checks if a user login is valid
 def registered_account(email, password):
-    if email == "registered_email" and password == "registered_password":
+    if email == "registered@g.com" and password == "registered_password":
         return True
     else:
         return False
@@ -116,7 +115,7 @@ def valid_name_last(name_last):
 
 # Checks if a password is associated with the user
 def correct_password(email, password):
-    if email == "registered_email" and password == "registered_password":
+    if email == "registered@g.com" and password == "registered_password":
         return True
     else:
         return False

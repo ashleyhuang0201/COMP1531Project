@@ -5,7 +5,7 @@ import pytest
 # Testing Functions
 def test_auth_login():
     # A registered user is logged in
-    assert auth.auth_login("registered_email", "registered_password") \
+    assert auth.auth_login("registered@g.com", "registered_password") \
          == {"u_id": "valid_u_id", "token": "valid_token"}
     # An invalid email is given
     with pytest.raises(ValueError, match = "Invalid Email"):
@@ -15,11 +15,11 @@ def test_auth_login():
         auth.auth_login("unregistered_email", "valid_password")
     # Password is incorrect
     with pytest.raises(ValueError, match = "Password Incorrect"):
-        auth.auth_login("registered_email", "invalid_password")
+        auth.auth_login("registered@g.com", "bpas")
 
 def test_auth_logout():
     # A user is registered
-    login_details = auth.auth_register("valid_correct_email",  \
+    login_details = auth.auth_register("validcorrect@g.com",  \
         "valid_correct_password", "valid_first_name", "valid_last_name")
 
     #Confirming user is logged in
@@ -32,7 +32,7 @@ def test_auth_logout():
 
 def test_auth_register():
     #A user is registered
-    assert auth.auth_register("valid_correct_email", "valid_correct_password", \
+    assert auth.auth_register("validcorrect@g.com", "valid_correct_password", \
          "valid_correct_first_name", "valid_correct_last_name") \
               == {"u_id": "valid_u_id", "token": "valid_token"}
 
@@ -42,24 +42,24 @@ def test_auth_register():
              "valid_first_name", "valid_last_name")
     # Email given is already in use
     with pytest.raises(ValueError, match = "Email Already Registered"):
-        auth.auth_register("registered_email", "valid_password", \
+        auth.auth_register("registered@g.com", "valid_password", \
              "valid_first_name", "valid_last_name")
     # Password provided is not strong enough
     with pytest.raises(ValueError, match = "Password Not Strong"):
-        auth.auth_register("valid_correct_email", "invalid_password", \
+        auth.auth_register("validcorrect@g.com", "bpas", \
              "valid_first_name", "valid_last_name")
     # First name is invalid
     with pytest.raises(ValueError, match = "Invalid First Name"):
-        auth.auth_register("valid_correct_email", "valid_correct_password", \
+        auth.auth_register("validcorrect@g.com", "valid_correct_password", \
              "invalid_first_name", "valid_last_name")
     # Last name is invalid
     with pytest.raises(ValueError, match = "Invalid Last Name"):
-        auth.auth_register("valid_correct_email", "valid_correct_password", \
+        auth.auth_register("validcorrect@g.com", "valid_correct_password", \
              "valid_first_name", "invalid_last_name")
 
 def test_auth_passwordreset_request():
     # Password reset request is sent to valid email
-    assert auth.auth_passwordreset_request("valid_email") == {}
+    assert auth.auth_passwordreset_request("vali@g.com") == {}
 
 def test_auth_passwordreset_reset():
     # Password is reset when valid reset code and password is given
@@ -69,4 +69,4 @@ def test_auth_passwordreset_reset():
         auth.auth_passwordreset_reset("invalid_reset_code", "valid_password")
     # Invalid password is given
     with pytest.raises(ValueError, match = "Invalid Password"):
-        auth.auth_passwordreset_reset("valid_reset_code", "invalid_password")
+        auth.auth_passwordreset_reset("valid_reset_code", "bpas")
