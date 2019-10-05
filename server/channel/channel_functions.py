@@ -61,6 +61,7 @@ if user is not a member of the channel of channel_id
 '''
 
 def channel_messages(token, channel_id, start):
+    messages = []
 
     if valid_channel(channel_id) == False:
         raise ValueError("Channel does not exist")
@@ -69,9 +70,9 @@ def channel_messages(token, channel_id, start):
     if valid_member(token, channel_id) == False:
         raise AccessError("Authorised user is not a member of the channel")
     
-    messages = {"messages" : "hello", "start": 0,"end" : 50}
+    output = {"messages" : messages, "start": 0,"end" : 50}
 
-    return messages #HELP :((
+    return output
     
 
 '''
@@ -84,7 +85,6 @@ def channel_leave(token, channel_id):
         raise ValueError("Channel does not exist")
     
     return {}
-    
 '''
 Given a channel_id of a channel that the authorised user can join
 adds them to that channel

@@ -56,31 +56,25 @@ def test_channel_details():
         func.channel_details(token1, 100)
 
     
-    
-'''
 def test_channel_messages():
 
     #passes in token, channel_id, start
-
-    user1 = auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
+    user1 = auth_register("channel_messages@test.com", "password", "channel_messages", "test")
     token1 = user1["token"]
 
     #create a channel 
     channel = func.channels_create(token1, "TestChannel", True)
     channel_ids = channel["channel_id"]
 
-
-
     assert func.channel_messages(token1, channel_ids, 0) == {"messages": "hello", "start": 0, "end":50}
 
     with pytest.raises(ValueError, match = "Invalid channel_id"):
-        func.channel_messages(token1, 100, start)
+        func.channel_messages(token1, -1, start)
     
     if start > len(messages):
         with pytest.raises(ValueError, match = "Start index is invalid"):
             func.channel_message(token1, channel_ids, 100)
 
-'''
     
 
 def test_channel_leave():
