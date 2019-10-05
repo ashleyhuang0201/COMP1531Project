@@ -68,7 +68,7 @@ def channel_messages(token, channel_id, start):
     if start > len(messages):
         raise ValueError("Start index is invalid")
     if valid_member(token, channel_id) == False:
-        raise AccessError("Authorised user is not a member of the channel")
+        raise AccessError("User is not a member of the channel")
     
     output = {"messages" : messages, "start": 0,"end" : 50}
 
