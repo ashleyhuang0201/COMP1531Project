@@ -11,10 +11,8 @@ from server.channel import channel_functions
 from server.search import search_function
 from server.helper.Error import AccessError
 
-
 # message_sendlater(token, channel_id, message, time_sent)  
 def test_message_sendlater():
-
     #Initialisation
     #Create a user
     user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
@@ -56,10 +54,8 @@ def test_message_sendlater():
     with pytest.raises(ValueError, match = "User not member of channel"):
         funcs.message_sendlater(token, channel, "This is a valid message", datetime.datetime(2020,1,1))
 
-
 # message_send(token, channel_id, message)
 def test_message_send():
-
     #Initialisation
     #Create an user
     user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
@@ -97,10 +93,8 @@ def test_message_send():
     with pytest.raises(ValueError, match = "User not member of channel"):
         funcs.message_send(token, channel, "This is a valid message")
 
-
 # message_remove(token, message_id)
 def test_message_remove():
-
     #Initialisation
     #Create users
     user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
@@ -146,10 +140,8 @@ def test_message_remove():
     with pytest.raises(AccessError, match = "User does not have permission"):
         funcs.message_remove(token, message_id)
 
-
 # message_edit(token, message_id, message)
 def test_message_edit():
-
     #Initialisation
     #Create users
     user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
@@ -199,10 +191,8 @@ def test_message_edit():
     with pytest.raises(ValueError, match = "Message length too long"):
         funcs.message_edit("owner", message_id, "1" + create_long_string())
 
-
 # message_react(token, message_id, react_id)
 def test_message_react():
-
     #Initialisation
     user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
     token = user["token"]
@@ -224,7 +214,7 @@ def test_message_react():
         funcs.message_react("owner", 99, 1)
 
     #A user tries to react to a message already reacted to
-    with pytest.raises(ValueError, match = "Message contains a active react"):
+    with pytest.raises(ValueError, match = "Message contains an active react"):
         funcs.message_react(token, message_id, 1)
 
     #Gets message_id of "This is another valid message"
@@ -233,10 +223,8 @@ def test_message_react():
     with pytest.raises(ValueError, match = "Invalid React ID"):
         funcs.message_react(token, message_id, 99)
 
-
 # message_unreact(token, message_id, react_id)
 def test_message_unreact():
-    
     #Initialisation
     user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
     token = user["token"]
@@ -261,7 +249,7 @@ def test_message_unreact():
         funcs.message_unreact("owner", 99, 1)
 
     #A user tries to unreact to a message that is not reacted to
-    with pytest.raises(ValueError, match = "Message does not contains a active react"):
+    with pytest.raises(ValueError, match = "Message does not contains an active react"):
         funcs.message_unreact(token, message_id, 1)
 
     # message is reacted to again
@@ -270,10 +258,8 @@ def test_message_unreact():
     with pytest.raises(ValueError, match = "Invalid React ID"):
         funcs.message_unreact(token, 1, 99)
 
-
 # message_pin(token, message_id)
 def test_message_pin():
-    
     #Initialisation
     #Create users
     user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
@@ -320,10 +306,8 @@ def test_message_pin():
     with pytest.raises(AccessError, match = "User is not a member of the channel"):
         funcs.message_pin(owner_token, message_id)
 
-
 # message_unpin(token, message_id)
 def test_message_unpin():
-
     #Initialisation
     #Create users
     user = auth_functions.auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
@@ -371,7 +355,6 @@ def test_message_unpin():
         funcs.message_unpin(owner_token, message_id)
 
 #Helper Functions
-
 #Creates a string of 1000 characters for testing purposes
 def create_long_string():
     longstring = ""
