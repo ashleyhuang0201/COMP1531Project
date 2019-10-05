@@ -6,6 +6,8 @@ import pytest
 from server.channel import channel_functions as func
 from server.auth.auth_functions import auth_register
 from server.helper.Error import AccessError
+from server.message.message_functions import message_send
+from server.search.search_function import search
 
 
 def test_channel_invite():
@@ -57,23 +59,34 @@ def test_channel_details():
 
     
 def test_channel_messages():
-
-    #passes in token, channel_id, start
     user1 = auth_register("channel_messages@test.com", "password", "channel_messages", "test")
     token1 = user1["token"]
 
+    user2 = auth_register("channel_messages@test2.com", "password", "channel_messages2", "test2")
+    token2 = user1["token"]
+
     #create a channel 
     channel = func.channels_create(token1, "TestChannel", True)
-    channel_ids = channel["channel_id"]
+    channel_id = channel["channel_id"]
 
-    assert func.channel_messages(token1, channel_ids, 0) == {"messages": "hello", "start": 0, "end":50}
+    # test correct response when no messages in channel
+    assert func.channel_messages(token1, channel_id, 0) == {"messages": [], "start": 0, "end": -1}
 
-    with pytest.raises(ValueError, match = "Invalid channel_id"):
-        func.channel_messages(token1, -1, start)
+    # send a message to the channel and check that return is correct
+    message_send(token1, channel_id, 'Channel_messages_test_message_192746583745928792374')
+    search_result = search(token1, 'Channel_messages_test_message_192746583745928792374')
+    sent_message = search_result['messages']
+    assert func.channel_messages(token1, channel_id, 0) == {"messages": {sent_message[0]}, "start": 0, "end": -1}
+
+    # test exceptions
+    with pytest.raises(ValueError, match = "Channel does not exist"):
+        func.channel_messages(token1, -1, 0)
     
-    if start > len(messages):
-        with pytest.raises(ValueError, match = "Start index is invalid"):
-            func.channel_message(token1, channel_ids, 100)
+    with pytest.raises(ValueError, match = "Start index is invalid"):
+        func.channel_message(token1, channel_id, 100)
+
+    with pytest.raises(AccessError, match = "User is not a member of the channel"):
+        func.channel_message(token2, channel_id, 0)
 
     
 

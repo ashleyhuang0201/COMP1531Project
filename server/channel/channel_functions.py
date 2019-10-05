@@ -66,7 +66,7 @@ def channel_messages(token, channel_id, start):
     if valid_channel(channel_id) == False:
         raise ValueError("Channel does not exist")
     if start > len(messages):
-        raise ValueError("Message does not exist")
+        raise ValueError("Start index is invalid")
     if valid_member(token, channel_id) == False:
         raise AccessError("Authorised user is not a member of the channel")
     
