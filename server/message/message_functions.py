@@ -4,7 +4,6 @@
 
 #Date module for representing time
 import datetime
-import pytest
 from server.helper.Error import AccessError
 
 """
@@ -23,17 +22,15 @@ ValueErrors:
 - Time sent is a time in the past
 """
 def message_sendlater(token, channel_id, message, time_sent):
-
-    #Dummy implementation    
-    channel_users = ["valid token"]
-
+    channel_users = ["valid token", "valid_token"]
+    #Dummy implementation
     if valid_token(token) == False:
         raise ValueError("Invalid Token")
     elif valid_channel(channel_id) == False:
         raise ValueError("Invalid Channel ID")
     elif len(message) > 1000:
         raise ValueError("Message length too long")
-    elif(time_sent < datetime.datetime.now()):
+    elif time_sent < datetime.datetime.now():
         raise ValueError("Time sent was in the past")
     
     if token in channel_users:
@@ -56,7 +53,6 @@ ValueErrors:
 - Message is more than 1000 Characters
 """
 def message_send(token, channel_id, message):
-
     #Dummy implementation
     channel_users = ["valid token", "valid_token"]
     
@@ -89,7 +85,6 @@ AccessErrors:
 - User does not have permission to remove that row
 """
 def message_remove(token, message_id):
-
     #Dummy implementation
     messages = {1: "valid_token", 2: "valid_token", 3: "valid_token"}
 
@@ -120,7 +115,6 @@ ValueErrors:
     2) If the authorised user is an admin, is any message within a channel that the authorised user has joined
 """
 def message_edit(token, message_id, message):
-
     #Dummy implementation
     messages = {1: "valid_token", 2: "valid_token", 3: "valid_token"}
 
@@ -151,7 +145,6 @@ ValueErrors:
 - Message with ID message_id already contains a active react with ID react_id
 """
 def message_react(token, message_id, react_id):
-
     #Dummy implementation
     messages_reacts = {1:0, 2:0, 3:0}
     
@@ -161,7 +154,7 @@ def message_react(token, message_id, react_id):
         raise ValueError("Invalid React ID")
     #The message with message_id already contains an active react
     elif messages_reacts[message_id] == 1:
-        raise ValueError("Message contains a active react")
+        raise ValueError("Message contains an active react")
 
     #React status of message is set
     messages_reacts[message_id] = 1
@@ -181,7 +174,6 @@ ValueErrors:
 - Message with ID message_id does not contain an active react with ID react_id
 """
 def message_unreact(token, message_id, react_id):
-    
     #Dummy implementation
     messages_reacts = {1:0, 2:0, 3:1}
 
@@ -211,7 +203,6 @@ AccessErrors:
 - The authorised user is not a member of the channel that the message is within
 """
 def message_pin(token, message_id):
-
     #Dummy implementation
     messages_pinned = {1:0, 2:0, 3:1}
     channel_users = ["valid token"]
@@ -246,7 +237,6 @@ ValueErrors:
 - Message with ID message_id is already unpinned
 """
 def message_unpin(token, message_id):
-
     #Dummy implementations
     messages_pinned = {1:0, 2:0, 3:1}
     channel_users = ["valid token"]
@@ -313,4 +303,3 @@ def valid_permission(token, messages, message_id):
         return True
 
     return False
-
