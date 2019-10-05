@@ -15,7 +15,8 @@ def standup_start(token, channel_id):
     return 900
 
 """
-Sending a message to get buffered in the standup queue, assuming a standup is currently active
+Sending a message to get buffered in the standup queue, assuming a standup 
+is currently active
 """
 def standup_send(token, channel_id, message):
     if existing_channel(channel_id) == False:
@@ -29,16 +30,19 @@ def standup_send(token, channel_id, message):
 
     return {}
 
+# Helper Functions
 # Checks if a channel exists
 def existing_channel(channel_id):
-    if channel_id == "correct_and_valid_channel" or channel_id == "correct_and_valid_channel_with_standup":
+    if channel_id == "correct_and_valid_channel" or channel_id \
+         == "correct_and_valid_channel_with_standup":
         return True
     else:
         return False
 
 # Checks if a user is apart of a channel
 def user_in_channel(token, channel_id):
-    if token == "valid_token" and (channel_id == "correct_and_valid_channel" or channel_id == "correct_and_valid_channel_with_standup"):
+    if token == "valid_token" and (channel_id == "correct_and_valid_channel" \
+         or channel_id == "correct_and_valid_channel_with_standup"):
         return True
     else:
         return False
