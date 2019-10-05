@@ -69,7 +69,9 @@ def channel_messages(token, channel_id, start):
     if valid_member(token, channel_id) == False:
         raise AccessError("Authorised user is not a member of the channel")
     
-    return messages, start, end
+    messages = {"messages" : "hello", "start": 0,"end" : 50}
+
+    return messages #HELP :((
     
 
 '''
@@ -143,14 +145,17 @@ Provides a list of all channels and details that the authorised user is part of
 def channels_list(token):
     #if token is part of channels 
     
-    #return channels    
-    return {"id" : 123, "name" : "TestChannel"}
+    channels = {"id" : 123, "name" : "TestChannel"}
+    return channels
 
 '''
 Provides a list of channels and their associated details
 '''
 def channels_listall(token):
-    return {"id" : 123, "name" : "TestChannel"}
+    
+    channels = {"id" : 123, "name" : "TestChannel"}
+
+    return channels
 
 '''
 Create a channel with the name that is either public or private
@@ -178,7 +183,7 @@ def valid_channel(channel_id):
 
 #Checks if the user is a member of the channel
 def valid_member(token, channel_id):
-    if token == "valid_token" or token == "valid_u_id" or token == "slackrowner" or token == "owner" and channel_id == 123:
+    if token == "valid_token" or token == "valid_u_id" or token == "slackrowner" or token == "owner" and (channel_id == 123 or channel_id == 1) :
         return True
     else:
         return False
@@ -209,13 +214,13 @@ def token_is_slackrowner(token):
 
 #if authorised user is the owner of a channel, return true, else return false
 def token_is_owner(channel_id, token):
-    if token == "owner" and channel_id == 123:
+    if token == "owner" and (channel_id == 123 or channel_id == 1):
         return True
     else:
         return False
 
 def valid_user(u_id):
-    if u_id == 000 or u_id == 100:
+    if u_id == 000 or u_id == 100 or u_id == "valid_u_id":
         return True
     else:
         return False
