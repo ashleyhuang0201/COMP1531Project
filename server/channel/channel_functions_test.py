@@ -57,9 +57,8 @@ def test_channel_details():
 
     
     
-'''
-def test_channel_messages():
 
+def test_channel_messages():
     #passes in token, channel_id, start
 
     user1 = auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
@@ -80,7 +79,6 @@ def test_channel_messages():
         with pytest.raises(ValueError, match = "Start index is invalid"):
             func.channel_message(token1, channel_ids, 100)
 
-'''
     
 
 def test_channel_leave():
@@ -210,7 +208,7 @@ def test_channels_list():
     userid1 = user1["u_id"]
 
     user2 = auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
-    token1 = user2["token"] 
+    token2 = user2["token"] 
     userid2 = user2["u_id"]
 
     #user1 create a channel (123) 

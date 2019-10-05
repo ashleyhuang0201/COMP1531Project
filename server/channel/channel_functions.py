@@ -61,17 +61,19 @@ if user is not a member of the channel of channel_id
 '''
 
 def channel_messages(token, channel_id, start):
-
-    if valid_channel(channel_id) == False:
+    # define messages list so errors stop
+    messages = []
+    if (not valid_channel(channel_id)):
         raise ValueError("Channel does not exist")
-    if start > len(messages):
+    if (start > len(messages)):
         raise ValueError("Message does not exist")
-    if valid_member(token, channel_id) == False:
+    if (not valid_member(token, channel_id)):
         raise AccessError("Authorised user is not a member of the channel")
     
-    messages = {"messages" : "hello", "start": 0,"end" : 50}
 
-    return messages #HELP :((
+    output = {"messages" : [], "start": 0,"end" : 50}
+
+    return output #HELP :((
     
 
 '''
