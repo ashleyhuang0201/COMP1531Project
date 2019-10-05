@@ -1,4 +1,5 @@
-# Given a registered users' email and password and generates a valid token for the user to remain authenticated
+# Given a registered user's email and password and generates a valid token
+# for the user to remain authenticated
 def auth_login(email, password):
     if valid_email(email) == False:
         raise ValueError("Invalid Email")
@@ -9,7 +10,8 @@ def auth_login(email, password):
 
     return {"u_id": "valid_u_id", "token": "valid_token"}
 
-# Given an active token, invalidates the taken to log the user out. Given a non-valid token, does nothing
+# Given an active token, invalidates the taken to log the user out. Given a 
+# non-valid token, does nothing
 def auth_logout(token):
     if valid_token(token) == True:
         # Remove token from server
@@ -17,7 +19,8 @@ def auth_logout(token):
 
     return {}
 
-# Given a user's first and last name, email address, and password, create a new account for them and return a new token for authentication in their session
+# Given a user's first and last name, email address, and password, create a new 
+# account for them and return a new token for authentication in their session
 def auth_register(email, password, name_first, name_last):
     if valid_email(email) == False:
         raise ValueError("Invalid Email")
@@ -43,7 +46,8 @@ def auth_passwordreset_request(email):
 
     return {}
 
-# Given a reset code for a user, set that user's new password to the password provided
+# Given a reset code for a user, set that user's new password to the password 
+# provided
 def auth_passwordreset_reset(reset_code, new_password):
     if valid_reset_code(reset_code) == False:
         raise ValueError("Invalid Reset Code")
@@ -52,23 +56,30 @@ def auth_passwordreset_reset(reset_code, new_password):
 
     return {}
 
+
+# Helper Functions
 # Checks if an email is a valid email
 def valid_email(email):  
-    if email == "valid_correct_email" or email == "valid_email" or email == "correct_email" or email == "registered_email" or email == "unregistered_email":
+    if email == "valid_correct_email" or email == "valid_email" \
+         or  email == "correct_email" or email == "registered_email" \
+              or email == "unregistered_email":
         return True
     else:
         return False
 
 # Checks if a password is a valid password
 def valid_password(password):
-    if password == "valid_password" or password == "correct_password" or password == "valid_correct_password" or password == "registered_password":
+    if password == "valid_password" or password == "correct_password" \
+         or password == "valid_correct_password" \
+              or password == "registered_password":
         return True
     else:
         return False
 
 # Checks if a user is a valid user
 def correct_email(email):
-    if email == "valid_email" or email == "correct_email" or email == "correct_valid_email":
+    if email == "valid_email" or email == "correct_email" \
+         or email == "correct_valid_email":
         return True
     else:
         return False
@@ -89,14 +100,16 @@ def registered_account(email, password):
 
 # Checks if first name is valid
 def valid_name_first(name_first):
-    if name_first == "valid_first_name" or name_first == "valid_correct_first_name":
+    if name_first == "valid_first_name" \
+         or name_first == "valid_correct_first_name":
         return True
     else:
         return False
 
 # Checks if last name is valid
 def valid_name_last(name_last):
-    if name_last == "valid_last_name" or name_last == "valid_correct_last_name":
+    if name_last == "valid_last_name" \
+         or name_last == "valid_correct_last_name":
         return True
     else:
         return False
