@@ -42,17 +42,18 @@ def test_channel_details():
     
     user1 = auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
     token1 = user1["token"]
+    userid1 = user1["u_id"]
 
-    #create a channel 
+    #if user is not a member of the channel, has not joined yet
+    with pytest.raises(AccessError, match = "Authorised user is not a member of the channel"):
+        func.channel_details("12345", channel_ids)
+
+    #token1 creates a channel and is automatically part of it as the owner
     channel = func.channels_create(token1, "TestChannel", True)
     channel_ids = channel["channel_id"]
 
-    assert func.channel_details(token1, channel_ids) == {"name" : "ChannelName", "owner_members": "Ethan Jack", "all_members": "Ethan Jack, Jack Smith"}
+    assert func.channel_details(token1, channel_ids) == {"name" : "ChannelName", "owner_members": {"u_id": userid1, "name_first": "valid_correct_first_name" , "name_last": "valid_correct_last_name"}, "all_members": {"u_id": userid1 , "name_first": "valid_correct_first_name" , "name_last": "valid_correct_last_name"}}
     
-    #if user is not a member of the channel
-    with pytest.raises(AccessError, match = "Authorised user is not a member of the channel"):
-        func.channel_details("12345", channel_ids)
-   
     #if given an invalid channel_id
     with pytest.raises(ValueError, match = "Invalid channel_id"):
         func.channel_details(token1, 100)
@@ -126,9 +127,8 @@ def test_channel_join():
     channel2 = func.channels_create(token2, "TestChannel2", False)
     channel_private = channel2["channel_id"]
 
-    #user 1 joining user2's channel
+    
     assert func.channel_join(token1, channel_ids) == {}
-
 
     #if given an invalid channel_id
     with pytest.raises(ValueError, match = "Invalid channel_id"):
@@ -141,7 +141,6 @@ def test_channel_join():
 
 def test_channel_addowner():
     
-
     owner = auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
     tokenowner = owner["token"]
     useridowner = owner["u_id"]
@@ -158,25 +157,27 @@ def test_channel_addowner():
     channel = func.channels_create(tokenowner, "TestChannel", True)
     channel_ids = channel["channel_id"]
 
-    #token1 joins channel 123
+    #token1 joins channel that owner created
     func.channel_join(token1, channel_ids)
 
     assert func.channel_addowner("owner", channel_ids, userid1) == {}
-
-    #add token1 as an owner
-    func.channel_addowner("owner", channel_ids, userid1)
-
+    
     #if given an invalid channel_id
     with pytest.raises(ValueError, match = "Invalid channel_id"):
-        func.channel_addowner(token1, 100, useridowner)
-    
-    #tokenowner made channel, user is already owner of channel
-    with pytest.raises(ValueError, match = "User is already an owner of the channel"):
-        func.channel_addowner(tokenowner, channel_ids, 100)
+        func.channel_addowner(tokenowner, 100, userid1)
 
-    #token is not an owner of slackr or the channel
-    with pytest.raises(AccessError, match = "Authorised user is not an owner of slackr or an owner of the channel"):
-        func.channel_addowner(token2, channel_ids, userid1)
+    #token is not an owner of the channel
+    with pytest.raises(AccessError, match = "Authorised user is not an owner of the channel"):
+        func.channel_addowner(token1, channel_ids, userid2)
+
+    #add token1 as an owner
+    func.channel_addowner(tokenowner, channel_ids, userid1)
+
+    #token1/userid1 is already an owner of the channel
+    with pytest.raises(ValueError, match = "User is already an owner of the channel"):
+        func.channel_addowner(tokenowner, channel_ids, userid1)
+
+    
 
 
 
@@ -194,20 +195,23 @@ def test_channel_removeowner():
     token2 = user2["token"]
     userid2 = user2["u_id"]
 
-    #token2 joins channel_ids
+    #token2 joins the channel token1 made
     func.channel_join(token2, channel_ids)
-   
-    #token1 makes token2 the owner
-    func.channel_addowner("owner", channel_ids, userid2)
     
-    assert func.channel_removeowner("owner", channel_ids, 100) == {}
+    #user2 is not the owner, thus trying to removeowner raises an error
+    with pytest.raises(ValueError, match = "User id is not an owner of the channel"):
+        func.channel_removeowner(token1, channel_ids, 000)
+    
+    #token1 makes token2 the owner
+    func.channel_addowner(token1, channel_ids, userid2)
+    
+    assert func.channel_removeowner(token1, channel_ids, userid2) == {}
 
     #if given an invalid channel_id
     with pytest.raises(ValueError, match = "Invalid channel_id"):
         func.channel_removeowner(token1, 100, userid2)
 
-    with pytest.raises(ValueError, match = "User id is not an owner of the channel"):
-        func.channel_removeowner(token1, channel_ids, 000)
+  
 
 
 def test_channels_list():
@@ -220,11 +224,11 @@ def test_channels_list():
     token1 = user2["token"] 
     userid2 = user2["u_id"]
 
-    #user1 create a channel (123) 
+    #user1 create a channel (123)
     channel = func.channels_create(token1, "TestChannel", True)
     channel_ids = channel["channel_id"]
 
-    #user2 create a channel
+    #user2 create a channel (123)
     channel2 = func.channels_create(token2, "TestChannel2", True)
     channel_ids2 = channel2["channel_id"]
    
@@ -256,16 +260,18 @@ def test_channels_listall():
     
     assert func.channels_list(token1) == {"id": 123, "name" : "TestChannel1"}, {"id": 1, "name": "TestChannel2"}
     
+    #if given invalid token 
+    with pytest.raises(ValueError, match = "Invalid token"):
+        func.channels_listall("12345")
 
 def test_channels_create():
     user1 = auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
     token1 = user1["token"] 
     userid1 = user1["u_id"]
 
-    #user1 create a channel (123) 
+    #user1 create a channel  
     channel = func.channels_create(user1, "TestChannel", True)
     channel_ids = channel["channel_id"]
-
 
     assert func.channels_create(token1, "Channel1", True) == {"channel_id" : 123}
     assert func.channels_create(token1, "Channel2", False) == {"channel_id" : 1}
