@@ -15,6 +15,8 @@ Multiple users can login using the same account at the same time
 Users will enter tokens (valid, invalid)
 ## auth_register
 Users will enter emails (invalid, already registered, correct), passwords (invalid, valid), first name (invalid, valid) and last name (valid, invalid)
+
+Users are logged straight after registering an account
 ## auth_passwordreset_request
 Users will enter email (incorrect, correct, invalid, valid)
 ## auth_passwordreset_reset
