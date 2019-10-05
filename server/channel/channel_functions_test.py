@@ -12,12 +12,12 @@ from server.search.search_function import search
 
 def test_channel_invite():
     #the authorised user
-    user1 = auth_register("valid_correct_email", "valid_correct_password", \
+    user1 = auth_register("valid_correct_email@test.com", "valid_correct_password", \
     "valid_correct_first_name", "valid_correct_last_name")
     token1 = user1["token"]
 
     #the one being invited
-    user2 = auth_register("valid_correct_email", "valid_correct_password", \
+    user2 = auth_register("valid_correct_email@test2.com", "valid_correct_password", \
     "valid_correct_first_name", "valid_correct_last_name")
     userid2 = user2["u_id"]
 
@@ -42,7 +42,7 @@ def test_channel_invite():
 
 def test_channel_details():
     
-    user1 = auth_register("valid_correct_email", "valid_correct_password",\
+    user1 = auth_register("valid_correct_email@test.com", "valid_correct_password",\
      "valid_correct_first_name", "valid_correct_last_name")
     token1 = user1["token"]
     userid1 = user1["u_id"]
@@ -110,7 +110,7 @@ def test_channel_messages():
 
 def test_channel_leave():
     
-    user1 = auth_register("valid_correct_email", "valid_correct_password",\
+    user1 = auth_register("valid_correct_email@test.com", "valid_correct_password",\
      "valid_correct_first_name", "valid_correct_last_name")
     token1 = user1["token"]
 
@@ -127,11 +127,11 @@ def test_channel_leave():
 
 def test_channel_join():
 
-    user1 = auth_register("valid_correct_email", "valid_correct_password", \
+    user1 = auth_register("valid_correct_email@test.com", "valid_correct_password", \
     "valid_correct_first_name", "valid_correct_last_name")
     token1 = user1["token"]
 
-    user2 = auth_register("valid_correct_email", "valid_correct_password", \
+    user2 = auth_register("valid_correct_email@test2.com", "valid_correct_password", \
     "valid_correct_first_name", "valid_correct_last_name")
     token2 = user2["token"]
     userid2 = user2["u_id"]
@@ -158,17 +158,17 @@ def test_channel_join():
 
 def test_channel_addowner():
     
-    owner = auth_register("valid_correct_email", "valid_correct_password",\
+    owner = auth_register("valid_correct_email@test.com", "valid_correct_password",\
      "valid_correct_first_name", "valid_correct_last_name")
     tokenowner = owner["token"]
     useridowner = owner["u_id"]
 
-    user1 = auth_register("valid_correct_email", "valid_correct_password", \
+    user1 = auth_register("valid_correct_email@test1.com", "valid_correct_password", \
     "valid_correct_first_name", "valid_correct_last_name")
     token1 = user1["token"] 
     userid1 = user1["u_id"]
 
-    user2 = auth_register("valid_correct_email", "valid_correct_password", \
+    user2 = auth_register("valid_correct_email@test2.com", "valid_correct_password", \
     "valid_correct_first_name", "valid_correct_last_name")
     token2 = user2["token"]
     userid2 = user2["u_id"]
@@ -200,19 +200,19 @@ def test_channel_addowner():
 
 def test_channel_removeowner():
 
-    user1 = auth_register("valid_correct_email", "valid_correct_password", \
+    user1 = auth_register("valid_correct_email@test.com", "valid_correct_password", \
     "valid_correct_first_name", "valid_correct_last_name")
     token1 = user1["token"] 
     userid1 = user1["u_id"]
+    
+    user2 = auth_register("valid_correct_email@test2.com", "valid_correct_password", \
+    "valid_correct_first_name", "valid_correct_last_name")
+    token2 = user2["token"]
+    userid2 = user2["u_id"]
 
     #token1 create a channel (123) 
     channel = func.channels_create(token1, "TestChannel", True)
     channel_ids = channel["channel_id"]
-
-    user2 = auth_register("valid_correct_email", "valid_correct_password", \
-    "valid_correct_first_name", "valid_correct_last_name")
-    token2 = user2["token"]
-    userid2 = user2["u_id"]
 
     #token2 joins the channel token1 made
     func.channel_join(token2, channel_ids)
@@ -235,12 +235,12 @@ def test_channel_removeowner():
 
 def test_channels_list():
 
-    user1 = auth_register("valid_correct_email", "valid_correct_password", \
+    user1 = auth_register("valid_correct_email@t.com", "valid_correct_password", \
     "valid_correct_first_name", "valid_correct_last_name")
     token1 = user1["token"] 
     userid1 = user1["u_id"]
 
-    user2 = auth_register("valid_correct_email", "valid_correct_password", \
+    user2 = auth_register("valid_correct_email@t1.com", "valid_correct_password", \
     "valid_correct_first_name", "valid_correct_last_name")
     token1 = user2["token"] 
     userid2 = user2["u_id"]
@@ -267,7 +267,7 @@ def test_channels_list():
 
 def test_channels_listall():
 
-    user1 = auth_register("valid_correct_email", "valid_correct_password", \
+    user1 = auth_register("valid_correct_email@t.com", "valid_correct_password", \
     "valid_correct_first_name", "valid_correct_last_name")
     token1 = user1["token"] 
     userid1 = user1["u_id"]
@@ -289,7 +289,7 @@ def test_channels_listall():
         func.channels_listall("12345")
 
 def test_channels_create():
-    user1 = auth_register("valid_correct_email", "valid_correct_password", \
+    user1 = auth_register("valid_correct_email@t.com", "valid_correct_password", \
     "valid_correct_first_name", "valid_correct_last_name")
     token1 = user1["token"] 
     userid1 = user1["u_id"]
