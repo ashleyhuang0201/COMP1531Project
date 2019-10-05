@@ -75,14 +75,6 @@ def valid_password(password):
     else:
         return False
 
-# Checks if a user is a valid user
-def correct_email(email):
-    if email == "vali@g.com" or email == "correct@g.com" \
-         or email == "correct_valid_email":
-        return True
-    else:
-        return False
-
 # Checks if a user is a registered user
 def registered_email(email):
     if email == "registered@g.com":
