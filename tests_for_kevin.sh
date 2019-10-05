@@ -1,5 +1,4 @@
 #!/bin/bash
-`alias pytest-3=pytest `
 for dir in `ls server`
 do
     for file in `ls server/$dir`
