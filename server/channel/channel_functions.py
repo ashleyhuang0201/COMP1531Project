@@ -39,7 +39,7 @@ def channel_details(token, channel_id):
         raise AccessError("Authorised user is not a member of the channel")
 
     #returned details 
-    channel_details = {"name" : "ChannelName", "owner_members": "Ethan Jack", "all_members": "Ethan Jack, Jack Smith"}
+    channel_details = {"name" : "ChannelName", "owner_members": {"u_id": userid1, "name_first": "valid_correct_first_name" , "name_last": "valid_correct_last_name"}, "all_members": {"u_id": userid1 , "name_first": "valid_correct_first_name" , "name_last": "valid_correct_last_name"}}
 
     return channel_details
     
