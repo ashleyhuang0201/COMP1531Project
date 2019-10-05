@@ -5,7 +5,7 @@ do
     do
         if [[ "$file" == "__pycache__" ]]
         then
-            `rm -r $file`
+            `rm -r server/$dir/$file`
         fi
         to_run=`echo "$file" | egrep -o "[^.]+_test\.py"`
         if [[ "$to_run" != "" ]]
