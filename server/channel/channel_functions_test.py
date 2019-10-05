@@ -21,7 +21,7 @@ def test_channel_invite():
     channel = func.channels_create(token1, "TestChannel", True)
     channel_ids = channel["channel_id"]
 
-    assert func.channel_invite(token1, channel_ids, 000) == {}
+    assert func.channel_invite(token1, channel_ids, userid2) == {}
 
     #if given an invalid token
     with pytest.raises(ValueError, match = "Invalid token"):
@@ -60,20 +60,29 @@ def test_channel_details():
 '''
 def test_channel_messages():
 
+    #passes in token, channel_id, start
+
     user1 = auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
     token1 = user1["token"]
 
     #create a channel 
     channel = func.channels_create(token1, "TestChannel", True)
     channel_ids = channel["channel_id"]
-    FIX DIS REEEEE
-    assert func.channel_messages(token, channel, start) == {messages, start, end}
+
+
+
+    assert func.channel_messages(token1, channel_ids, 0) == {"messages": "hello", "start": 0, "end":50}
 
     with pytest.raises(ValueError, match = "Invalid channel_id"):
         func.channel_messages(token1, 100, start)
-
     
+    if start > len(messages):
+        with pytest.raises(ValueError, match = "Start index is invalid"):
+            func.channel_message(token1, channel_ids, 100)
+
 '''
+    
+
 def test_channel_leave():
     #can an owner leave channel
     user1 = auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")
@@ -170,7 +179,7 @@ def test_channel_removeowner():
     token1 = user1["token"] 
     userid1 = user1["u_id"]
 
-    #token1 create a channel (123) and is automatically the owner
+    #token1 create a channel (123) 
     channel = func.channels_create(token1, "TestChannel", True)
     channel_ids = channel["channel_id"]
 
@@ -178,10 +187,6 @@ def test_channel_removeowner():
     token2 = user2["token"]
     userid2 = user2["u_id"]
 
-    user3 = auth_register("valid_correct_email", "valid_correct_password", "valid_correct_first_name", "valid_correct_last_name")   
-    token3 = user3["token"]
-    userid3 = user3["u_id"]
-    
     #token2 joins channel_ids
     func.channel_join(token2, channel_ids)
    
@@ -204,9 +209,12 @@ def test_channels_list():
     token1 = user1["token"] 
     userid1 = user1["u_id"]
 
-    #user1 create a channel (123) and is automatically the owner
+    #user1 create a channel (123) 
     channel = func.channels_create(token1, "TestChannel", True)
     channel_ids = channel["channel_id"]
+
+    func.channel_join(token1, channel_ids)
+   
 
     assert func.channels_list(token1) == {"id" : 123, "name" : "TestChannel"}
 
@@ -229,7 +237,7 @@ def test_channels_create():
     token1 = user1["token"] 
     userid1 = user1["u_id"]
 
-    #user1 create a channel (123) and is automatically the owner
+    #user1 create a channel (123) 
     channel = func.channels_create(user1, "TestChannel", True)
     channel_ids = channel["channel_id"]
 
@@ -244,6 +252,4 @@ def test_channels_create():
         func.channels_create(token1, "asdbcdjsisjd222isjdisjdisjdisjdijsi", False)
 
     
-
-   
 
