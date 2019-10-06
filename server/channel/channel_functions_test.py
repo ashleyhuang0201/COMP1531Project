@@ -11,7 +11,7 @@ from server.search.search_function import search
 
 
 def test_channel_invite():
-    #the authorised user
+    #Initialisation
     user1 = auth_register("valid_correct_email@test.com", \
     "valid_correct_password", "valid_correct_first_name", \
     "valid_correct_last_name")
@@ -43,7 +43,7 @@ def test_channel_invite():
     
 
 def test_channel_details():
-    
+    #initialisation
     user1 = auth_register("valid_correct_email@test.com", \
     "valid_correct_password", "valid_correct_first_name", \
     "valid_correct_last_name")
@@ -72,6 +72,7 @@ def test_channel_details():
 
     
 def test_channel_messages():
+    #initialisation
     user1 = auth_register("channel_messages@test.com", "password", \
     "channel_messages", "test")
     token1 = user1["token"]
@@ -114,7 +115,7 @@ def test_channel_messages():
     
 
 def test_channel_leave():
-    
+    #initialisation
     user1 = auth_register("valid_correct_email@test.com", \
     "valid_correct_password","valid_correct_first_name", \
     "valid_correct_last_name")
@@ -133,6 +134,7 @@ def test_channel_leave():
 
 def test_channel_join():
 
+    #initialisation
     user1 = auth_register("valid_correct_email@test.com", \
     "valid_correct_password", "valid_correct_first_name",\
      "valid_correct_last_name")
@@ -185,7 +187,7 @@ def test_channel_addowner():
     token2 = user2["token"]
     userid2 = user2["u_id"]
 
-    #owner create a channel (123) and is automatically the owner
+    #owner creates a channel and is automatically the owner
     channel = func.channels_create(tokenowner, "TestChannel", True)
     channel_ids = channel["channel_id"]
 
@@ -226,7 +228,7 @@ def test_channel_removeowner():
     token2 = user2["token"]
     userid2 = user2["u_id"]
 
-    #token1 create a channel (123) 
+    #token1 create a channel  
     channel = func.channels_create(token1, "TestChannel", True)
     channel_ids = channel["channel_id"]
 
