@@ -7,8 +7,8 @@ import datetime
 from server.helper.Error import AccessError
 
 """
-Sends a message from authorised_user to the channel specified by channel_id automatically at a specified
-time in the future
+Sends a message from authorised_user to the channel specified by 
+channel_id automatically at a specified time in the future
 
 Data types:
 token: string
@@ -112,7 +112,8 @@ message: string
 ValueErrors:
 - message_id is not a valid message when it is not:
     1) a message sent by the authorised user
-    2) If the authorised user is an admin, is any message within a channel that the authorised user has joined
+    2) If the authorised user is an admin, is any message within a channel 
+        that the authorised user has joined
 """
 def message_edit(token, message_id, message):
     #Dummy implementation
@@ -132,7 +133,8 @@ def message_edit(token, message_id, message):
     return {}
 
 """
-Given a message within a channel the authorised user is part of, add a "react" to that particular message
+Given a message within a channel the authorised user is part of, add a "react"
+ to that particular message
 
 Data types:
 token: string
@@ -140,7 +142,8 @@ message_id: integer
 react_id: integer
 
 ValueErrors:
-- message_id is not a valid message within a channel that the authorised user has joined
+- message_id is not a valid message within a channel that the authorised user
+     has joined
 - react_id is not a valid react ID
 - Message with ID message_id already contains a active react with ID react_id
 """
@@ -161,7 +164,8 @@ def message_react(token, message_id, react_id):
     return {}
 
 """
-Given a message within a channel the authorised user is part of, remove a "react" to that particular message
+Given a message within a channel the authorised user is part of, remove a 
+ "react" to that particular message
 
 Data types:
 token: string
@@ -169,7 +173,8 @@ message_id: integer
 react_id: integer
 
 ValueErrors:
-- message_id is not a valid message within a channel that the authorised user has joined
+- message_id is not a valid message within a channel that the authorised user
+     has joined
 - react_id is not a valid react ID
 - Message with ID message_id does not contain an active react with ID react_id
 """
@@ -189,7 +194,8 @@ def message_unreact(token, message_id, react_id):
     return {}
 
 """
-Given a message within a channel, mark it as "pinned" to be given special display treatment by the frontend
+Given a message within a channel, mark it as "pinned" to be given special  
+ display treatment by the frontend
 
 Data types:
 token: string
@@ -263,7 +269,7 @@ def message_unpin(token, message_id):
 
 # Checks the validity of a token
 def valid_token(token):
-    if token == "123456" or token == "223456" or token == "owner" or token == "valid_token":
+    if token == "123456" or token == "223456" or token == "owner":
         # Active token
         return True
     else:
