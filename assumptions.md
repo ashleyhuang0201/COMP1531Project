@@ -160,6 +160,8 @@ The function will be called with a token, image url and crop co-ordinates
 
 Users will try start on channel ((non-existent, existing) and (apart of, not apart of))
 
+Function will do nothing if standup has already started and user attempts (correctly) to start a standup
+
 ## standup_send
 
 Users will try to send on channel ((non-existent, existing) and (apart of, not apart of) and (standup time running, standup time stopped)), message (longer than 1000 characters, less than or equal to 1000)
