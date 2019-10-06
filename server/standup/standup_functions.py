@@ -12,7 +12,7 @@ def standup_start(token, channel_id):
     if user_in_channel(token, channel_id) == False:
         raise AccessError("Cannot Access Channel")
 
-    return 900
+    return {"time" : 900}
 
 """
 Sending a message to get buffered in the standup queue, assuming a standup 
