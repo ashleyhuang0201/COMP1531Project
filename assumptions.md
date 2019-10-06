@@ -72,7 +72,7 @@ The function will be called with a token, a channel id and a user id
 
 A user can remove themself as a owner. If the user was the last owner, the channel now has no owners
 
-## channeLs_list
+## channels_list
 
 The function will be called with a token
 
