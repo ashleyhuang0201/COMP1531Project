@@ -50,6 +50,3 @@ def test_search_single_channel():
 def test_search_multi_channel():
     assert search.search(user['token'], '93336257 Multichannel search ') == \
         {'messages': [messages2[0], messages1[0]]}
-
-
-##### SALLY AND BOB WILL
