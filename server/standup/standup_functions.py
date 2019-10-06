@@ -33,16 +33,50 @@ def standup_send(token, channel_id, message):
 # Helper Functions
 # Checks if a channel exists
 def existing_channel(channel_id):
-    if channel_id == "correct_and_valid_channel" or channel_id \
-         == "correct_and_valid_channel_with_standup":
+    channels = channels_available()
+
+    if channel_id in channels:
         return True
     else:
         return False
 
+# Gets channels
+def channels_available():
+    channel = ["correct_and_valid_channel", "correct_and_valid_channel_with_standup"]
+    return channel
+
 # Checks if a user is apart of a channel
 def user_in_channel(token, channel_id):
-    if token == "valid_token" and (channel_id == "correct_and_valid_channel" \
-         or channel_id == "correct_and_valid_channel_with_standup"):
+    if valid_token(token) == True and get_u_id(token) in users_in_channel(channel_id):
+        return True
+    else:
+        return False
+
+# Get user identification
+def get_u_id(token):
+    if token == "valid_token":
+        return 1
+    else:
+        return 0
+
+# Gets users ids from a channel
+def users_in_channel(channel_id):
+    channels = channels_available()
+
+    if channel_id in channels:
+        return [1, 2]
+    else:
+        return []
+
+# Get all possible tokens
+def get_tokens():
+    return ["valid_token"]
+
+# Checks if a token is valid
+def valid_token(token):
+    tokens = get_tokens()
+
+    if token in tokens:
         return True
     else:
         return False
