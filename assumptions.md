@@ -100,6 +100,8 @@ The function will be called with a token, a channel id and a message
 
 Assume that message is only send if there is a message to send
 
+Assume that message ID will be retrievable from the database after it has been sent
+
 ## message_remove
 
 The function will be called with a token and a message id

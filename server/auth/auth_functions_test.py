@@ -5,8 +5,15 @@ import pytest
 # Testing Functions
 def test_auth_login():
     # A registered user is logged in
-    assert auth.auth_login("registered@g.com", "registered_password") \
-         == {"u_id": "valid_u_id", "token": "valid_token"}
+    login =  auth.auth_login("registered@g.com", "registered_password") \
+    
+    # Check database for id and token
+    user_id = get_u_id("registered@g.com")
+    user_token = get_token(user_id)
+              
+    assert login == {"u_id": user_id, "token": user_token}
+    
+    
     # An invalid email is given
     with pytest.raises(ValueError, match = "Invalid Email"):
         auth.auth_login("invalid_email", "valid_password")
