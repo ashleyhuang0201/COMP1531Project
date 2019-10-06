@@ -18,7 +18,7 @@ def test_auth_login():
         auth.auth_login("registered@g.com", "bpas")
 
 def test_auth_logout():
-    # A user is registeredCosuTabeMapi1!
+    # A user is registered
     login_details = auth.auth_register("validcorrect@g.com",  \
         "valid_correct_password", "valid_first_name", "valid_last_name")
 
