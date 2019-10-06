@@ -5,11 +5,8 @@
 import pytest
 from server.admin.admin_userpermission_change_function import \
     admin_userpermission_change
-from server.helper.valid_checks import (
-    valid_user_id, 
-    token_is_admin, 
-    token_is_owner
-)
+from server.helper.valid_checks import valid_user_id
+from server.helper.permission_checks import token_is_admin, token_is_owner
 from server.auth.auth_functions import auth_register
 
 user_admin = auth_register("test@gmail.com", "pass123", "Rayden", "Smith")
