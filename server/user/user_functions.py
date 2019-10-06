@@ -8,7 +8,8 @@ from server.helper.Error import AccessError
 from server.helper.valid_checks import valid_email, valid_user_id
 
 """
-For a valid user, returns information about their email, first name, last name, and handle
+For a valid user, returns information about their email, first name, 
+last name, and handle
 
 ValueError:
 - User with u_id is not a valid user
@@ -74,7 +75,8 @@ def user_profile_sethandle(token, handle_str):
     return {}
 
 """
-Given a URL of an image on the internet, crops the image within x and y co-oridinates
+Given a URL of an image on the internet, crops the image within x and 
+ y co-oridinates
 
 ValueError:
 - img_url returns an HTTP status other than 200 (2xx indicates success)
@@ -82,7 +84,8 @@ ValueError:
 
 """
 def user_profiles_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
-    #This function is a little hard to test, as we don't know how the image are to be handled
+    #This function is a little hard to test, as we don't know how the image
+    #are to be handled
     valid_urls = {"img1", "img2"}
 
     if img_url in valid_urls:

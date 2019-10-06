@@ -29,8 +29,8 @@ def channel_details(token, channel_id):
 
     #returned details 
     channel_details = {"name" : "ChannelName", "owner_members":\
-     {"u_id": userid1, "name_first": "valid_correct_first_name" , \
-     "name_last": "valid_correct_last_name"}, "all_members": {"u_id": userid1 \
+     {"u_id": "userID", "name_first": "valid_correct_first_name" , \
+     "name_last": "valid_correct_last_name"}, "all_members": {"u_id": "UserID" \
      , "name_first": "valid_correct_first_name" , "name_last": \
      "valid_correct_last_name"}}
 

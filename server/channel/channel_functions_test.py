@@ -47,13 +47,13 @@ def test_channel_details():
     token1 = user1["token"]
     userid1 = user1["u_id"]
 
-    #if user is not a member of the channel, has not joined yet
-    with pytest.raises(AccessError, match = "User is not a member of the channel"):
-        func.channel_details("12345", channel_ids)
-
     #token1 creates a channel and is automatically part of it as the owner
     channel = func.channels_create(token1, "TestChannel", True)
     channel_ids = channel["channel_id"]
+
+    #if user is not a member of the channel, has not joined yet
+    with pytest.raises(AccessError, match = "User is not a member of the channel"):
+        func.channel_details("12345", channel_ids)
 
     assert func.channel_details(token1, channel_ids) == \
     {"name" : "ChannelName", "owner_members": {"u_id": userid1, \
@@ -242,7 +242,7 @@ def test_channels_list():
 
     user2 = auth_register("valid_correct_email@t1.com", "valid_correct_password", \
     "valid_correct_first_name", "valid_correct_last_name")
-    token1 = user2["token"] 
+    token2 = user2["token"] 
     userid2 = user2["u_id"]
 
     #user1 create a channel (123)
