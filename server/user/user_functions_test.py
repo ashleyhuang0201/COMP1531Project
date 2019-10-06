@@ -94,17 +94,18 @@ def test_profiles_uploadphoto():
     token = user["token"]
 
     #A valid photo is uploaded and cropped
-    assert funcs.user_profiles_uploadphoto(token, "img1", 10, 10, 20 ,20) == {}
+    assert funcs.user_profiles_uploadphoto(token, \
+        "https://oc1.ocstatic.com/images/logo_small.png", 10, 10, 20 ,20) == {}
 
     #The url is invalid
     with pytest.raises(ValueError, match = "HTTP status not 200"):
-        funcs.user_profiles_uploadphoto(token,"img3", 10, 10, 20, 20 )
+        funcs.user_profiles_uploadphoto(token,\
+            "https://oc1.ocstatic.com/images/logo_small.png1", 10, 10, 20, 20 )
 
-    #Add test cases for testing invalid crop co-ordinates
-
-    #Size of img2 = (0,0,100,200)
+    #Size of img2 = (0,0,256,256)
     with pytest.raises(ValueError, match = "Crop values invalid"):
-        funcs.user_profiles_uploadphoto(token,"img2", 0, 0, 200, 300)
+        funcs.user_profiles_uploadphoto(token,\
+            "https://oc1.ocstatic.com/images/logo_small.png", 0, 0, 200, 300)
 
 
 
