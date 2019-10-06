@@ -66,11 +66,15 @@ The function will be called with a token and a channel id
 
 The function will be called with a token, a channel id and a user id
 
+Slackr owners is also an owner of the channels
+
 ## channel_removeowner
 
 The function will be called with a token, a channel id and a user id
 
 A user can remove themself as a owner. If the user was the last owner, the channel now has no owners
+
+Slackr owners is also an owner of the channels
 
 ## channels_list
 
@@ -154,11 +158,11 @@ The function will be called with a token, image url and crop co-ordinates
 
 ## standup_start
 
-Users will try start on channel ((non-existant, existing) and (apart of, not apart of))
+Users will try start on channel ((non-existent, existing) and (apart of, not apart of))
 
 ## standup_send
 
-Users will try to send on channel ((non-existant, existing) and (apart of, not apart of) and (standup time running, standup time stopped)), message (longer than 1000 characters, less than or equal to 1000)
+Users will try to send on channel ((non-existent, existing) and (apart of, not apart of) and (standup time running, standup time stopped)), message (longer than 1000 characters, less than or equal to 1000)
 
 ## Misc
 
