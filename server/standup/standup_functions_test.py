@@ -32,6 +32,10 @@ def test_standup_start():
     with pytest.raises(ValueError, match = "Channel Does Not Exist"):
         standup.standup_start(user["token"], 21512512521512)
 
+    # Standup works on private channel
+    private = channel_func.channels_create(owner["token"], "Owner", False)
+    assert standup.standup_start(owner["token"], private["channel_id"]) \
+        == {"time": get_standup_end()}
 
 def test_standup_send():
     # A message is buffered in the standup queue - Owner
@@ -72,6 +76,11 @@ def test_standup_send():
     with pytest.raises(ValueError, match = "Message Too Long"):
         standup.standup_send(user["token"], channel["channel_id"],\
             string_creator(1001))
+
+    # Check still works in private channel
+    private = channel_func.channels_create(owner["token"], "Owner", False)
+    assert standup.standup_send(owner["token"], private["channel_id"], \
+        "correct_and_valid_message") == {}
 
 # Creates a variable length string
 def string_creator(length):
