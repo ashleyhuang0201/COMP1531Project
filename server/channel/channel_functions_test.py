@@ -274,17 +274,19 @@ def test_channels_list():
     channel2 = func.channels_create(token2, "TestChannel2", True)
     channel_ids2 = channel2["channel_id"]
    
-    assert func.channels_list(token1) == {"id" : 123, "name" : "TestChannel"}
+    assert func.channels_list(token1) == {"id" : "channel_ids",\
+     "name" : "TestChannel"}
 
-    assert func.channels_list(token2) == {"id" : 123, "name" : "TestChannel2"}
+    assert func.channels_list(token2) == {"id" : "channel_ids2",\
+     "name" : "TestChannel2"}
 
     #user2 creates another channel
     channel3 = func.channels_create(token2, "TestChannel3", True)
     channel_ids3 = channel3["channel_id"]
     
     #assert token2 is in two channels
-    assert func.channels_list(token2) == {"id" : 123, "name" : "TestChannel2"},\
-     {"id" : 123, "name" : "TestChannel3"}
+    assert func.channels_list(token2) == {"id" : "channel_ids2", \
+    "name" : "TestChannel2"}, {"id" : "channel_ids3", "name" : "TestChannel3"}
 
 def test_channels_listall():
 
@@ -297,14 +299,15 @@ def test_channels_listall():
     channel = func.channels_create(token1, "TestChannel1", True)
     channel_ids = channel["channel_id"]
 
-    assert func.channels_list(token1) == {"id" : 123, "name" : "TestChannel1"}
+    assert func.channels_list(token1) == {"id" : "channel_ids",\
+     "name" : "TestChannel1"}
     
     #creating another channel
     channel2 = func.channels_create(token1, "TestChannel2", False)
-    channel_ids = channel2["channel_id"]
+    channel_ids2 = channel2["channel_id"]
     
-    assert func.channels_list(token1) == {"id": 123, "name" : "TestChannel1"},\
-     {"id": 1, "name": "TestChannel2"}
+    assert func.channels_list(token1) == {"id": "channel_ids", \
+    "name" : "TestChannel1"}, {"id": "channel_ids2", "name": "TestChannel2"}
     
     #if given invalid token 
     with pytest.raises(ValueError, match = "Invalid token"):
@@ -322,8 +325,9 @@ def test_channels_create():
     channel_ids = channel["channel_id"]
 
     assert func.channels_create(token1, "Channel1", True) == \
-    {"channel_id" : 123}
-    assert func.channels_create(token1, "Channel2", False) == {"channel_id" : 1}
+    {"channel_id" : get_channel_id(Channel1)}
+    assert func.channels_create(token1, "Channel2", False) == \
+    {"channel_id" : get_channel_id(Channel2)}
 
     #public channel, name longer than 20 characters
     with pytest.raises(ValueError, match = \
@@ -335,5 +339,8 @@ def test_channels_create():
     "Name is more than 20 characters long"):
         func.channels_create(token1, "asdbcdjsisjd222isjdisjdis", False)
 
+# helper function to get channel ID from database given the channel name
+def get_channel_id(name):
+    return 123
     
 
