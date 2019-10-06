@@ -339,6 +339,7 @@ def test_channels_create():
     "Name is more than 20 characters long"):
         func.channels_create(token1, "asdbcdjsisjd222isjdisjdis", False)
 
+# helper function to get channel ID from database given the channel name
 def get_channel_id(name):
     return 123
     
