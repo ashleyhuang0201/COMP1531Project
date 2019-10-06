@@ -13,7 +13,6 @@ def test_auth_login():
               
     assert login == {"u_id": user_id, "token": user_token}
     
-    
     # An invalid email is given
     with pytest.raises(ValueError, match = "Invalid Email"):
         auth.auth_login("invalid_email", "valid_password")

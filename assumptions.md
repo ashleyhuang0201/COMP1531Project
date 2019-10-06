@@ -12,33 +12,31 @@ The database structure that will be used in iteration 1 will be accessable via h
 
 ## auth_login
 
-Users will enter emails (correct, invalid, not registered) and passwords (correct, incorrect)
+The function will be called with a email and password
 
-Users will not enter emails (incorrrect) and passwords (invalid)
-
-Multiple users can login using the same account at the same time
+Multiple active sessions can be associated with a single account
 
 ## auth_logout
 
-Users will enter tokens (valid, invalid)
+The function will be called with a token
 
 ## auth_register
 
-Users will enter emails (invalid, already registered, correct), passwords (invalid, valid), first name (invalid, valid) and last name (valid, invalid)
+The function will be called with an email, password, first name and last name
 
 Users are logged straight after registering an account
 
-Each email address may only be used by 1 user
+Each email address can only be used by one user
 
 ## auth_passwordreset_request
 
-Users will enter email (incorrect, correct, invalid, valid)
+The function will be called with an email
 
 Assume that the code that is emailed is saved in the database for access
 
 ## auth_passwordreset_reset
 
-Users will enter reset code (valid, invalid) and password (invalid, valid)
+The function will be called with a reset code and password
 
 # channel function assumption
 
@@ -66,11 +64,15 @@ The function will be called with a token and a channel id
 
 The function will be called with a token, a channel id and a user id
 
+Slackr owners is also an owner of the channels
+
 ## channel_removeowner
 
 The function will be called with a token, a channel id and a user id
 
 A user can remove themself as a owner. If the user was the last owner, the channel now has no owners
+
+Slackr owners is also an owner of the channels
 
 ## channels_list
 
@@ -154,13 +156,12 @@ The function will be called with a token, image url and crop co-ordinates
 
 ## standup_start
 
-Users will try start on channel ((non-existant, existing) and (apart of, not apart of))
+The function will be called with a token and a channel
 
 Function will do nothing if standup has already started and user attempts (correctly) to start a standup
 
 ## standup_send
-
-Users will try to send on channel ((non-existant, existing) and (apart of, not apart of) and (standup time running, standup time stopped)), message (longer than 1000 characters, less than or equal to 1000)
+The function will be called with a token, channel and a message
 
 ## Misc
 

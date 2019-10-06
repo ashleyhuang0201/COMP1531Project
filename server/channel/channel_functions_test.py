@@ -9,7 +9,6 @@ from server.helper.Error import AccessError
 from server.message.message_functions import message_send
 from server.search.search_function import search
 
-
 def test_channel_invite():
     #Initialisation
     user1 = auth_register("valid_correct_email@test.com", \
@@ -40,7 +39,6 @@ def test_channel_invite():
     #if given an invalid user
     with pytest.raises(ValueError, match = "Invalid user"):
         func.channel_invite(token1, channel_ids, 111111)
-    
 
 def test_channel_details():
     #initialisation
@@ -70,7 +68,6 @@ def test_channel_details():
     with pytest.raises(ValueError, match = "Invalid channel_id"):
         func.channel_details(token1, 100)
 
-    
 def test_channel_messages():
     #initialisation
     user1 = auth_register("channel_messages@test.com", "password", \
@@ -112,8 +109,6 @@ def test_channel_messages():
     "User is not a member of the channel"):
         func.channel_message(token2, channel_id, 0)
 
-    
-
 def test_channel_leave():
     #initialisation
     user1 = auth_register("valid_correct_email@test.com", \
@@ -130,7 +125,6 @@ def test_channel_leave():
     #if given an invalid channel_id
     with pytest.raises(ValueError, match = "Invalid channel_id"):
         func.channel_leave(token1, 100)
-
 
 def test_channel_join():
 
@@ -165,7 +159,6 @@ def test_channel_join():
     with pytest.raises(AccessError, match = \
     "Channel is private and user is not admin"):
         func.channel_join(token1, channel_private)
-
 
 def test_channel_addowner():
     
@@ -213,7 +206,6 @@ def test_channel_addowner():
     "User is already an owner of the channel"):
         func.channel_addowner(tokenowner, channel_ids, userid1)
 
-
 def test_channel_removeowner():
 
     user1 = auth_register("valid_correct_email@test.com", \
@@ -248,9 +240,6 @@ def test_channel_removeowner():
     #if given an invalid channel_id
     with pytest.raises(ValueError, match = "Invalid channel_id"):
         func.channel_removeowner(token1, 100, userid2)
-
-  
-
 
 def test_channels_list():
 
@@ -342,5 +331,3 @@ def test_channels_create():
 # helper function to get channel ID from database given the channel name
 def get_channel_id(name):
     return 123
-    
-

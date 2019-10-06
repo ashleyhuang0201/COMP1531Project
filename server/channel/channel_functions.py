@@ -19,7 +19,6 @@ def channel_invite(token, channel_id, u_id):
 
 #Provide basic details about the channel
 
-
 def channel_details(token, channel_id):
     if valid_channel(channel_id) == False:
         raise ValueError("Channel does not exist")
@@ -46,7 +45,6 @@ if function has returned the least recent messages in the channel
 returns -1 in "end" to indicate there are no more msgs to load
 
 '''
-
 def channel_messages(token, channel_id, start):
     messages = []
 
@@ -60,11 +58,8 @@ def channel_messages(token, channel_id, start):
     output = {"messages" : messages, "start": 0,"end" : 50}
 
     return output
-    
-
 
 #Given a channel ID, the user is removed as a member of the channel
-
 def channel_leave(token, channel_id):
     if valid_channel(channel_id) == False:
         raise ValueError("Channel does not exist")
@@ -73,7 +68,6 @@ def channel_leave(token, channel_id):
 
 #Given a channel_id of a channel that the authorised user can join
 #adds them to that channel
-
 def channel_join(token, channel_id):
     if valid_channel(channel_id) == False:
         raise ValueError("Channel does not exist")
@@ -83,8 +77,6 @@ def channel_join(token, channel_id):
     return {}
 
 #make user an owner of the channel
-
-
 def channel_addowner(token, channel_id, u_id):
     if valid_channel(channel_id) == False:
         raise ValueError("Channel does not exist")
@@ -98,7 +90,6 @@ def channel_addowner(token, channel_id, u_id):
 
 
 #Remove user with user id u_id an owner of this channel
-
 def channel_removeowner(token, channel_id, u_id):
     if valid_channel(channel_id) == False:
         raise ValueError("Channel does not exist")
@@ -109,27 +100,20 @@ def channel_removeowner(token, channel_id, u_id):
         raise AccessError("User is not an owner of the channel or slackrowner")
     return {}
 
-
 #Provides a list of all channels and details that the auth user is part of
-
 def channels_list(token):
     #if token is part of channels 
     
     channels = {"id" : 123, "name" : "TestChannel"}
     return channels
 
-
 #Provides a list of channels and their associated details
-
 def channels_listall(token):
-    
     channels = {"id" : 123, "name" : "TestChannel"}
 
     return channels
 
-
 #Create a channel with the name that is either public or private
-
 def channels_create(token, name, is_public):
     if len(name) > 20:
         raise ValueError("Name is longer than 20 characters")
@@ -138,7 +122,6 @@ def channels_create(token, name, is_public):
     else:
         #if private
         return {"channel_id" : 1}
-    
 
 #Checks if the channel is a valid channel
 def valid_channel(channel_id):
@@ -146,7 +129,6 @@ def valid_channel(channel_id):
         return True
     else:
         return False
-
 
 #Checks if the user is a member of the channel
 def valid_member(token, channel_id):
@@ -156,8 +138,6 @@ def valid_member(token, channel_id):
         return True
     else:
         return False
-
-
 
 #Returns true if it is a private channel, returns false if not private
 def private_channel(channel_id):
@@ -172,7 +152,6 @@ def user_is_owner(channel_id, u_id):
         return True
     else:
         return False
-    
     
 #if authorised user is slackr owner, return true, else return false
 def token_is_slackrowner(token):
@@ -193,4 +172,3 @@ def valid_user(u_id):
         return True
     else:
         return False
-
