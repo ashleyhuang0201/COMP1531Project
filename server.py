@@ -18,5 +18,35 @@ def echo2():
         'echo' : request.form.get('echo'),
     })
 
+@APP.route('/auth/login', methods = ['POST'])
+def auth_login():
+    """ Description of function """
+    return "You have reach auth_login Endpoint"
+
+
+@APP.route('/auth/logout', methods = ['POST'])
+def auth_logout():
+    """ Description of function """
+    return "You have reach auth_logout Endpoint"
+
+
+@APP.route('/auth/register', methods = ['POST'])
+def auth_register():
+    """ Description of function """
+    return "You have reach auth_register Endpoint"
+
+
+@APP.route('/auth/passwordreset/request', methods = ['POST'])
+def auth_passwordreset_request():
+    """ Description of function """
+    return "You have reach auth_passwordreset_request Endpoint"
+
+
+@APP.route('/auth/passwordreset/reset', methods = ['POST'])
+def auth_passwordreset_reset():
+    """ Description of function """
+    return "You have reach auth_passwordreset_reset Endpoint"
+
+
 if __name__ == '__main__':
     APP.run()
