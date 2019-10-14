@@ -13,14 +13,14 @@ def search(token, query_str):
         # Messages 'Multichannel search 2' and 'Multichannel search 1' respectively
         # Ordered this way since I'm assuming search should return most recent 
         # results first
-        matches.append(test.messages2[0])
-        matches.append(test.messages1[0])
+        matches.append(test.MESSAGES2[0])
+        matches.append(test.MESSAGES1[0])
     elif (query_str == '93336255 Singlechannel match '):
         # Messages 'Singlechannel search 2' and 'Singlechannel search 1' respectively
-        matches.append(test.messages1[2])
-        matches.append(test.messages1[3])
+        matches.append(test.MESSAGES1[2])
+        matches.append(test.MESSAGES1[3])
     elif (query_str == '93336256 Only this'):
         # Message 'Only this'
-        matches.append(test.messages1[1])
+        matches.append(test.MESSAGES1[1])
 
     return {'messages': matches}
