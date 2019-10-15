@@ -2,7 +2,7 @@
 from json import dumps
 from flask import Flask, request
 
-from server.global_var import data
+from server import global_var
 from server.auth import auth_functions as auth
 
 APP = Flask(__name__)
@@ -54,10 +54,9 @@ def auth_register():
     name_first = request.form.get("name_first")
     name_last = request.form.get("name_last")
 
-    return dumps(
-        auth.auth_register(email,password,name_first,name_last)
-    )
+    return auth.auth_register(email,password,name_first,name_last)
     
+
 @APP.route('/auth/passwordreset/request', methods = ['POST'])
 def auth_passwordreset_request():
     """ Description of function """

@@ -1,15 +1,15 @@
 
-from server.helper.Error import AccessError
-#from server.global_var import data
+from server import global_var
 import re 
 import jwt
+import hashlib
 
 SECRET = "token_hash"
-
 
 # Given a registered user's email and password and generates a valid token
 # for the user to remain authenticated
 def auth_login(email, password):
+    
     if valid_email(email) == False:
         raise ValueError("Invalid Email")
     if registered_email(email) == False:
@@ -17,10 +17,10 @@ def auth_login(email, password):
     if registered_account(email, password) == False:
         raise ValueError("Password Incorrect")
 
-    for user in data["users"]:
+    for user in global_var.data["users"]:
         if user["email"] == email:
-            data["tokens"].append(get_token(user["u_id"]))
-            return {"u_id": user["u_id"], "token": get_token(user["u_id"])}
+            global_var.data["tokens"].append(get_token(user["u_id"]))
+            return {"u_id": user["u_id"], "token": str(get_token(user["u_id"]))}
         
 
 # Given an active token, invalidates the taken to log the user out. Given a 
@@ -35,6 +35,9 @@ def auth_logout(token):
 # Given a user's first and last name, email address, and password, create a new 
 # account for them and return a new token for authentication in their session
 def auth_register(email, password, name_first, name_last):
+
+    
+
     if valid_email(email) == False:
         raise ValueError("Invalid Email")
     if registered_email(email) == True:
@@ -46,15 +49,21 @@ def auth_register(email, password, name_first, name_last):
     if valid_name(name_last) == False:
         raise ValueError("Invalid Last Name")
 
-    new_u_id = len(data["users"])
+    
+
+    new_u_id = len(global_var.data["users"])
     token = get_token(new_u_id)
 
-    data["users"].append({"u_id": new_u_id, \
+    
+
+    global_var.data["users"].append({"u_id": new_u_id, \
                             "password": password, "email": email, \
                             "name_first": name_first,"name_last": name_last, \
                             "handle": create_handle(name_first,name_last)})
 
-    return {"u_id": new_u_id, "token": token}
+    global_var.data["tokens"].append(str(token))
+
+    return { "u_id": new_u_id, "token": str(token)}
 
 """
 Given an email address, if the user is a registered user, send's them a an 
@@ -90,7 +99,7 @@ def valid_email(email):
 
 # Checks if a password is a valid password to be registered
 def valid_password(password):
-    if len(password) > 6 and len(password) < 30:
+    if len(password) > 6:
         return True
     else:
         return False
@@ -110,7 +119,7 @@ def create_handle(name_first, name_last):
 def registered_email(email):
     
     #Loops through users to find matching email
-    for user in data["users"]:
+    for user in global_var.data["users"]:
         if user["email"] == email:
             return True
         
@@ -120,19 +129,29 @@ def registered_email(email):
 def registered_account(email, password):
 
     #Loops through users to find matching email
-    for user in data["users"]:
+    for user in global_var.data["users"]:
         if user["email"] == email:
             if user["password"] == password:
                 return True
             else:
                 return False
 
+
 def get_token(u_id):
-    return jwt.encode({'some': 'payload'}, SECRET, algorithm='HS256')
+    global SECRET
+    return jwt.encode({"u_id": u_id}, SECRET, algorithm='HS256')
+
+def get_user(token):
+    global SECRET
+    return jwt.decode(token, SECRET, algorithms=['HS256'])
+
+# Creates a hashed password to store
+def hashPassword(password):
+    return hashlib.sha256(password.encode()).hexdigest()
 
 # Checks the activeness of a token
 def valid_token(token):
-    if token in data["tokens"]:
+    if token in global_var.data["tokens"]:
         return True
     else:
         return False
