@@ -41,7 +41,11 @@ def auth_login():
 @APP.route('/auth/logout', methods = ['POST'])
 def auth_logout():
     """ Description of function """
-    return "You have reach auth_logout Endpoint"
+    token = request.form.get("token")
+    return dumps(
+        auth.auth_logout(token)
+    )
+    
 
 @APP.route('/auth/register', methods = ['POST'])
 def auth_register():
@@ -54,7 +58,9 @@ def auth_register():
     name_first = request.form.get("name_first")
     name_last = request.form.get("name_last")
 
-    return auth.auth_register(email,password,name_first,name_last)
+    return dumps(
+        auth.auth_register(email,password,name_first,name_last)
+    ) 
     
 
 @APP.route('/auth/passwordreset/request', methods = ['POST'])

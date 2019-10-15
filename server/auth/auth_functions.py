@@ -26,17 +26,14 @@ def auth_login(email, password):
 # Given an active token, invalidates the taken to log the user out. Given a 
 # non-valid token, does nothing
 def auth_logout(token):
-    if valid_token(token) == True:
-        # Remove token from server
-        pass
+    if token in global_var.data["tokens"]:
+        global_var.data["tokens"].remove(token)
 
     return {}
 
 # Given a user's first and last name, email address, and password, create a new 
 # account for them and return a new token for authentication in their session
 def auth_register(email, password, name_first, name_last):
-
-    
 
     if valid_email(email) == False:
         raise ValueError("Invalid Email")
@@ -49,12 +46,8 @@ def auth_register(email, password, name_first, name_last):
     if valid_name(name_last) == False:
         raise ValueError("Invalid Last Name")
 
-    
-
     new_u_id = len(global_var.data["users"])
     token = get_token(new_u_id)
-
-    
 
     global_var.data["users"].append({"u_id": new_u_id, \
                             "password": password, "email": email, \
