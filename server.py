@@ -2,7 +2,7 @@
 from json import dumps
 from flask import Flask, request
 
-from global_var import data
+from server.global_var import data
 from server.auth import auth_functions as auth
 
 APP = Flask(__name__)
@@ -22,8 +22,6 @@ def echo2():
         'echo' : request.form.get('echo'),
     })
 
-
-
 @APP.route('/auth/login', methods = ['POST'])
 def auth_login():
     """ 
@@ -35,7 +33,10 @@ def auth_login():
     password = request.form.get("password")
 
     #Calls function from auth_functions.py
-    return auth.auth_login(email,password)
+    return dumps(
+        auth.auth_login(email,password)
+    )
+    
 
 @APP.route('/auth/logout', methods = ['POST'])
 def auth_logout():
@@ -53,9 +54,10 @@ def auth_register():
     name_first = request.form.get("name_first")
     name_last = request.form.get("name_last")
 
-    return auth.auth_register(email,password,name_first,name_last)
-
-
+    return dumps(
+        auth.auth_register(email,password,name_first,name_last)
+    )
+    
 @APP.route('/auth/passwordreset/request', methods = ['POST'])
 def auth_passwordreset_request():
     """ Description of function """
