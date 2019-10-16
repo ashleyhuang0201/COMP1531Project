@@ -22,11 +22,11 @@ def echo2():
         'echo' : request.form.get('echo'),
     })
 
-@APP.route('/auth/login', methods = ['POST'])
+@APP.route('/auth/login', methods=['POST'])
 def auth_login():
-    """ 
+    """
     Given a registered user' email and password, generates a valid token
-    for the user to remain authenticated 
+    for the user to remain authenticated
     """
     #Gets username and password
     email = request.form.get("email")
@@ -34,22 +34,20 @@ def auth_login():
 
     #Calls function from auth_functions.py
     return dumps(
-        auth.auth_login(email,password)
+        auth.auth_login(email, password)
     )
-    
 
-@APP.route('/auth/logout', methods = ['POST'])
+@APP.route('/auth/logout', methods=['POST'])
 def auth_logout():
     """ Description of function """
     token = request.form.get("token")
     return dumps(
         auth.auth_logout(token)
     )
-    
 
-@APP.route('/auth/register', methods = ['POST'])
+@APP.route('/auth/register', methods=['POST'])
 def auth_register():
-    """ 
+    """
     Given a user's details, creates a new account and returns a new token
     """
     #Gets user details
@@ -59,21 +57,18 @@ def auth_register():
     name_last = request.form.get("name_last")
 
     return dumps(
-        auth.auth_register(email,password,name_first,name_last)
-    ) 
-    
+        auth.auth_register(email, password, name_first, name_last)
+    )
 
-@APP.route('/auth/passwordreset/request', methods = ['POST'])
+@APP.route('/auth/passwordreset/request', methods=['POST'])
 def auth_passwordreset_request():
     """ Description of function """
     return "You have reach auth_passwordreset_request Endpoint"
 
-
-@APP.route('/auth/passwordreset/reset', methods = ['POST'])
+@APP.route('/auth/passwordreset/reset', methods=['POST'])
 def auth_passwordreset_reset():
     """ Description of function """
     return "You have reach auth_passwordreset_reset Endpoint"
-
 
 if __name__ == '__main__':
     APP.run()
