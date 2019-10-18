@@ -6,14 +6,14 @@ import hashlib
 import jwt
 
 import server.global_var as global_var
-from server.helper.valid_checks import valid_email, valid_name
+from server.helpers import valid_email, valid_name
 
-SECRET = "token_hash"
+SECRET = "9c055b2cc7394df69438fe14bc31cbe142898b1d8548360d2b4cddd990e97c69"
 
 def auth_login(email, password):
     '''
-    Given a registered user's email and password and generates a valid token
-    for the user to remain authenticated
+    Given a registered user's email and password function generates and returns a 
+    user_id and token assigned to the account
     '''
     if not valid_email(email):
         raise ValueError("Invalid Email")
@@ -23,8 +23,9 @@ def auth_login(email, password):
         raise ValueError("Password Incorrect")
 
     for user in global_var.data["users"]:
-        if user["email"] == email:
-            global_var.data["tokens"].append(get_token(user["u_id"]))
+        if user.email == email:
+            token = get_token(user.u_id)
+            global_var.data["tokens"].append(token)
             return {"u_id": user["u_id"], "token": str(get_token(user["u_id"]))}
 
 
@@ -54,10 +55,9 @@ def auth_register(email, password, name_first, name_last):
     new_u_id = len(global_var.data["users"])
     token = get_token(new_u_id)
 
-    global_var.data["users"].append({"u_id": new_u_id, \
-                            "password": password, "email": email, \
-                            "name_first": name_first, "name_last": name_last, \
-                            "handle": create_handle(name_first, name_last)})
+    user = global_var.User(new_u_id, email, hashPassword(password), name_first, name_last)
+
+    global_var.data["users"].append(user)
 
     global_var.data["tokens"].append(str(token))
 
@@ -70,6 +70,10 @@ def auth_passwordreset_request(email):
     auth_passwordreset_reset, shows that the user trying to reset the password
     is the one who got sent this email.
     '''
+
+    # Just shutting up pylint for now
+    if email:
+        pass
 
     return {}
 
@@ -95,16 +99,12 @@ def valid_password(password):
     else:
         return False
 
-def create_handle(name_first, name_last):
-    ''' Creates a handle for a newly registered user '''
-    return str(f"{name_first}{name_last}")
-
 # Checks if an email is already a registered email
 def registered_email(email):
 
     #Loops through users to find matching email
     for user in global_var.data["users"]:
-        if user["email"] == email:
+        if user.email == email:
             return True
 
     return False
@@ -114,8 +114,8 @@ def registered_account(email, password):
 
     #Loops through users to find matching email
     for user in global_var.data["users"]:
-        if user["email"] == email:
-            if user["password"] == password:
+        if user.email == email:
+            if user.password == password:
                 return True
             else:
                 return False
@@ -125,7 +125,7 @@ def get_token(u_id):
     global SECRET
     return jwt.encode({"u_id": u_id}, SECRET, algorithm='HS256')
 
-def get_user(token):
+def get_id(token):
     global SECRET
     return jwt.decode(token, SECRET, algorithms=['HS256'])
 
