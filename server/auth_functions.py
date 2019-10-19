@@ -1,9 +1,12 @@
 '''
 Authorisation functions abstracted from the HTTP routes
 '''
-
 import hashlib
 import jwt
+import random
+from flask import Flask
+from flask_mail import Mail, Message
+from json import dumps
 
 import server.global_var as global_var
 from server.helpers import valid_email, valid_name
@@ -15,6 +18,7 @@ def auth_login(email, password):
     Given a registered user's email and password function generates and returns a 
     user_id and token assigned to the account
     '''
+    # Check validity of login
     if not valid_email(email):
         raise ValueError("Invalid Email")
     if not registered_email(email):
@@ -22,6 +26,7 @@ def auth_login(email, password):
     if not registered_account(email, password):
         raise ValueError("Password Incorrect")
 
+    # Logging in
     for user in global_var.data["users"]:
         if user.email == email:
             token = get_token(user.u_id)
@@ -32,6 +37,7 @@ def auth_login(email, password):
 # Given an active token, invalidates the taken to log the user out. Given a
 # non-valid token, does nothing
 def auth_logout(token):
+    # Deleting token
     if token in global_var.data["tokens"]:
         global_var.data["tokens"].remove(token)
 
@@ -40,7 +46,7 @@ def auth_logout(token):
 # Given a user's first and last name, email address, and password, create a new
 # account for them and return a new token for authentication in their session
 def auth_register(email, password, name_first, name_last):
-
+    # Checking if registration details are valid
     if not valid_email(email):
         raise ValueError("Invalid Email")
     if registered_email(email):
@@ -52,6 +58,7 @@ def auth_register(email, password, name_first, name_last):
     if not valid_name(name_last):
         raise ValueError("Invalid Last Name")
 
+    # Adding new user details
     new_u_id = len(global_var.data["users"])
     token = get_token(new_u_id)
 
@@ -70,12 +77,33 @@ def auth_passwordreset_request(email):
     auth_passwordreset_reset, shows that the user trying to reset the password
     is the one who got sent this email.
     '''
+    if valid_email(email) == False:
+        raise ValueError("Email is not valid")
 
-    # Just shutting up pylint for now
-    if email:
-        pass
+    # Creating email server
+    APP = Flask(__name__)
+    APP.config.update(
+        MAIL_SERVER='smtp.gmail.com',
+        MAIL_PORT=465,
+        MAIL_USE_SSL=True,
+        MAIL_USERNAME = "comp1531shared@gmail.com",
+        MAIL_PASSWORD = "ThanksGuys"
+    )
 
-    return {}
+    # Preparing reset code
+    reset_code = generate_reset_code()
+    user = find_user_by_email(email)
+    user.add_reset_code(reset_code)
+
+    # Creating mail to send
+    mail = Mail(APP)
+    msg = Message("Website Reset Request",
+        sender="comp1531shared@gmail.com",
+        recipients=[email])
+    msg.body = "Your reset code is: " + reset_code
+    mail.send(msg)
+
+    return dumps({})
 
 def auth_passwordreset_reset(reset_code, new_password):
     '''
@@ -87,7 +115,10 @@ def auth_passwordreset_reset(reset_code, new_password):
     if not valid_password(new_password):
         raise ValueError("Invalid Password")
 
-    return {}
+    user = find_user_by_reset_code(reset_code)
+    user.change_password(new_password)
+
+    return dumps({})
 
 
 # Helper Functions specific to auth
@@ -146,3 +177,10 @@ def valid_reset_code(reset_code):
         return True
     else:
         return False
+
+# Generate reset code
+def generate_reset_code():
+    reset_code = random.random()
+    # Access and place reset code into data - Todo
+
+    return reset_code
