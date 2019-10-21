@@ -17,6 +17,15 @@ class User:
         self.name_first = name_first
         self.name_last = name_last
         self.handle = f"{name_first}{name_last}"
+        self.permission = 3
+        """
+        An owner of slackr is an owner in every channel # 1
+        An admin of slackr is an owner in every channel # 2
+        A member of slackr is a member in channels they are not owners of and an owner in channels they are owners of # 3
+        """
+    
+    def change_permissions(self, permission_id):
+        self.permission = permission_id
 
 class Channel:
     def __init__(self, name, isPublic):
@@ -56,8 +65,15 @@ class Channel:
         now = datetime.datetime.now()
         for item in self.send_later:
             if (now - item["time_created"]).total_seconds() >= item["send_time"]:
-                # Implement transfer from send_later to messages once channel object is better defined
+                # Implement transfer from send_later to maessages once channel object is better defined
                 pass
+
+    def user_in_channel(token):a
+        # Checks if a user is in the channel
+
+    def search_message(self, substring):
+        # Checks messages for if substring exists
+        # Returns strings as a list
 
     def add_react(self, message_id, react_id):
         # To do
