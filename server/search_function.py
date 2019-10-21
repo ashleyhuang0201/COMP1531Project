@@ -10,8 +10,10 @@ def search(token, query_str):
     if not valid_token(token):
         raise ValueError("Invalid token")
 
+    # Searching for messages with query string
     messages = []
     for channel in global_var.data["channels"]:
+        if channel.user
         message = message + channel.search(query_str)
     
     return {"messages": messages}
