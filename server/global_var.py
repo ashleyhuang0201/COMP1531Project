@@ -27,26 +27,105 @@ class User:
     def change_permissions(self, permission_id):
         self.permission = permission_id
 
+class Message:
+    def __init__(self, u_id, message, channel_id):
+        self.id = message_id_ticker
+        message_id_ticker += 1
+        self.sender = u_id
+        self.message = message
+        self.channel = channel_id
+        self.time_created = datetime.datetime.now
+        self.reacts = [{"react_id": 1, "u_id": []}]
+        self.is_pinned = False
+
+    def user_sent_message(self, u_id):
+        if self.sender == u_id:
+            return True
+        else:
+            return False
+
+    def user_has_reacted(self, u_id):
+        for react in channel.reacts:
+            if react["react_id"] == 1:
+                if u_id in react["u_id"]:
+                    return True
+                else:
+                    return False
+
+    def update_message(self, message):
+        self.message = message
+
+    def add_react(self, u_id):
+        for react in channel.reacts:
+            if react["react_id"] == 1:
+                react["u_id"].append(u_id)
+
+    def remove_react(self, u_id):
+        for react in channel.reacts:
+            if react["react_id"] == 1:
+                react["u_id"].remove(u_id)
+
+    def pin_message(self):
+        self.is_pinned = True
+
+    def unpin_message(self):
+        self.is_pinned = False
+
+
 class Channel:
-    def __init__(self, name, isPublic):
+    def __init__(self, name, u_id, is_public):
         self.name = name
-        self.id = len(data["channels"]) + 1
-
-        # A list of dictionaries containing {message_id, u_id, message, 
-        # time_created, is_unread, reacts, is_pinned }
+        self.id = len(data["channels"])
+        # messages: a list of message objects
         self.messages = [] 
-
-        # A list of dictionaries containing messages 
-        # {(message_id, message, u_id, time_created) and send time}
+        #send_later: a list of dictionaries containing messages and a send time 
         self.send_later = [] 
+        self.owners = [u_id]
+        self.users = [u_id]
+        self.is_public = is_public
 
-        self.owners = []
-        self.users = []
-        self.isPublic = isPublic
+    def add_user(self, u_id):
+        self.users.append(u_id)
 
-    def send_message(self, message):
-        # To do
-        pass
+    def remove_user(self, u_id):
+        self.users.remove(u_id)
+
+    def add_owner(self):
+        self.owners.append(u_id)
+        
+    def remove_owner(self):
+        self.owners.remove(u_id)
+
+    def is_member(self, u_id):
+        if u_id in self.users:
+            return True
+        else:
+            return False
+
+    def is_public(self):
+        if self.is_public == True:
+            return True
+        else:
+            return False
+
+    def add_message(self, message):
+        self.messages.append(message)
+
+    def remove_message(self, message_id):
+        for message in self.messages:
+            if message_id == message.id:
+                removed_message = message
+
+        self.messages.remove(removed_message)
+            
+    def update_message_object(self, message_id, message_object):
+        for message in self.messages:
+            if message_id == message.id:
+                message.message = message_object.message
+                message.reacts = message_object.reacts
+                message.is_pinned = message_object.is_pinned
+
+'''
 
     def send_later(self, message, token, time_sent):
         # Message id starts from 0 index in messages?
@@ -65,41 +144,6 @@ class Channel:
         now = datetime.datetime.now()
         for item in self.send_later:
             if (now - item["time_created"]).total_seconds() >= item["send_time"]:
-                # Implement transfer from send_later to maessages once channel object is better defined
+                # Implement transfer from send_later to messages once channel object is better defined
                 pass
-
-    def user_in_channel(token):a
-        # Checks if a user is in the channel
-
-    def search_message(self, substring):
-        # Checks messages for if substring exists
-        # Returns strings as a list
-
-    def add_react(self, message_id, react_id):
-        # To do
-        pass
-    def remove_react(self, message_id, react_id):
-        # To do
-        pass
-    def edit_message(self, message_id, message):
-        # Implement after confirmation
-        pass
-    def remove_message(self, message_id):
-        # Implement after confirmation
-        pass
-    def unpin_message(self, message_id):
-        # To do
-        pass
-    def pin_message(self, message_id):
-        # Implement
-        pass
-    def add_owner(self):
-        pass
-    def remove_owner(self):
-        pass
-
-    def add_user(self, u_id):
-        self.users.append(u_id)
-
-    def remove_user(self):
-        pass
+'''
