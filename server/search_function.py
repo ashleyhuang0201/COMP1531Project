@@ -14,6 +14,6 @@ def search(token, query_str):
     messages = []
     for channel in global_var.data["channels"]:
         if channel.user_in_channel(token):
-            messages = messages + channel.search(query_str)
+            messages = messages + channel.search_message(query_str)
     
     return {"messages": messages}
