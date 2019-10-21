@@ -1,26 +1,17 @@
-# Dummy implementation of search() fucntion
-# Created by: Coen Townson
-# Created on: 2/10/2019
+import server.global_var as global_var
+from server.helpers import valid_token
 
-import pytest
-from server.search import search_function_test as test
-
-matches = []
-
-# Dummy search function and returns
 def search(token, query_str):
-    if (query_str == '93336257 Multichannel search '):
-        # Messages 'Multichannel search 2' and 'Multichannel search 1' respectively
-        # Ordered this way since I'm assuming search should return most recent 
-        # results first
-        matches.append(test.messages2[0])
-        matches.append(test.messages1[0])
-    elif (query_str == '93336255 Singlechannel match '):
-        # Messages 'Singlechannel search 2' and 'Singlechannel search 1' respectively
-        matches.append(test.messages1[2])
-        matches.append(test.messages1[3])
-    elif (query_str == '93336256 Only this'):
-        # Message 'Only this'
-        matches.append(test.messages1[1])
+    """
+    Given a query string, return a collection of messages in all of the
+    channels that the user has joined that match the query
+    """
+    # Checking if the token is a valid token
+    if not valid_token(token):
+        raise ValueError("Invalid token")
 
-    return {'messages': matches}
+    messages = []
+    for channel in global_var.data["channels"]:
+        message = message + channel.search(query_str)
+    
+    return {"messages": messages}
