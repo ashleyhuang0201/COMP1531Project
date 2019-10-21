@@ -9,6 +9,8 @@ data = {
     "messages": [],
 }
 
+message_id_ticker = 0
+
 class User:
     def __init__(self, u_id, email, password, name_first, name_last):
         self.u_id = u_id
