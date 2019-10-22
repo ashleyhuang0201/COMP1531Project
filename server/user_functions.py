@@ -7,6 +7,7 @@ from server.auth import auth_functions
 from server.helper.Error import AccessError
 from server.helper.valid_checks import valid_email, valid_user_id
 
+"TESTING"
 """
 For a valid user, returns information about their email, first name, 
 last name, and handle
