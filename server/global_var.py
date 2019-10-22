@@ -29,6 +29,15 @@ class User:
     def change_permissions(self, permission_id):
         self.permission = permission_id
 
+    def update_name_first(self, name_first):
+        self.name_first = name_first
+
+    def update_name_last(self, name_last):
+        self.name_last = name_last
+
+    def update_email(self, email):
+        self.email = email
+
 class Message:
     def __init__(self, u_id, message, channel_id):
         self.id = message_id_ticker
