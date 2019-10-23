@@ -38,6 +38,9 @@ class User:
     def update_email(self, email):
         self.email = email
 
+    def update_handle(self, handle_str):
+        self.handle = handle_str
+
 class Message:
     def __init__(self, u_id, message, channel_id):
         self.id = message_id_ticker
