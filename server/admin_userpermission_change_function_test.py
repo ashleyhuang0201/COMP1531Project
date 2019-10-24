@@ -1,7 +1,8 @@
 """
 Tests for admin
 admin_userpermission_change: Invalid user, invalid permission, user_member,
-invalid_token, successful case
+invalid_token, successful case (permission changes by owner and admin, ability
+to change permission to any three states)
 """
 
 import pytest
