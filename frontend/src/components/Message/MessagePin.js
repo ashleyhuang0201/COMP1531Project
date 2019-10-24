@@ -5,8 +5,6 @@ import MdiIcon from '@mdi/react';
 import { mdiPin, mdiPinOutline } from '@mdi/js';
 import { IconButton } from '@material-ui/core';
 
-import { url } from '../../utils/constants';
-
 import { withTheme } from '@material-ui/styles';
 import AuthContext from '../../AuthContext';
 
@@ -23,12 +21,12 @@ function MessagePin({
 
   const toggle = () => {
     if (isPinned) {
-      axios.post(`${url}/message/unpin`, {
+      axios.post(`/message/unpin`, {
         token,
         message_id,
       });
     } else {
-      axios.post(`${url}/message/pin`, {
+      axios.post(`/message/pin`, {
         token,
         message_id,
       });
