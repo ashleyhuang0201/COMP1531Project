@@ -5,6 +5,8 @@ Gets data
 '''
 import re
 import server.global_var as global_var
+import jwt
+import hashlib
 
 # Decodes a token
 def decode_token(token):
@@ -12,7 +14,11 @@ def decode_token(token):
 
 # Encodes user id
 def encode_token_for_u_id(u_id):
-    jwt.encode({"u_id": u_id}, SECRET, algorithm=['HS256'])
+    return jwt.encode({"u_id": u_id}, SECRET, algorithm=['HS256'])
+
+# Hashes a code
+def hash(code):
+    return hashlib.sha256(password.encode()).hexdigest()
 
 def token_is_admin(token):
     """
