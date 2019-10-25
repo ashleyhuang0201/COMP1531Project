@@ -146,3 +146,4 @@ def get_channel(id):
     for channel in data.data["channels"]:
         if channel.id == id:
             return channel
+    return None
