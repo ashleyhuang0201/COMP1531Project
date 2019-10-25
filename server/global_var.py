@@ -25,7 +25,8 @@ class User:
         """
         An owner of slackr is an owner in every channel # 1
         An admin of slackr is an owner in every channel # 2
-        A member of slackr is a member in channels they are not owners of and an owner in channels they are owners of # 3
+        A member of slackr is a member in channels they are not owners of
+        and an owner in channels they are owners of # 3
         """
 
     def change_permissions(self, permission_id):
@@ -99,8 +100,8 @@ class Channel:
         self.owners = [u_id]
         self.users = [u_id]
         self.is_public = is_public
-        self.inStandup = False
-        self.standupMessages = []
+        self.in_standup = False
+        self.standup_messages = []
 
     def add_user(self, u_id):
         self.users.append(u_id)
@@ -143,43 +144,17 @@ class Channel:
                 message.reacts = message_object.reacts
                 message.is_pinned = message_object.is_pinned
 
-    def startStandup(self):
-        self.inStandup = True
+    def start_standup(self):
+        self.in_standup = True
 
-    def endStandup(self, token):
-        self.inStandup = False
+    def end_standup(self, token):
+        self.in_standup = False
         message = ""
-        for m in self.standupMessages:
+        for m in self.standup_messages:
             line = ': '.join(m['user'], m['message'])
             '\n'.join(message, line)
-
+        self.standup_messages = []
         message_send(token, self.id, message)
 
-    def addStandupMessage(self, token, message):
-        self.standupMessages.append({
-            'user': get_user(token).handle, 
-            'message': message})
-
-
-'''
-
-    def send_later(self, message, token, time_sent):
-        # Message id starts from 0 index in messages?
-        message_id = len(self.send_later) + len(self.messages)
-        self.send_later.append({
-            "message_id": message_id,
-            "message": message,
-            "u_id": token,
-            "time_created": time_sent,
-        })
-        return {"message_id": message_id}
-
-    def update_send_later(self, message):
-        # Checks if it is possible to send message
-        # To be placed in its proper location
-        now = datetime.datetime.now()
-        for item in self.send_later:
-            if (now - item["time_created"]).total_seconds() >= item["send_time"]:
-                # Implement transfer from send_later to messages once channel object is better defined
-                pass
-'''
+    def add_standup_message(self, token, message):
+        self.standup_messages.append({'user': get_user(token).handle, 'message': message})
