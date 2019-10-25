@@ -117,7 +117,7 @@ def test_search_multi_channel():
     channel1 = channels_create(token, "chat1", True)
     channel1_id = channel1["channel_id"]
     
-    # Creating channel 1
+    # Creating channel 2
     channel2 = channels_create(token, "chat2", True)
     channel2_id = channel2["channel_id"]
     
