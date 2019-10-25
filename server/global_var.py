@@ -112,13 +112,6 @@ class Message:
                 else:
                     return False
 
-    # Checks if the message is currently pinned
-    def is_pinned(self):
-        if self.is_pinned == True:
-            return True
-        else:
-            return False
-
     # Edits the message of the message object
     def edit_message(self, message):
         self.message = message
@@ -182,35 +175,7 @@ class Channel:
      # Checks if an user is a owner
     def is_owner(self, u_id):
         if u_id in self.owners:
-            retur# Adds a member to the channel
-    def add_user(self, u_id):
-        self.users.append(u_id)
-
-    # Removes a member from the channel
-    def remove_user(self, u_id):
-        self.users.remove(u_id)
-
-    # Adds an owner to the channels
-    def add_owner(self, u_id):
-        self.owners.append(u_id)
-        
-    # Removes an owner from the channel
-    def remove_owner(self, u_id):
-        self.owners.remove(u_id)
-
-    # Checks if an user is a member
-    def is_member(self, u_id):
-        if u_id in self.users:
             return True
-        else:
-            return False
-
-    # Checks if an user is a owner
-    def is_owner(self, u_id):
-        if u_id in self.owners:
-            return True
-        else:
-            return False
 
     # Checks if the channel is public
     def is_public(self):
@@ -227,8 +192,7 @@ class Channel:
     def remove_message(self, message_id):
         for message in self.messages:
             if message_id == message.id:
-                removed_message = message
-        self.messages.remove(removed_message)
+                self.messages.remove(message)
 
     # Searches for a message given a substring
     def search_message(self, substring):
@@ -236,7 +200,7 @@ class Channel:
         Given a query string, return a list of messages in the channel
         """
         messages = []
-        for message in channel.message:
+        for message in self.messages:
             if message.find(substring) != -1:
                 messages.append(message)
         return messages
