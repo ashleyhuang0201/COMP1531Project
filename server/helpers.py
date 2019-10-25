@@ -90,18 +90,9 @@ def valid_permission_id(permission_id):
     """
     Checks if a permission is valid
     """
-    if permission_id == 1:
-        # Owner
-        return True
-    elif permission_id == 2:
-        # Admin
-        return True
-    elif permission_id == 3:
-        # User
-        return True
-    else:
-        # Invalid permission_id
+    if permission_id < 1 or permission_id > 3:
         return False
+    return True
 
 def get_user_by_u_id(u_id):
     """
@@ -142,7 +133,7 @@ def get_user_token_by_u_id(u_id):
     
     return encode_token_for_u_id(u_id)
 
-def get_channel(id):
+def get_channel_by_channel_id(id):
     for channel in data.data["channels"]:
         if channel.id == id:
             return channel
