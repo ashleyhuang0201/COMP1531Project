@@ -1,52 +1,128 @@
-# Tests for the search messages function
-# Created by: Coen Townson
-# Created on: 2/10/2019
-
+"""
+Tests for channel functions
+search: Invalid token, successful case (empty search, no such message,
+no message in channel, 1 result from one channel, two results from one channel,
+results from multiple channels)
+"""
 import pytest
 from server.search import search_function as search
 from server.message.message_functions import message_send
 from server.auth.auth_functions import auth_register
 from server.channel.channel_functions import channels_create, channel_messages
 
-##### Initialize some messages to be searched #####
-# Create test user
-user = auth_register('searchtest@test.com', 'password', 'search', 'test')
-# Create two test channels to ensure search covers both
-channel1 = channels_create(user['token'], "Test1", True)
-channel2 = channels_create(user['token'], "Test2", True)
-# Send some messages
-message_send(user['token'], channel1, '93336255 Singlechannel match 1')
-message_send(user['token'], channel1, '93336255 Singlechannel match 2')
-message_send(user['token'], channel1, '93336256 Only this')
-message_send(user['token'], channel1, '93336257 Multichannel search 1')
-message_send(user['token'], channel2, '93336257 Multichannel search 2')
+# Search given invalid token
+def test_search_invalid_token:
+    with pytest.raises(ValueError, match="Invalid token"):
+        # Creating user
+        user = auth_register('user@test.com', 'password', 'search', 'test')
+        token = get_user_token_by_u_id(user.u_id)
+        
+        # Creating channel
+        channel = channels_create(token, "chat", True)
+        channel_id = channel["channel_id"]
 
-# Get a list of the messages just created
-messages1 = channel_messages(user['token'], channel1, 0)
-messages2 = channel_messages(user['token'], channel2, 0)
+        search.search("invalid token", "123")
 
-##### Tests #####
-
-# Search for nothing and get nothing
+# Search for nothing
 def test_search_none():
-    assert search.search(user['token'], '') == {'messages': []}
+    # Creating user
+    user = auth_register('user@test.com', 'password', 'search', 'test')
+    token = get_user_token_by_u_id(user.u_id)
+    
+    # Creating channel
+    channel = channels_create(token, "chat", True)
+    channel_id = channel["channel_id"]
+    
+    # Adding messages to channel
+    def message_send(token, channel_id, "121"):
+    def message_send(token, channel_id, "321"):
+    def message_send(token, channel_id, "342"):
+    def message_send(token, channel_id, "499"):
+    
+    assert search.search(token, '') == {'messages': []}
 
-# Search for message that shouldn't exist and get nothing
-def test_search_empty():
-    assert search.search(user['token'], 'no message here like this') == \
-        {'messages': []}
+# Search for message that does not exist and get nothing
+def test_search_no_match():
+    # Creating user
+    user = auth_register('user@test.com', 'password', 'search', 'test')
+    token = get_user_token_by_u_id(user.u_id)
+    
+    # Creating channel
+    channel = channels_create(token, "chat", True)
+    channel_id = channel["channel_id"]
+    
+    # Adding messages to channel
+    def message_send(token, channel_id, "121"):
+    def message_send(token, channel_id, "321"):
+    def message_send(token, channel_id, "342"):
+    def message_send(token, channel_id, "499"):
+    
+    assert search.search(token, 'hey') == {'messages': []}
+
+# Search for message with the channel being empty
+def test_search_empty_channel():
+    # Creating user
+    user = auth_register('user@test.com', 'password', 'search', 'test')
+    token = get_user_token_by_u_id(user.u_id)
+    
+    # Creating channel
+    channel = channels_create(token, "chat", True)
+    channel_id = channel["channel_id"]
+    
+    assert search.search(token, 'hey') == {'messages': []}
 
 # Search and get 1 message back
 def test_search_one():
-    assert search.search(user['token'], '93336256 Only this') == \
-        {'messages': messages1[1]}
+    # Creating user
+    user = auth_register('user@test.com', 'password', 'search', 'test')
+    token = get_user_token_by_u_id(user.u_id)
+    
+    # Creating channel
+    channel = channels_create(token, "chat", True)
+    channel_id = channel["channel_id"]
+    
+    # Adding messages to channel
+    def message_send(token, channel_id, "121"):
+    def message_send(token, channel_id, "321"):
+    def message_send(token, channel_id, "342"):
+    def message_send(token, channel_id, "499"):
+    
+    assert search.search(token, '99') == {'messages': ['499']}
 
 # Search and get 2 messages from the same channel back
 def test_search_single_channel():
-    assert search.search(user['token'], '93336255 Singlechannel match ') == \
-        {'messages': [messages1[2], messages1[3]]}
+    # Creating user
+    user = auth_register('user@test.com', 'password', 'search', 'test')
+    token = get_user_token_by_u_id(user.u_id)
+    
+    # Creating channel
+    channel = channels_create(token, "chat", True)
+    channel_id = channel["channel_id"]
+    
+    # Adding messages to channel
+    def message_send(token, channel_id, "121"):
+    def message_send(token, channel_id, "321"):
+    def message_send(token, channel_id, "342"):
+    def message_send(token, channel_id, "499"):
+    
+    assert search.search(token, '21') == {'messages': ['121', '321']}
 
 # Search and get 2 messages from different channels back
 def test_search_multi_channel():
-    assert search.search(user['token'], '93336257 Multichannel search ') == \
-        {'messages': [messages2[0], messages1[0]]}
+    # Creating user
+    user = auth_register('user@test.com', 'password', 'search', 'test')
+    token = get_user_token_by_u_id(user.u_id)
+    
+    # Creating channel 1
+    channel1 = channels_create(token, "chat1", True)
+    channel1_id = channel1["channel_id"]
+    
+    # Creating channel 1
+    channel2 = channels_create(token, "chat2", True)
+    channel2_id = channel2["channel_id"]
+    
+    # Adding messages to channel
+    def message_send(token, channel1_id, "121"):
+    def message_send(token, channel2_id, "321"):
+    
+    assert search.search(token, '21') == {'messages': ['121', '321']}
