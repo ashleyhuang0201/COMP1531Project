@@ -4,17 +4,17 @@ Checks user validity
 Gets data
 '''
 import re
-import server.global_var as global_var
 import jwt
 import hashlib
+import server.global_var as data
 
 # Decodes a token
 def decode_token(token):
-    return jwt.decode(token, SECRET, algorithms=['HS256'])
+    return jwt.decode(token, data.SECRET, algorithms=['HS256'])
 
 # Encodes user id
 def encode_token_for_u_id(u_id):
-    return jwt.encode({"u_id": u_id}, SECRET, algorithm=['HS256'])
+    return jwt.encode({"u_id": u_id}, data.SECRET, algorithm=['HS256'])
 
 # Hashes a code
 def hash(code):
@@ -73,7 +73,7 @@ def valid_user_id(u_id):
     '''
     Checking if a user_id is valid
     '''
-    for user in global_var.data["users"]:
+    for user in data.data["users"]:
         if user.u_id == u_id:
             return True
     return False
@@ -82,7 +82,7 @@ def valid_token(token):
     '''
     Checks if a user token is valid
     '''
-    for token in global_var.data["token"]:
+    for token in data.data["token"]:
         return True
     return False
 
@@ -112,7 +112,7 @@ def get_user_by_u_id(u_id):
         raise ValueError("Invalid User ID")
 
     # Finding user object using u_id
-    for user in global_var.data["users"]:
+    for user in data.data["users"]:
         if user.u_id == u_id:
             return user
 
@@ -125,10 +125,10 @@ def get_user_by_token(token):
         raise ValueError("Invalid token")
 
     # Decoding token
-    u_id = jwt.decode(token, SECRET, algorithms=['HS256'])
+    u_id = jwt.decode(token, data.SECRET, algorithms=['HS256'])
     
     # Finding user_id
-    for user in global_var.data["user"]:
+    for user in data.data["user"]:
         if user.u_id == u_id:
             return user
 
@@ -141,3 +141,8 @@ def get_user_token_by_u_id(u_id):
         raise ValueError("Invalid u_id")
     
     return encode_token_for_u_id(u_id)
+
+def get_channel(id):
+    for channel in data.data["channels"]:
+        if channel.id == id:
+            return channel
