@@ -18,7 +18,7 @@ def encode_token_for_u_id(u_id):
 
 # Hashes a code
 def hash(code):
-    return hashlib.sha256(password.encode()).hexdigest()
+    return hashlib.sha256(code.encode()).hexdigest()
 
 def token_is_admin(token):
     """
