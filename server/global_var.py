@@ -5,8 +5,8 @@ data = {
     "users": [],
     "tokens": [],
     "channels": [],
-    "owner": [],
     "messages": [],
+    "reset_code": [],
 }
 
 message_id_ticker = 0
