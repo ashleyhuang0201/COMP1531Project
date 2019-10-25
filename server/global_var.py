@@ -1,4 +1,6 @@
 import datetime
+from server.message_functions import message_send
+from server.helpers import get_user
 
 #Single global variable containing nested dictionaries/lists
 data = {
@@ -25,7 +27,7 @@ class User:
         An admin of slackr is an owner in every channel # 2
         A member of slackr is a member in channels they are not owners of and an owner in channels they are owners of # 3
         """
-    
+
     def change_permissions(self, permission_id):
         self.permission = permission_id
 
@@ -91,12 +93,14 @@ class Channel:
         self.name = name
         self.id = len(data["channels"])
         # messages: a list of message objects
-        self.messages = [] 
-        #send_later: a list of dictionaries containing messages and a send time 
-        self.send_later = [] 
+        self.messages = []
+        #send_later: a list of dictionaries containing messages and a send time
+        self.send_later = []
         self.owners = [u_id]
         self.users = [u_id]
         self.is_public = is_public
+        self.inStandup = False
+        self.standupMessages = []
 
     def add_user(self, u_id):
         self.users.append(u_id)
@@ -104,10 +108,10 @@ class Channel:
     def remove_user(self, u_id):
         self.users.remove(u_id)
 
-    def add_owner(self):
+    def add_owner(self, u_id):
         self.owners.append(u_id)
-        
-    def remove_owner(self):
+
+    def remove_owner(self, u_id):
         self.owners.remove(u_id)
 
     def is_member(self, u_id):
@@ -131,13 +135,31 @@ class Channel:
                 removed_message = message
 
         self.messages.remove(removed_message)
-            
+
     def update_message_object(self, message_id, message_object):
         for message in self.messages:
             if message_id == message.id:
                 message.message = message_object.message
                 message.reacts = message_object.reacts
                 message.is_pinned = message_object.is_pinned
+
+    def startStandup(self):
+        self.inStandup = True
+
+    def endStandup(self, token):
+        self.inStandup = False
+        message = ""
+        for m in self.standupMessages:
+            line = ': '.join(m['user'], m['message'])
+            '\n'.join(message, line)
+
+        message_send(token, self.id, message)
+
+    def addStandupMessage(self, token, message):
+        self.standupMessages.append({
+            'user': get_user(token).handle, 
+            'message': message})
+
 
 '''
 
