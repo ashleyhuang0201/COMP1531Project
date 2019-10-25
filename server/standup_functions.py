@@ -16,7 +16,7 @@ def standup_start(token, channel_id):
     user = get_user_by_token(token)
     if channel == None:
         raise ValueError("Channel Does Not Exist")
-    if channel.hasStandup():
+    if channel.inStandup:
         raise ValueError("Standup Already Running")
     if not channel.is_member(user.id):
         raise AccessError("Cannot Access Channel")
