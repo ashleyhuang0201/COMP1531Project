@@ -15,7 +15,7 @@ def test_search_invalid_token:
     with pytest.raises(ValueError, match="Invalid token"):
         # Creating user
         user = auth_register('user@test.com', 'password', 'search', 'test')
-        token = get_user_by_token(user.u_id)
+        token = get_user_by_u_id(user.u_id)
         
         # Creating channel
         channel = channels_create(token, "chat", True)
@@ -27,7 +27,7 @@ def test_search_invalid_token:
 def test_search_none():
     # Creating user
     user = auth_register('user@test.com', 'password', 'search', 'test')
-    token = get_user_by_token(user.u_id)
+    token = get_user_by_u_id(user.u_id)
     
     # Creating channel
     channel = channels_create(token, "chat", True)
@@ -45,7 +45,7 @@ def test_search_none():
 def test_search_no_match():
     # Creating user
     user = auth_register('user@test.com', 'password', 'search', 'test')
-    token = get_user_by_token(user.u_id)
+    token = get_user_by_u_id(user.u_id)
     
     # Creating channel
     channel = channels_create(token, "chat", True)
@@ -63,7 +63,7 @@ def test_search_no_match():
 def test_search_empty_channel():
     # Creating user
     user = auth_register('user@test.com', 'password', 'search', 'test')
-    token = get_user_by_token(user.u_id)
+    token = get_user_by_u_id(user.u_id)
     
     # Creating channel
     channel = channels_create(token, "chat", True)
@@ -75,7 +75,7 @@ def test_search_empty_channel():
 def test_search_one():
     # Creating user
     user = auth_register('user@test.com', 'password', 'search', 'test')
-    token = get_user_by_token(user.u_id)
+    token = get_user_by_u_id(user.u_id)
     
     # Creating channel
     channel = channels_create(token, "chat", True)
@@ -93,7 +93,7 @@ def test_search_one():
 def test_search_single_channel():
     # Creating user
     user = auth_register('user@test.com', 'password', 'search', 'test')
-    token = get_user_by_token(user.u_id)
+    token = get_user_by_u_id(user.u_id)
     
     # Creating channel
     channel = channels_create(token, "chat", True)
@@ -111,7 +111,7 @@ def test_search_single_channel():
 def test_search_multi_channel():
     # Creating user
     user = auth_register('user@test.com', 'password', 'search', 'test')
-    token = get_user_by_token(user.u_id)
+    token = get_user_by_u_id(user.u_id)
     
     # Creating channel 1
     channel1 = channels_create(token, "chat1", True)
