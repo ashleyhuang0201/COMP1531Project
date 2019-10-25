@@ -41,7 +41,7 @@ def standup_send(token, channel_id, message):
         raise ValueError("Message Too Long")
     if not channel.is_member(user.id):
         raise AccessError("Cannot Access Channel")
-    if not channel.hasStandup():
+    if not channel.inStandup():
         raise AccessError("Not Currently In Standup")
 
     channel.addStandupMessage(token, message)
