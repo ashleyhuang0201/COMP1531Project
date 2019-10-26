@@ -3,17 +3,19 @@ import sys
 from json import dumps
 from flask import Flask, request
 from flask_mail import Mail, Message
+from flask_cors import CORS
 
-from server import global_var
-from server import auth_functions as auth
-from server import channel_functions as channel
-from server import user_functions as user
-from server import standup_functions as standup
-from server import message_functions as message
-from server import search_function as Search
-from server import admin_userpermission_change_function as permission
+import server.global_var as global_var
+import server.auth_functions as auth
+import server.channel_functions as channel
+import server.user_functions as user
+import server.standup_functions as standup
+import server.message_functions as message
+import server.search_function as Search
+import server.admin_userpermission_change_function as permission
 
 APP = Flask(__name__)
+CORS(APP)
 # Creating email server
 APP.config.update(
     MAIL_SERVER='smtp.gmail.com',
@@ -70,10 +72,11 @@ def auth_register():
     password = request.form.get("password")
     name_first = request.form.get("name_first")
     name_last = request.form.get("name_last")
-
-    return dumps(
-        auth.auth_register(email, password, name_first, name_last)
-    )
+    val = auth.auth_register(email, password, name_first, name_last)
+    # print(val)
+    return dumps({"email":email})
+        # dumps(
+    # )
 
 @APP.route('/auth/passwordreset/request', methods=['POST'])
 def auth_passwordreset_request():
@@ -462,4 +465,4 @@ def admin_userpermission_change():
 
 
 if __name__ == '__main__':
-    APP.run(port=(sys.argv[1] if len(sys.argv) > 1 else 5000))
+    APP.run(port=(sys.argv[1] if len(sys.argv) > 1 else 5001))

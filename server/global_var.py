@@ -2,6 +2,7 @@
 File for all global variables, classes and functions
 '''
 import datetime
+import hashlib
 import random
 from server.message_functions import message_send
 import server.helpers as helpers
@@ -60,7 +61,7 @@ class User:
 
     # Change password
     def change_password(self, new_password):
-        self.password = new_password
+        self.password = hashlib.sha256(new_password.encode()).hexdigest()
 
     # Updating user's first name
     def update_name_first(self, name_first):

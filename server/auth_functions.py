@@ -72,7 +72,7 @@ def auth_register(email, password, name_first, name_last):
 
     data.data["tokens"].append(token)
 
-    return { "u_id": new_u_id, "token": token}
+    return {"u_id": new_u_id, "token": token}
 
 def auth_passwordreset_request(email):
     '''

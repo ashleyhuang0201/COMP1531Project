@@ -59,7 +59,7 @@ def valid_email(email):
     # r prefix treats as raw string - works without but pytest and pylint don't
     # like it
     regex = r"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$"
-    if re.search(regex, email):
+    if re.search(regex, str(email)):
         return True
     else:
         return False
