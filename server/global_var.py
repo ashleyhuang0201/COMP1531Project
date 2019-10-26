@@ -3,6 +3,8 @@ File for all global variables, classes and functions
 '''
 import datetime
 import random
+from server.message_functions import message_send
+from server.helpers import get_user_by_token
 
 # Dictionary list containing all global data
 data = {
@@ -32,9 +34,9 @@ def initialise_all():
 
     message_id_ticker = 0
 
-"""
+'''
 Object class for storing reset_codes
-"""
+'''
 class reset_code:
     def __init__(self, u_id):
         self.reset_code = random.random() # Planning to hash this later somehow
@@ -51,13 +53,14 @@ class User:
         self.name_first = name_first
         self.name_last = name_last
         self.handle = f"{name_first}{name_last}"
+        self.permission = 3
 
-        """
+        '''
         An owner of slackr is an owner in every channel # 1
         An admin of slackr is an owner in every channel # 2
-        A member of slackr is a member in channels they are not owners of and an owner in channels they are owners of # 3
-        """
-        self.permission = 3
+        A member of slackr is a member in channels they are not owners of 
+        and an owner in channels they are owners of # 3
+        '''
     
     # Change permission of user
     def change_permissions(self, permission_id):
@@ -66,6 +69,18 @@ class User:
     # Change password
     def change_password(self, new_password):
         self.password = new_password
+
+    def update_name_first(self, name_first):
+            self.name_first = name_first
+
+    def update_name_last(self, name_last):
+        self.name_last = name_last
+
+    def update_email(self, email):
+        self.email = email
+
+    def update_handle(self, handle_str):
+        self.handle = handle_str
 
 '''
 Object class for storing a message's data
@@ -97,13 +112,6 @@ class Message:
                     return True
                 else:
                     return False
-
-    # Checks if the message is currently pinned
-    def is_pinned(self):
-        if self.is_pinned == True:
-            return True
-        else:
-            return False
 
     # Edits the message of the message object
     def edit_message(self, message):
@@ -175,13 +183,6 @@ class Channel:
         else:
             return False
 
-    # Checks if the channel is public
-    def is_public(self):
-        if self.is_public == True:
-            return True
-        else:
-            return False
-
     # Adds a message to the channel
     def add_message(self, message):
         self.messages.insert(0, message)
@@ -190,16 +191,38 @@ class Channel:
     def remove_message(self, message_id):
         for message in self.messages:
             if message_id == message.id:
-                removed_message = message
-        self.messages.remove(removed_message)
+                self.messages.remove(message)
         
     # Searches for a message given a substring
     def search_message(self, substring):
-        """
+        '''
         Given a query string, return a list of messages in the channel
-        """
+        '''
         messages = []
-        for message in channel.message:
+        for message in self.message:
             if message.find(substring) != -1:
                 messages.append(message)
         return messages
+
+    def update_message_object(self, message_id, message_object):
+        for message in self.messages:
+            if message_id == message.id:
+                message.message = message_object.message
+                message.reacts = message_object.reacts
+                message.is_pinned = message_object.is_pinned
+
+    def start_standup(self):
+        self.in_standup = True
+
+    def end_standup(self, token):
+        self.in_standup = False
+        message = ""
+        for m in self.standup_messages:
+            line = ': '.join(m['user'], m['message'])
+            '\n'.join(message, line)
+        self.standup_messages = []
+        message_send(token, self.id, message)
+
+    def add_standup_message(self, token, message):
+        self.standup_messages.append({'user': get_user_by_token(token).handle, 'message': message})
+
