@@ -1,5 +1,5 @@
 import server.global_var as global_var
-from server.helpers import valid_token
+from server.helpers import valid_token, get_user_by_token
 
 def search(token, query_str):
     """
@@ -13,7 +13,7 @@ def search(token, query_str):
     # Searching for messages with query string
     messages = []
     for channel in global_var.data["channels"]:
-        if channel.user_in_channel(token):
+        if channel.user_in_channel(get_user_by_token(token).u_id):
             messages = messages + channel.search_message(query_str)
     
     return {"messages": messages}

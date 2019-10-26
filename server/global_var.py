@@ -203,9 +203,9 @@ class Channel:
         Given a query string, return a list of messages in the channel
         '''
         messages = []
-        for message in self.message:
-            if message.find(substring) != -1:
-                messages.append(message)
+        for message in self.messages:
+            if (message.message).find(substring) != -1:
+                messages.append(message.message)
         return messages
 
     def update_message_object(self, message_id, message_object):
@@ -233,3 +233,18 @@ class Channel:
             'message': message
         })
 
+    def user_in_channel(self, u_id):
+        # Looping through users
+        for owner in self.owners:
+            # User found
+            if owner == u_id:
+                return True
+
+        # Looping through users
+        for user in self.users:
+            # User found
+            if user == u_id:
+                return True
+        
+        # No such user
+        return False
