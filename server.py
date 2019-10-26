@@ -364,7 +364,7 @@ def user_profile_setemail():
     )
 
 @APP.route('/user/profile/sethandle', methods = ['PUT'])
-def user_profile_setemail():
+def user_profile_sethandle():
     '''
     updates user's handle(display name)
     '''
