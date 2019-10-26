@@ -1,174 +1,297 @@
-# Dummy implementations of channel_functions
-# Implemented by: Ashley Huang
-# Created on: 1/10/2019
-
+'''
+Channel functions Iteration 2 implementations
+Team: You_Things_Can_Choose
+'''
+#nothgin
 import pytest
-from server.helper.Error import AccessError
-
-#Invites a user with user id u_id to join a channel (channel_id)
+import jwt
+import server.global_var as global_var
+from server.Error import AccessError
+from server.helpers import valid_token, get_channel_by_channel_id, get_user_by_token, token_is_admin, token_is_owner, valid_user_id, decode_token
 
 def channel_invite(token, channel_id, u_id):
-    if valid_channel(channel_id) == False:
-        raise ValueError("Channel is not valid")
-    if valid_member(token, channel_id) == False:
-        raise ValueError("User is not part of the channel")
-    if valid_user(u_id) == False:
+    '''
+    Invites a user to join a channel
+    '''
+
+    channel = get_channel_by_channel_id(channel_id)
+
+    # Invalid user has accessed function
+    if valid_token(token) == False:
+        raise AccessError("Invalid token")
+
+    # Channel_id does not refer to a valid channel
+    if channel == None:
+        raise ValueError("Channel does not exist")
+
+    # Inviting user is not a member of the channel
+    if channel.is_member(decode_token(token)) == False:
+        raise AccessError("Authorised user is not a member of the channel")
+
+    # u_id is not a user
+    if valid_user_id(u_id) == False:
         raise ValueError("User id is not valid")
+
+    # User is added as a member
+    channel.add_user(u_id)
 
     return {}
 
-#Provide basic details about the channel
-
 def channel_details(token, channel_id):
-    if valid_channel(channel_id) == False:
+    '''
+    Provide basic details about the channel
+    '''
+
+    channel = get_channel_by_channel_id(channel_id)
+
+    # Invalid user has accessed function
+    if valid_token(token) == False:
+        raise AccessError("Invalid token")
+
+    # channel_id does not refer to a valid channel
+    if channel == None:
         raise ValueError("Channel does not exist")
     
-    if valid_member(token, channel_id) == False:
+    # user is not a member of the channel
+    if channel.is_member(decode_token(token)) == False:
         raise AccessError("Authorised user is not a member of the channel")
 
-    #returned details 
-    channel_details = {"name" : "ChannelName", "owner_members":\
-     {"u_id": "userID", "name_first": "valid_correct_first_name" , \
-     "name_last": "valid_correct_last_name"}, "all_members": {"u_id": "UserID" \
-     , "name_first": "valid_correct_first_name" , "name_last": \
-     "valid_correct_last_name"}}
+    # Returns the channel details corresponding to that channel id
+    channel_details = {"name": channel.name, "owner_members": channel.owners, \
+        "all_members": channel.users}
 
     return channel_details
     
-'''
-return up to 50 messages between index "start" and "start + 50".
-Message with 0 index is the most recent message
 
-end = start + 50
-
-if function has returned the least recent messages in the channel
-returns -1 in "end" to indicate there are no more msgs to load
-
-'''
 def channel_messages(token, channel_id, start):
+    '''
+    return up to 50 messages between index "start" and "start + 50".
+    Message with 0 index is the most recent message
+
+    end = start + 50
+
+    if function has returned the least recent messages in the channel
+    returns -1 in "end" to indicate there are no more msgs to load
+
+    '''
+
+    channel = get_channel_by_channel_id(channel_id)
+
+    # Invalid user has accessed function
+    if valid_token(token) == False:
+        raise AccessError("Invalid token")
+
+    # channel_id does not refer to a valid channel
+    if channel == None:
+        raise ValueError("Channel does not exist")
+
+    # user is not a member of the channel
+    if channel.is_member(decode_token(token)) == False:
+        raise AccessError("Authorised user is not a member of the channel")
+
+    # If the start is greater than the number of messages in the channel given
+    if start >= len(channel.messages):
+        raise ValueError("Start index is invalid")
+    
     messages = []
 
-    if valid_channel(channel_id) == False:
-        raise ValueError("Channel does not exist")
-    if start > len(messages):
-        raise ValueError("Start index is invalid")
-    if valid_member(token, channel_id) == False:
-        raise AccessError("User is not a member of the channel")
-    
-    output = {"messages" : messages, "start": 0,"end" : 50}
+    for i in range(50):
+        if start + i >= len(channel.messages):
+            # End index is -1 to indicate there are no more messages to load
+            return {"messages": messages, "start": start, "end": -1}
+        # Gets message object at index
+        message = channel.messages[start + i]
+        # Insert additional information regarding reacts
+        reacts = message.reacts[0]["is_this_user_reacted"] = \
+             message.user_has_reacted(decode_token(token))
 
-    return output
+        # Append message dictionary into list
+        messages.append({
+            "message_id": message.id,
+            "u_id": message.sender,
+            "message": message.message,
+            "time_created": message.time_created,
+            "reacts": reacts, 
+            "is_pinned": message.is_pinned,
+        })
 
-#Given a channel ID, the user is removed as a member of the channel
+    # End index is the 50th message
+    return {"messages": messages, "start": start, "end": start + 49}
+
+
 def channel_leave(token, channel_id):
-    if valid_channel(channel_id) == False:
+    '''
+    Given a channel ID, the user is removed as a member of the channel
+    '''
+
+    channel = get_channel_by_channel_id(channel_id)
+    user = get_user_by_token(token)
+
+    # Invalid user has accesed function
+    if valid_token(token) == False:
+        raise AccessError("Invalid token")
+
+    # channel_id does not refer to a valid channel
+    if channel == None:
         raise ValueError("Channel does not exist")
     
+    # User is removed as a member of the channel
+    channel.remove_user(user.u_id)
+    channel.remove_owner(user.u_id)
+
     return {}
 
-#Given a channel_id of a channel that the authorised user can join
-#adds them to that channel
+
 def channel_join(token, channel_id):
-    if valid_channel(channel_id) == False:
+    '''
+    Given a channel_id of a channel that the authorised user can join
+    adds them to that channel
+    '''
+
+    channel = get_channel_by_channel_id(channel_id)
+    user = get_user_by_token(token)
+
+    # Invalid user has accesed function
+    if valid_token(token) == False:
+        raise AccessError("Invalid token")
+
+    # channel_id does not refer to a valid channel
+    if channel == None:
         raise ValueError("Channel does not exist")
-    if private_channel(channel_id) == True:
-        raise AccessError("Channel is private")
+
+    # channel is private so invite is required
+    if channel.is_public == False and \
+            token_is_admin(token) == False and \
+            token_is_owner(token) == False:
+        raise AccessError("Channel is private and user is not admin")
+
+    # User is added to channel
+    channel.add_user(user.u_id)
 
     return {}
 
-#make user an owner of the channel
+
 def channel_addowner(token, channel_id, u_id):
-    if valid_channel(channel_id) == False:
+    '''
+    make an user an owner of the channel
+    '''
+
+    user = get_user_by_token(token)
+    channel = get_channel_by_channel_id(channel_id)
+
+    # Invalid user has accesed function
+    if valid_token(token) == False:
+        raise AccessError("Invalid token")
+
+    # channel_id does not refer to a valid channel
+    if channel == None:
         raise ValueError("Channel does not exist")
-    if user_is_owner(channel_id, u_id) == True:
-        raise ValueError("User is already the owner of the channel")
-    if token_is_slackrowner(token) == False and \
-    token_is_owner(channel_id, token) == False:
+
+    # user is already an owner of the channel
+    if channel.is_owner(u_id) == True:
+        raise ValueError("User is already an owner of the channel")
+
+    if channel.is_owner(decode_token(token)) == False and \
+            token_is_admin(token) == False and \
+            token_is_owner(token) == False:
         raise AccessError("User is not an owner of the channel or slackrowner")
     
+    # User is added as owner
+    channel.add_owner(u_id)
+
     return {}
 
 
-#Remove user with user id u_id an owner of this channel
 def channel_removeowner(token, channel_id, u_id):
-    if valid_channel(channel_id) == False:
+    '''
+    Remove user with user id u_id an owner of this channel
+    '''
+
+    user = get_user_by_token(token)
+    channel = get_channel_by_channel_id(channel_id)
+
+    # Invalid user has accesed function
+    if valid_token(token) == False:
+        raise AccessError("Invalid token")
+
+    # channel_id does not refer to a valid channel
+    if channel == None:
         raise ValueError("Channel does not exist")
-    if user_is_owner(channel_id, u_id) == False:
-        raise ValueError("User is not an owner of the channel")
-    if token_is_owner(channel_id, token) == False and \
-    token_is_slackrowner(token) == False:
+
+    # user is not an owner of the channel
+    if channel.is_owner(u_id) == False:
+        raise ValueError("User id is not an owner of the channel")
+
+    # If the user trying to remove owner does not have permission
+    if channel.is_owner(decode_token(token)) == False and \
+            token_is_admin(token) == False and \
+            token_is_owner(token) == False:
         raise AccessError("User is not an owner of the channel or slackrowner")
+
+    channel.remove_owner(u_id)
+
     return {}
 
-#Provides a list of all channels and details that the auth user is part of
+
 def channels_list(token):
-    #if token is part of channels 
-    
-    channels = {"id" : 123, "name" : "TestChannel"}
-    return channels
+    '''
+    Provides a list of all channels and details that the auth user is part of
+    '''    
 
-#Provides a list of channels and their associated details
+    # Exception raised
+    if valid_token(token) == False:
+        raise AccessError("Invalid token")
+
+    user = get_user_by_token(token)
+    channels_user_is_member = []
+
+    # Create a list of channels that the user is apart of
+    for channel in global_var.data["channels"]:
+        if channel.is_member(user.u_id):
+            channels_user_is_member.append({"channel_id": channel.id, \
+                                             "name": channel.name})
+
+    return {"channels": channels_user_is_member}    
+
 def channels_listall(token):
-    channels = {"id" : 123, "name" : "TestChannel"}
+    '''
+    Provides a list of channels and their associated details
+    '''
 
-    return channels
+    # Exception raised
+    if valid_token(token) == False:
+        raise AccessError("Invalid token")
 
-#Create a channel with the name that is either public or private
+    all_channels = []
+
+    # Creates a list of all channels
+    for channel in global_var.data["channels"]:
+        all_channels.append({"channel_id": channel.id, \
+                                "name": channel.name})
+
+    return {"channels": all_channels}
+
 def channels_create(token, name, is_public):
+    '''
+    Create a channel with the name that is either public or private
+    '''
+
+    # Exception raised
     if len(name) > 20:
         raise ValueError("Name is longer than 20 characters")
-    elif is_public == True:
-        return {"channel_id": 123}
-    else:
-        #if private
-        return {"channel_id" : 1}
+    elif valid_token(token) == False:
+        raise AccessError("Invalid token")
 
-#Checks if the channel is a valid channel
-def valid_channel(channel_id):
-    if channel_id == 123 or channel_id == 1:
-        return True
-    else:
-        return False
+    # token is decoded to find user id
+    user = get_user_by_token(token)
 
-#Checks if the user is a member of the channel
-def valid_member(token, channel_id):
-    if token == "valid_token" or token == "valid_u_id" or \
-    token == "slackrowner" or token == "owner" and \
-    (channel_id == 123 or channel_id == 1) :
-        return True
-    else:
-        return False
+    # A channel object is created
+    new_channel = global_var.Channel(name, user.u_id, is_public)
 
-#Returns true if it is a private channel, returns false if not private
-def private_channel(channel_id):
-    if channel_id == 1:
-        return True
-    else:
-        return False
-    
-#if user with u_id is an owner of channel, return true
-def user_is_owner(channel_id, u_id):
-    if u_id == 100 and channel_id == 123:
-        return True
-    else:
-        return False
-    
-#if authorised user is slackr owner, return true, else return false
-def token_is_slackrowner(token):
-    if token == "slackrowner":
-        return True
-    else:
-        return False
+    # channel is added to channels list
+    global_var.data["channels"].append(new_channel)
 
-#if authorised user is the owner of a channel, return true
-def token_is_owner(channel_id, token):
-    if token == "owner" and (channel_id == 123 or channel_id == 1):
-        return True
-    else:
-        return False
+    return {"channel_id" :new_channel.id}
 
-def valid_user(u_id):
-    if u_id == 000 or u_id == 100 or u_id == "valid_u_id":
-        return True
-    else:
-        return False
+
+
