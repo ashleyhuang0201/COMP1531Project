@@ -99,8 +99,11 @@ def test_auth_passwordreset_request():
 
     data.initialise_all()
 
+    # Create account to be password reset request
+    auth.auth_register("comp1531receive@gmail.com", "valid_password", "a", "b")
+
     # Password reset request is sent to valid email
-    assert auth.auth_passwordreset_request("vali@g.com") == {}
+    auth.auth_passwordreset_request("comp1531receive@gmail.com")
 
 def test_auth_passwordreset_reset():
     '''
@@ -109,11 +112,18 @@ def test_auth_passwordreset_reset():
 
     data.initialise_all()
 
+    # Create account to be password reset request
+    auth.auth_register("comp1531receive@gmail.com", "valid_password", "a", "b")
+
+    # Password reset request is sent to valid email
+    auth.auth_passwordreset_request("comp1531receive@gmail.com")
+    
     # Password is reset when valid reset code and password is given
-    auth.auth_passwordreset_reset(get_code("vali@g.com"), "valid_password")
+    reset_code = helpers.get_reset_code_from_email("comp1531receive@gmail.com")
+    auth.auth_passwordreset_reset(reset_code, "new_password")
     # Reset code is invalid
     with pytest.raises(ValueError, match="Invalid Reset Code"):
         auth.auth_passwordreset_reset("invalid_reset_code", "valid_password")
     # Invalid password is given
     with pytest.raises(ValueError, match="Invalid Password"):
-        auth.auth_passwordreset_reset(get_code("vali@g.com"), "bpas")
+        auth.auth_passwordreset_reset(reset_code, "bpas")

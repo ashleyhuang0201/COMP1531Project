@@ -35,14 +35,6 @@ def initialise_all():
     message_id_ticker = 0
 
 '''
-Object class for storing reset_codes
-'''
-class reset_code:
-    def __init__(self, u_id):
-        self.reset_code = random.random() # Planning to hash this later somehow
-        self.u_id = u_id
-
-'''
 Object class for storing an user's data
 '''
 class User:

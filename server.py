@@ -2,6 +2,7 @@
 import sys
 from json import dumps
 from flask import Flask, request
+from flask_mail import Mail, Message
 
 from server import global_var
 from server import auth_functions as auth
@@ -13,7 +14,14 @@ from server import search_function as Search
 from server import admin_userpermission_change_function as permission
 
 APP = Flask(__name__)
-
+# Creating email server
+APP.config.update(
+    MAIL_SERVER='smtp.gmail.com',
+    MAIL_PORT=465,
+    MAIL_USE_SSL=True,
+    MAIL_USERNAME = "comp1531shared@gmail.com",
+    MAIL_PASSWORD = "ThanksGuys"
+)
 
 @APP.route('/echo/get', methods=['GET'])
 def echo1():
@@ -77,9 +85,11 @@ def auth_passwordreset_request():
 
     email = request.form.get("email")
 
-    return dumps(
-        auth.auth_passwordreset_request(email)
-    )
+    msg = auth.auth_passwordreset_request(email)
+    mail = Mail(APP)
+    mail.send(msg)
+    
+    return dumps({})
 
 @APP.route('/auth/passwordreset/reset', methods=['POST'])
 def auth_passwordreset_reset():
@@ -364,7 +374,7 @@ def user_profile_setemail():
     )
 
 @APP.route('/user/profile/sethandle', methods = ['PUT'])
-def user_profile_setemail():
+def user_profile_sethandle():
     '''
     updates user's handle(display name)
     '''

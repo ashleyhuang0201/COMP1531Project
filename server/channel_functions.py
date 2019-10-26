@@ -285,9 +285,6 @@ def channels_create(token, name, is_public):
     # token is decoded to find user id
     user = helpers.get_user_by_token(token)
 
-    if user == None:
-        print("HUH??????")
-
     # A channel object is created
     new_channel = global_var.Channel(name, user.u_id, is_public)
 
