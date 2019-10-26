@@ -250,7 +250,7 @@ def message_remove():
     '''
     message_id = None 
     #TODO
-
+    token = request.form.get("token")
     return dumps(
         message.message_remove(token, message_id)
     )
