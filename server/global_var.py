@@ -44,7 +44,7 @@ class User:
         self.password = password
         self.name_first = name_first
         self.name_last = name_last
-        self.handle = f"{name_first}{name_last}"
+        self.handle = f"{name_first.lower()}{name_last.lower()}"
         self.permission = 3
 
         '''
@@ -62,15 +62,19 @@ class User:
     def change_password(self, new_password):
         self.password = new_password
 
+    # Updating user's first name
     def update_name_first(self, name_first):
-            self.name_first = name_first
+        self.name_first = name_first
 
+    # Updating user's last name
     def update_name_last(self, name_last):
         self.name_last = name_last
 
+    # Updating user's email
     def update_email(self, email):
         self.email = email
 
+    # Updating user's handle
     def update_handle(self, handle_str):
         self.handle = handle_str
 
@@ -191,9 +195,9 @@ class Channel:
         Given a query string, return a list of messages in the channel
         '''
         messages = []
-        for message in self.message:
-            if message.find(substring) != -1:
-                messages.append(message)
+        for message in self.messages:
+            if (message.message).find(substring) != -1:
+                messages.append(message.message)
         return messages
 
     def update_message_object(self, message_id, message_object):
@@ -221,3 +225,18 @@ class Channel:
             'message': message
         })
 
+    def user_in_channel(self, u_id):
+        # Looping through users
+        for owner in self.owners:
+            # User found
+            if owner == u_id:
+                return True
+
+        # Looping through users
+        for user in self.users:
+            # User found
+            if user == u_id:
+                return True
+        
+        # No such user
+        return False

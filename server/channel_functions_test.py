@@ -260,14 +260,10 @@ def test_channel_join():
     "Channel is private and user is not admin"):
         func.channel_join(token2, channel_private)
 
-    '''
-    UNCOMMENT AFTER MERGED WITH NEW AUTH BRANCH
-
     # A slackr owner leaves a private channel and can join back in
-    funcs.channel_leave(token1, channel_prviate)
-    funcs.channel_join(token1, channel_private)
+    func.channel_leave(token1, channel_ids)
+    func.channel_join(token1, channel_ids)
 
-    '''
 
 def test_channel_addowner():
     '''

@@ -106,6 +106,8 @@ ValueError:
 - xy points are outside the dimensions of the image at the url
 
 """
+
+
 def user_profiles_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
 
     # This function is a little hard to test, as we don't know how the image
