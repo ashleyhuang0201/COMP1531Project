@@ -16,14 +16,15 @@ def standup_start(token, channel_id):
     user = get_user_by_token(token)
     if channel == None:
         raise ValueError("Channel Does Not Exist")
-    if channel.inStandup:
+    if channel.in_standup:
         raise ValueError("Standup Already Running")
-    if not channel.is_member(user.id):
+    if not channel.is_member(user.u_id):
         raise AccessError("Cannot Access Channel")
 
     # After 15 minutes call the channel.startupEnd method to collate all of the
     # startup contents
-    Timer(15 * 60, channel.startupEnd)
+    channel.start_standup()
+    Timer(15 * 60, channel.end_standup)
     time = datetime.datetime.now() + datetime.timedelta(minutes=15)
 
     return {"time" : time.timestamp()}
@@ -39,11 +40,11 @@ def standup_send(token, channel_id, message):
         raise ValueError("Channel Does Not Exist")
     if len(message) > 1000:
         raise ValueError("Message Too Long")
-    if not channel.is_member(user.id):
+    if not channel.is_member(user.u_id):
         raise AccessError("Cannot Access Channel")
-    if not channel.inStandup():
+    if not channel.in_standup:
         raise AccessError("Not Currently In Standup")
 
-    channel.addStandupMessage(token, message)
+    channel.add_standup_message(token, message)
 
     return {}

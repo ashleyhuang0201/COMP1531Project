@@ -187,7 +187,6 @@ def get_message_by_message_id(message_id):
 
 # Return a reset code from a user email
 def get_reset_code_from_email(email):
-    print(data.data["reset_code"])
     for entry in data.data["reset_code"]:
         if entry["user"].email == email:
             return entry["reset_code"] 

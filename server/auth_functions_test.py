@@ -56,7 +56,7 @@ def test_auth_logout():
     # User is logged out, creating channel will now raise token error
     auth.auth_logout(user["token"])
     with pytest.raises(AccessError, match="token"):
-        channel.channels_create(user["token"], "testing2", False)
+        channel.channels_create(user["token"], "testing2", True)
 
 def test_auth_register():
     '''

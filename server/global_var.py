@@ -141,11 +141,11 @@ class Channel:
         self.name = name
         self.id = len(data["channels"])
         self.messages = [] 
-        #send_later: a list of dictionaries containing messages and a send time 
-        self.send_later = [] 
         self.owners = [u_id]
         self.users = [u_id]
         self.is_public = is_public
+        self.in_standup = False
+        self.standup_messages = []
 
     # Adds a member to the channel
     def add_user(self, u_id):
