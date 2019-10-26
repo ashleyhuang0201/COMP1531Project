@@ -86,8 +86,9 @@ def valid_token(token):
     '''
     Checks if a user token is valid
     '''
-    for token in data.data["tokens"]:
-        return True
+    for tok in data.data["tokens"]:
+        if tok == token:
+            return True
     return False
 
 def valid_permission_id(permission_id):

@@ -5,8 +5,8 @@ Created on: 1/10/2019
 '''
 
 import pytest
-from server.user import user_functions as funcs
-from server.auth import auth_functions
+import server.user_functions as funcs
+import server.auth_functions as auth_functions
 
 
 def test_user_profile():
