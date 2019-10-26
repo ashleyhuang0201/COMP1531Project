@@ -2,12 +2,11 @@
 Testing user functions Iteration 2
 Team: You_Things_Can_Choose
 '''
-
 import pytest
 from server import user_functions as funcs
 from server import auth_functions
 import server.global_var as global_var
-
+from server.Error import AccessError
 
 def test_user_profile():
     '''
@@ -31,10 +30,13 @@ def test_user_profile():
          {"email":'test@gmail.com', "name_first":'Raydon', "name_last":'Smith',\
               "handle_str":'raydonsmith'}
 
-    # A exception occurs when the user_id is invalid
+    # An exception occurs when the user_id is invalid
     with pytest.raises(ValueError, match="Invalid User ID"):
-        funcs.user_profile(token, 99)
+        funcs.user_profile(token, -1)
 
+    # An exception occurs when token is invalid
+    with pytest.raises(AccessError, match="Invalid token"):
+        funcs.user_profile("invalid_token", u_id)
 
 def test_profile_setname():
     '''
@@ -111,7 +113,7 @@ def test_profile_setemail():
     with pytest.raises(ValueError, match="Invalid email"):
         funcs.user_profile_setemail(token, "invalidEmail")
 
-    # A email already in use is given
+    # An email already in use is given
     with pytest.raises(ValueError, match="Email already in use"):
         funcs.user_profile_setemail(token, "test2@gmail.com")
 
