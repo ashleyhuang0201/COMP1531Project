@@ -8,38 +8,36 @@ from flask import Flask
 from flask_mail import Mail, Message
 from json import dumps
 
-import server.global_var as global_var
-from server.helpers import valid_email, valid_name
+import server.global_var as data
+import server.helpers as helper
 
-SECRET = "9c055b2cc7394df69438fe14bc31cbe142898b1d8548360d2b4cddd990e97c69"
 
 def auth_login(email, password):
     '''
     Given a registered user's email and password function generates and returns a 
     user_id and token assigned to the account
     '''
+    user = helper.get_user_by_email(email)
     # Check validity of login
-    if not valid_email(email):
+    if not helper.valid_email(email):
         raise ValueError("Invalid Email")
-    if not registered_email(email):
+    if not user:
         raise ValueError("Email not registered")
-    if not registered_account(email, password):
+    
+    if not user.password == hashPassword(password):
         raise ValueError("Password Incorrect")
 
-    # Logging in
-    for user in global_var.data["users"]:
-        if user.email == email:
-            token = get_token(user.u_id)
-            global_var.data["tokens"].append(token)
-            return {"u_id": user["u_id"], "token": str(get_token(user["u_id"]))}
+    token = get_token(user.u_id)
+    data.data["tokens"].append(token)
+    return {"u_id": user["u_id"], "token": token}
 
 
 # Given an active token, invalidates the taken to log the user out. Given a
 # non-valid token, does nothing
 def auth_logout(token):
     # Deleting token
-    if token in global_var.data["tokens"]:
-        global_var.data["tokens"].remove(token)
+    if token in data.data["tokens"]:
+        data.data["tokens"].remove(token)
 
     return {}
 
@@ -47,28 +45,34 @@ def auth_logout(token):
 # account for them and return a new token for authentication in their session
 def auth_register(email, password, name_first, name_last):
     # Checking if registration details are valid
-    if not valid_email(email):
+    user = helper.get_user_by_email(email)
+
+    if not helper.valid_email(email):
         raise ValueError("Invalid Email")
-    if registered_email(email):
+    if user:
         raise ValueError("Email Already Registered")
     if not valid_password(password):
         raise ValueError("Password Not Strong")
-    if not valid_name(name_first):
+    if not helper.valid_name(name_first):
         raise ValueError("Invalid First Name")
-    if not valid_name(name_last):
+    if not helper.valid_name(name_last):
         raise ValueError("Invalid Last Name")
 
     # Adding new user details
-    new_u_id = len(global_var.data["users"])
+    new_u_id = len(data.data["users"])
     token = get_token(new_u_id)
 
-    user = global_var.User(new_u_id, email, hashPassword(password), name_first, name_last)
+    user = data.User(new_u_id, email, hashPassword(password), name_first, name_last)
 
-    global_var.data["users"].append(user)
+    # Make the first user slackr owner
+    if len(data.data["users"]) == 0:
+        user.change_permissions(1)
 
-    global_var.data["tokens"].append(str(token))
+    data.data["users"].append(user)
 
-    return { "u_id": new_u_id, "token": str(token)}
+    data.data["tokens"].append(token)
+
+    return { "u_id": new_u_id, "token": token}
 
 def auth_passwordreset_request(email):
     '''
@@ -77,7 +81,7 @@ def auth_passwordreset_request(email):
     auth_passwordreset_reset, shows that the user trying to reset the password
     is the one who got sent this email.
     '''
-    if valid_email(email) == False:
+    if helper.valid_email(email) == False:
         raise ValueError("Email is not valid")
 
     # Creating email server
@@ -91,34 +95,36 @@ def auth_passwordreset_request(email):
     )
 
     # Preparing reset code
-    reset_code = generate_reset_code()
-    user = find_user_by_email(email)
-    user.add_reset_code(reset_code)
+    user = helper.get_user_by_email(email)
+    reset_code = generate_reset_code(user)
 
     # Creating mail to send
     mail = Mail(APP)
     msg = Message("Website Reset Request",
         sender="comp1531shared@gmail.com",
         recipients=[email])
-    msg.body = "Your reset code is: " + reset_code
+    msg.body = f"Your reset code is: {reset_code}"
     mail.send(msg)
 
-    return dumps({})
+    return {}
 
 def auth_passwordreset_reset(reset_code, new_password):
     '''
     Given a reset code for a user, set that user's new password to the password
     provided
     '''
-    if not valid_reset_code(reset_code):
+
+    user = helper.get_user_by_reset_code(reset_code)
+
+    if not user:
         raise ValueError("Invalid Reset Code")
     if not valid_password(new_password):
         raise ValueError("Invalid Password")
 
-    user = find_user_by_reset_code(reset_code)
     user.change_password(new_password)
+    helper.remove_reset(reset_code)
 
-    return dumps({})
+    return {}
 
 
 # Helper Functions specific to auth
@@ -130,57 +136,17 @@ def valid_password(password):
     else:
         return False
 
-# Checks if an email is already a registered email
-def registered_email(email):
-
-    #Loops through users to find matching email
-    for user in global_var.data["users"]:
-        if user.email == email:
-            return True
-
-    return False
-
-# Checks if a user email and password are matched to log in
-def registered_account(email, password):
-
-    #Loops through users to find matching email
-    for user in global_var.data["users"]:
-        if user.email == email:
-            if user.password == password:
-                return True
-            else:
-                return False
-
-
 def get_token(u_id):
-    global SECRET
-    return jwt.encode({"u_id": u_id}, SECRET, algorithm='HS256')
-
-def get_id(token):
-    global SECRET
-    return jwt.decode(token, SECRET, algorithms=['HS256'])
+    return jwt.encode({"u_id": u_id}, data.SECRET, algorithm='HS256').decode("utf-8")
 
 # Creates a hashed password to store
 def hashPassword(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
-# Checks the activeness of a token
-def valid_token(token):
-    if token in global_var.data["tokens"]:
-        return True
-    else:
-        return False
-
-# Checks if a reset code is valid
-def valid_reset_code(reset_code):
-    if reset_code == "valid_reset_code":
-        return True
-    else:
-        return False
-
 # Generate reset code
-def generate_reset_code():
-    reset_code = random.random()
-    # Access and place reset code into data - Todo
+def generate_reset_code(user):
+    reset_code = hashlib.sha256(str(random.random()).encode()).hexdigest()
+    # Access and place reset code into data
+    helper.add_reset(reset_code, user)
 
     return reset_code
