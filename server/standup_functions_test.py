@@ -1,8 +1,8 @@
-from server.standup import standup_functions as standup
-from server.auth import auth_functions as auth
 import pytest
-from server.helper.Error import AccessError
-from server.channel import channel_functions as channel_func
+import server.standup_functions as standup
+import server.auth_functions as auth
+from server.Error import AccessError
+import server.channel_functions as channel_func
 
 def test_standup_start():
     # A valid token and channel successfully starts a standup - Owner
