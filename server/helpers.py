@@ -127,6 +127,7 @@ def get_user_by_token(token):
     for user in data.data["users"]:
         if user.u_id == u_id:
             return user
+    return None
 
 def get_user_token_by_u_id(u_id):
     """
@@ -147,7 +148,7 @@ def get_channel_by_channel_id(id):
 def get_user_by_reset_code(reset_code):
     for entry in data.data["reset_code"]:
         if entry["reset_code"] == reset_code:
-            return entry["user"]
+            return entry["users"]
     raise ValueError("Invalid reset code")
     
 def get_user_by_email(email):
