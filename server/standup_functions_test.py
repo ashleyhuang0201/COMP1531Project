@@ -1,8 +1,8 @@
 '''
 Test functions for standup_*
 '''
-import pytest
 import datetime as dt
+import pytest
 from server.standup_functions import standup_send, standup_start
 import server.auth_functions as auth
 from server.Error import AccessError
@@ -11,6 +11,7 @@ import server.helpers as helpers
 import server.global_var as data
 
 def test_standup_start():
+
     '''
     Test functions for standup_start
     '''
@@ -37,7 +38,7 @@ def test_standup_start():
     # user starts standup
     channel_func.channel_join(user["token"], channel2["channel_id"])
     end_ex = get_standup_end()
-    end_ac = standup_start(user["token"], channel2["channel_id"]) 
+    end_ac = standup_start(user["token"], channel2["channel_id"])
     assert same_time(end_ex, end_ac["time"])
 
     # Channel id given does not exist
@@ -47,16 +48,17 @@ def test_standup_start():
     # Standup works on private channel
     private = channel_func.channels_create(owner["token"], "Owner", False)
     end_ex = get_standup_end()
-    end_ac = standup_start(owner["token"], private["channel_id"]) 
+    end_ac = standup_start(owner["token"], private["channel_id"])
     assert same_time(end_ex, end_ac["time"])
 
 def test_standup_send():
+
     '''
     Test functions for standup_send
     '''
 
     data.initialise_all()
-    
+
     # A message is buffered in the standup queue - Owner
     owner = auth.auth_register("validcorrect@g.com", "valid_password", "a", "b")
 
@@ -76,7 +78,7 @@ def test_standup_send():
 
     # User tries to send message but has not joined channel
     with pytest.raises(AccessError, match="Cannot Access Channel"):
-        standup_send(user["token"], channel["channel_id"], 
+        standup_send(user["token"], channel["channel_id"], \
         "correct_and_valid_message")
 
     # A message is buffered in the standup queue - Member
@@ -101,12 +103,17 @@ def test_standup_send():
         "correct_and_valid_message") == {}
 
 def get_standup_end():
+    '''
+    Get the time that standup ends
+    '''
     time = dt.datetime.now() + dt.timedelta(minutes=15)
     return time.timestamp()
 
-def same_time(ex, ac):
-    # Check that standup end time expected and actual are within 1 second of 
-    # each other
-    if ex - ac < 1:
+def same_time(expected_time, actual_time):
+    '''
+    Check that standup end time expected and actual are within 1 second of
+    each other
+    '''
+    if expected_time - actual_time < 1:
         return True
     return False

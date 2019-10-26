@@ -6,12 +6,13 @@ Team: You_Things_Can_Choose
 import pytest
 from server import user_functions as funcs
 from server import auth_functions
-from server.Error import AccessError
 import server.global_var as global_var
-import jwt
+
 
 def test_user_profile():
-
+    '''
+    Returns information about their email, first name, last name, and handle
+    '''
     # Initialisation
     global_var.initialise_all()
     assert global_var.data["users"] == []
@@ -36,7 +37,9 @@ def test_user_profile():
 
 
 def test_profile_setname():
-
+    '''
+    Update the authorised user's first and last name
+    '''
     # Initialisation
     global_var.initialise_all()
     assert global_var.data["users"] == []
@@ -76,7 +79,9 @@ def test_profile_setname():
 
 
 def test_profile_setemail():
-
+    '''
+    Update the user's email
+    '''
     # Initialisation
 
     global_var.initialise_all()
@@ -112,7 +117,9 @@ def test_profile_setemail():
 
 
 def test_profile_sethandle():
-
+    '''
+    Update the user's handle
+    '''
     # Initialisation
     global_var.initialise_all()
     assert global_var.data["users"] == []
@@ -146,14 +153,14 @@ def test_profile_sethandle():
     with pytest.raises(ValueError, match="Invalid Handle"):
         funcs.user_profile_sethandle(token, "aa")
 
-'''
+
 def test_profiles_uploadphoto():
-    
+    '''
     #Initialisation
     global_var.initialise_all()
     assert global_var.data["users"] == []
 
-    #Creating a user 
+    #Creating a user
     user = auth_functions.auth_register("test@gmail.com", "pass123", \
          "Rayden", "Smith")
 
@@ -178,8 +185,10 @@ def test_profiles_uploadphoto():
 
 #Helper funcions
 
-#Creates a string of length 50 characters
 def create_50_string():
+    '''
+    Creates a string of length 50 characters
+    '''
     string = "a" * 50
     assert len(string) == 50
     return string
