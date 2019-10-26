@@ -118,13 +118,13 @@ def get_user_by_token(token):
     """
     # Checking validity of token
     if not valid_token(token):
-        raise ValueError("Invalid token")
+        raise AccessError("Invalid token")
 
     # Decoding token
-    u_id = jwt.decode(token, data.SECRET, algorithms=['HS256'])
+    u_id = jwt.decode(token, data.SECRET, algorithms=['HS256'])["u_id"]
     
     # Finding user_id
-    for user in data.data["user"]:
+    for user in data.data["users"]:
         if user.u_id == u_id:
             return user
 
@@ -151,7 +151,7 @@ def get_user_by_reset_code(reset_code):
     raise ValueError("Invalid reset code")
     
 def get_user_by_email(email):
-    for user in data.data["user"]:
+    for user in data.data["users"]:
         if user.email == email:
             return user
     return None

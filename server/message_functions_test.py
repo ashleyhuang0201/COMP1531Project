@@ -431,13 +431,13 @@ def test_message_unpin():
     global_var.initialise_all()
     
     #Create users
-    user = auth_functions.auth_register("test@gmail.com", "pass123", \
-         "Rayden", "Smith")
-    token = user["token"]
-
     owner = auth_functions.auth_register("test2@gmail.com", "pass123", \
          "Sally", "Bob")
     owner_token = owner["token"]
+
+    user = auth_functions.auth_register("test@gmail.com", "pass123", \
+         "Rayden", "Smith")
+    token = user["token"]
 
     #owner that creates the channel and so is the owner
     channel = channel_functions.channels_create(owner_token,"Name", True)
