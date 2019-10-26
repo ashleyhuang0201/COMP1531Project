@@ -137,4 +137,25 @@ def get_channel_by_channel_id(id):
     for channel in data.data["channels"]:
         if channel.id == id:
             return channel
+    return 
+
+def get_user_by_reset_code(reset_code):
+    for entry in data.data["reset_code"]:
+        if entry["reset_code"] == reset_code:
+            return entry["user"]
+    raise ValueError("Invalid reset code")
+    
+def get_user_by_email(email):
+    for user in data.data["user"]:
+        if user.email == email:
+            return user
     return None
+
+def remove_reset(code):
+    for entry in data.data["reset_code"]:
+        if entry["reset_code"] == code:
+            data.data["reset_code"].remove(entry)
+
+def add_reset(code, email):
+    user = get_user_by_email(email)
+    data.data["reset_code"].append({"reset_code": code, "user": user})
