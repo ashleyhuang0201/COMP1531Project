@@ -3,7 +3,6 @@ Helper functions
 Checks user validity
 Gets data
 '''
-import hashlib
 import re
 import jwt
 import server.global_var as data
