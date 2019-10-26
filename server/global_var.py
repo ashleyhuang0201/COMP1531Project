@@ -70,15 +70,19 @@ class User:
     def change_password(self, new_password):
         self.password = new_password
 
+    # Updating user's first name
     def update_name_first(self, name_first):
-            self.name_first = name_first
+        self.name_first = name_first
 
+    # Updating user's last name
     def update_name_last(self, name_last):
         self.name_last = name_last
 
+    # Updating user's email
     def update_email(self, email):
         self.email = email
 
+    # Updating user's handle
     def update_handle(self, handle_str):
         self.handle = handle_str
 

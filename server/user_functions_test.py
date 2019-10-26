@@ -96,8 +96,7 @@ def test_profile_setemail():
 
 def test_profile_sethandle():
     
-    #Initialisation
-
+    # Initialisation
     global_var.initialise_all()
     assert global_var.data["users"] == []
 
@@ -109,14 +108,14 @@ def test_profile_sethandle():
 
     token = user["token"]
 
-    #A valid handle is given
+    # A valid handle is given
     assert funcs.user_profile_sethandle(token, "a handle") == {}
 
-    #A invalid handle is given (50 characters)
+    # A invalid handle is given (50 characters)
     with pytest.raises(ValueError, match = "Invalid Handle"):
         funcs.user_profile_sethandle(token, create_50_string())
 
-    #A invalid handle is given (2 characters)
+    # A invalid handle is given (2 characters)
     with pytest.raises(ValueError, match = "Invalid Handle"):
         funcs.user_profile_sethandle(token, "aa")
 
@@ -154,10 +153,7 @@ def test_profiles_uploadphoto():
 
 #Creates a string of length 50 characters
 def create_50_string():
-    string = ""
-    for i in range(50):
-        string += "a"
-
+    string = "a" * 50
     assert len(string) == 50
     return string
 
