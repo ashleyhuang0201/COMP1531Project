@@ -1,4 +1,4 @@
-import echo
+import server.echo as echo
 
 def test_echo():
     assert echo.echo("1") == "1", "1 == 1"
