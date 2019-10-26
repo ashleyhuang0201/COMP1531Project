@@ -137,4 +137,10 @@ def get_channel_by_channel_id(id):
     for channel in data.data["channels"]:
         if channel.id == id:
             return channel
-    return None
+    return 
+
+def find_user_by_reset_code(reset_code):
+    for entry in data.data["reset_code"]:
+        if entry.reset_code == reset_code:
+            return entry.u_id
+    raise ValueError("User does not have a reset_code")
