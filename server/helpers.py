@@ -124,7 +124,7 @@ def get_user_by_token(token):
     u_id = jwt.decode(token, data.SECRET, algorithms=['HS256'])
     
     # Finding user_id
-    for user in data.data["user"]:
+    for user in data.data["users"]:
         if user.u_id == u_id:
             return user
 
@@ -147,11 +147,11 @@ def get_channel_by_channel_id(id):
 def get_user_by_reset_code(reset_code):
     for entry in data.data["reset_code"]:
         if entry["reset_code"] == reset_code:
-            return entry["user"]
+            return entry["users"]
     raise ValueError("Invalid reset code")
     
 def get_user_by_email(email):
-    for user in data.data["user"]:
+    for user in data.data["users"]:
         if user.email == email:
             return user
     return None

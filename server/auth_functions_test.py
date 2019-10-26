@@ -4,18 +4,26 @@ Test functions for auth_*
 import pytest
 import server.auth_functions as auth
 import server.message_functions as message
+import server.helpers as helpers
+import server.global_var as data
 
 # Testing Functions
 def test_auth_login():
     '''
     Test functions for auth_login
     '''
+
+    data.initialise_all()
+
+    # Register a user and then log in
+    auth.auth_register("registered@g.com", "registered_password", "a", "b")
+
     # A registered user is logged in
     login = auth.auth_login("registered@g.com", "registered_password") \
 
     # Check database for id and token
-    user_id = get_u_id("registered@g.com")
-    user_token = get_token(user_id)
+    user_id = helpers.get_user_by_email("registered@g.com").u_id
+    user_token = helpers.get_user_token_by_u_id(user_id)
 
     assert login == {"u_id": user_id, "token": user_token}
 
@@ -33,6 +41,9 @@ def test_auth_logout():
     '''
     Test functions for auth_logout
     '''
+
+    data.initialise_all()
+
     # A user is registered
     login_details = auth.auth_register("validcorrect@g.com",  \
         "valid_correct_password", "valid_first_name", "valid_last_name")
@@ -49,6 +60,9 @@ def test_auth_register():
     '''
     Test functions for auth_register
     '''
+
+    data.initialise_all()
+
     #A user is registered
     reg_result = auth.auth_register("validcorrect@g.com", "valid_password", \
          "valid_correct_first_name", "valid_correct_last_name")
@@ -85,6 +99,9 @@ def test_auth_passwordreset_request():
     '''
     Test functions for auth_passwordreset_request
     '''
+
+    data.initialise_all()
+
     # Password reset request is sent to valid email
     assert auth.auth_passwordreset_request("vali@g.com") == {}
 
@@ -92,6 +109,9 @@ def test_auth_passwordreset_reset():
     '''
     Test functions for auth_passwordreset_reset
     '''
+
+    data.initialise_all()
+
     # Password is reset when valid reset code and password is given
     auth.auth_passwordreset_reset(get_code("vali@g.com"), "valid_password")
     # Reset code is invalid
@@ -100,26 +120,3 @@ def test_auth_passwordreset_reset():
     # Invalid password is given
     with pytest.raises(ValueError, match="Invalid Password"):
         auth.auth_passwordreset_reset(get_code("vali@g.com"), "bpas")
-
-# helper function that accesses database to get the user ID given an email
-def get_u_id(email):
-    '''
-    Helper
-    '''
-    u_id = 1
-    return u_id
-
-# helper function to get the token of a user from u_id
-def get_token(u_id):
-    '''
-    Helper
-    '''
-    token = 'valid_token'
-    return token
-
-# Get the reset code that was sent to email
-def get_code(email):
-    '''
-    Helper
-    '''
-    return "valid_reset_code"

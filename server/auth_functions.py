@@ -18,6 +18,7 @@ def auth_login(email, password):
     user_id and token assigned to the account
     '''
     user = helper.get_user_by_email(email)
+    
     # Check validity of login
     if not helper.valid_email(email):
         raise ValueError("Invalid Email")
@@ -29,7 +30,7 @@ def auth_login(email, password):
 
     token = get_token(user.u_id)
     data.data["tokens"].append(token)
-    return {"u_id": user["u_id"], "token": token}
+    return {"u_id": user.u_id, "token": token}
 
 
 # Given an active token, invalidates the taken to log the user out. Given a
