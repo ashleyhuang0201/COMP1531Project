@@ -118,7 +118,7 @@ def get_user_by_token(token):
     """
     # Checking validity of token
     if not valid_token(token):
-        raise ValueError("Invalid token")
+        raise AccessError("Invalid token")
 
     # Decoding token
     u_id = jwt.decode(token, data.SECRET, algorithms=['HS256'])["u_id"]
