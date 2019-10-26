@@ -25,13 +25,6 @@ def encode_token_for_u_id(u_id):
         "u_id": u_id
         }, data.SECRET, algorithm='HS256').decode("utf-8")
 
-# Hashes a code
-def hash_code(code):
-    """
-    Hashing algorithm used for server
-    """
-    return hashlib.sha256(code.encode()).hexdigest()
-
 # Checks if a token is an admin
 def token_is_admin(token):
     """
@@ -123,6 +116,7 @@ def get_user_by_u_id(u_id):
     for user in data.data["users"]:
         if user.u_id == u_id:
             return user
+    return None
 
 # Obtain user object using a token
 def get_user_by_token(token):
@@ -149,7 +143,7 @@ def get_user_token_by_u_id(u_id):
     """
     # Checking validity of u_id
     if not valid_user_id(u_id):
-        raise ValueError("Invalid u_id")
+        raise ValueError("Invalid u_id to find token")
 
     return encode_token_for_u_id(u_id)
 
@@ -178,9 +172,13 @@ def remove_reset(code):
     """
     Turns a valid reset code to an invalid reset code
     """
+    code_deleted = False
     for entry in data.data["reset_code"]:
         if entry["reset_code"] == code:
+            code_deleted = True
             data.data["reset_code"].remove(entry)
+    if code_deleted is False:
+        raise ValueError("No code was deleted")
 
 # Add reset_code
 def add_reset(code, user):
@@ -197,6 +195,7 @@ def get_channel_by_channel_id(channel_id):
     for channel in data.data["channels"]:
         if channel_id == channel.id:
             return channel
+    return None
 
 # Returns the channel object according to the message_id
 def get_channel_by_message_id(message_id):
@@ -207,6 +206,7 @@ def get_channel_by_message_id(message_id):
         for message in channel.messages:
             if message.id == message_id:
                 return channel
+    return None
 
 # Returns the message object corresponding to message id
 def get_message_by_message_id(message_id):
@@ -217,6 +217,7 @@ def get_message_by_message_id(message_id):
         for message in channel.messages:
             if message.id == message_id:
                 return message
+    return None
 
 # Return a reset code from a user email
 def get_reset_code_from_email(email):
@@ -226,3 +227,4 @@ def get_reset_code_from_email(email):
     for entry in data.data["reset_code"]:
         if entry["user"].email == email:
             return entry["reset_code"]
+    return None
