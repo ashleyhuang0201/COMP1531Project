@@ -50,9 +50,19 @@ def test_profile_setname():
     assert global_var.data["users"] != []
 
     token = user["token"]
+    u_id = user["u_id"]
 
     # A valid first and last name is given
-    assert funcs.user_profile_setname(token, "Raydon", "Smith") == {}
+    assert funcs.user_profile_setname(token, "Rayden", "Smith") == {}
+
+    # Updating the first and last name of user
+    funcs.user_profile_setname(token, "Hello", "World")
+
+    # Checking if first and last name have been updated successfully
+    assert funcs.user_profile(token, u_id) ==  \
+         {"email":'test@gmail.com', "name_first":'Hello',"name_last":'World', \
+              "handle_str":'raydensmith'}
+
 
     # A name of 50 length is valid
     assert funcs.user_profile_setname(token, create_50_string(), \
@@ -81,9 +91,18 @@ def test_profile_setemail():
     assert global_var.data["users"] != []
 
     token = user["token"]
+    u_id = user["u_id"]
 
     # A valid email change
     assert funcs.user_profile_setemail(token, "test1@gmail.com") == {}
+
+    # Updating the email of the user
+    funcs.user_profile_setemail(token, "new@gmail.com") 
+
+    # Checking if the user's email has been updated successfully
+    assert funcs.user_profile(token, u_id) ==  \
+         {"email":'new@gmail.com', "name_first":'Rayden',"name_last":'Smith', \
+              "handle_str":'raydensmith'}
 
     # A invalid email is given
     with pytest.raises(ValueError, match = "Invalid email"):
@@ -107,9 +126,19 @@ def test_profile_sethandle():
     assert global_var.data["users"] != []
 
     token = user["token"]
+    u_id = user["u_id"]
 
     # A valid handle is given
     assert funcs.user_profile_sethandle(token, "a handle") == {}
+
+    # Updating the handle of the user
+    funcs.user_profile_sethandle(token, "new handle") 
+
+    # Checking if the user's handle has been updated successfully
+    assert funcs.user_profile(token, u_id) ==  \
+         {"email":'test@gmail.com', "name_first":'Rayden',"name_last":'Smith', \
+              "handle_str":'new handle'}
+
 
     # A invalid handle is given (50 characters)
     with pytest.raises(ValueError, match = "Invalid Handle"):
