@@ -1,3 +1,6 @@
+'''
+Test functions for standup_*
+'''
 import pytest
 import server.standup_functions as standup
 import server.auth_functions as auth
@@ -5,31 +8,34 @@ from server.Error import AccessError
 import server.channel_functions as channel_func
 
 def test_standup_start():
+    '''
+    Test functions for standup_start
+    '''
     # A valid token and channel successfully starts a standup - Owner
     owner = auth.auth_register("validcorrect@g.com", "valid_password", \
          "valid_correct_first_name", "valid_correct_last_name")
-    
+
     channel1 = channel_func.channels_create(owner["token"], "Owner", True)
     channel2 = channel_func.channels_create(owner["token"], "User", True)
-    
+
     assert standup.standup_start(owner["token"], channel1["channel_id"]) \
         == {"time": get_standup_end()}
 
     # A valid token and channel successfully starts a standup - User
     user = auth.auth_register("validcorrect@g.com", "valid_password", \
          "valid_correct_first_name", "valid_correct_last_name")
-    
+
     # User tries to start standup but has not joined the channel
-    with pytest.raises(AccessError, match = "Cannot Access Channel"):
+    with pytest.raises(AccessError, match="Cannot Access Channel"):
         standup.standup_start(user["token"], channel2["channel_id"])
-    
+
     # user starts standup
     channel_func.channel_join(user["token"], channel2["channel_id"])
     assert standup.standup_start(user["token"], channel2["channel_id"]) \
         == {"time": get_standup_end()}
 
     # Channel id given does not exist
-    with pytest.raises(ValueError, match = "Channel Does Not Exist"):
+    with pytest.raises(ValueError, match="Channel Does Not Exist"):
         standup.standup_start(user["token"], 21512512521512)
 
     # Standup works on private channel
@@ -38,19 +44,22 @@ def test_standup_start():
         == {"time": get_standup_end()}
 
 def test_standup_send():
+    '''
+    Test functions for standup_send
+    '''
     # A message is buffered in the standup queue - Owner
     owner = auth.auth_register("validcorrect@g.com", "valid_password", \
          "valid_correct_first_name", "valid_correct_last_name")
-    
+
     channel = channel_func.channels_create(owner["token"], "Owner", True)
-    
+
     # Channel is not currently in standup mode
-    with pytest.raises(AccessError, match = "Not Currently In Standup"):
+    with pytest.raises(AccessError, match="Not Currently In Standup"):
         standup.standup_send(owner["token"], channel["channel_id"], \
              "correct_and_valid_message")
 
     standup.standup_start(owner["token"], channel["channel_id"])
-    
+
     assert standup.standup_send(owner["token"], channel["channel_id"], \
         "correct_and_valid_message") == {}
 
@@ -58,7 +67,7 @@ def test_standup_send():
         "valid_correct_first_name", "valid_correct_last_name")
 
     # User tries to send message but has not joined channel
-    with pytest.raises(AccessError, match = "Cannot Access Channel"):
+    with pytest.raises(AccessError, match="Cannot Access Channel"):
         standup.standup_send(user["token"], channel["channel_id"], \
                   "correct_and_valid_message")
 
@@ -68,12 +77,12 @@ def test_standup_send():
         "correct_and_valid_message") == {}
 
     # Channel given does not exist
-    with pytest.raises(ValueError, match = "Channel Does Not Exist"):
+    with pytest.raises(ValueError, match="Channel Does Not Exist"):
         standup.standup_send(user["token"], 523523523, \
             "correct_and_valid_message")
 
     # The message sent was greater than max message length
-    with pytest.raises(ValueError, match = "Message Too Long"):
+    with pytest.raises(ValueError, match="Message Too Long"):
         standup.standup_send(user["token"], channel["channel_id"],\
             string_creator(1001))
 
@@ -84,11 +93,17 @@ def test_standup_send():
 
 # Creates a variable length string
 def string_creator(length):
+    '''
+    Helper
+    '''
     string = ""
-    for i in range(length):
+    for _ in range(length):
         string += "a"
     return string
 
 # returns expected end time of standup (15 mins in future)
 def get_standup_end():
+    '''
+    Helper
+    '''
     return 900
