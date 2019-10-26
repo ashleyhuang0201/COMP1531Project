@@ -7,14 +7,18 @@ import re
 import jwt
 import hashlib
 import server.global_var as data
+from server.Error import AccessError
 
 # Decodes a token
 def decode_token(token):
-    return jwt.decode(token, data.SECRET, algorithms=['HS256'])
+    return jwt.decode(token, data.SECRET, algorithms=['HS256'])["u_id"]
 
 # Encodes user id
 def encode_token_for_u_id(u_id):
-    return jwt.encode({"u_id": u_id}, data.SECRET, algorithm=['HS256'])
+    return jwt.encode({
+        "u_id": u_id
+        }, data.SECRET, algorithm='HS256').decode("utf-8")
+
 
 # Hashes a code
 def hash(code):
@@ -82,7 +86,7 @@ def valid_token(token):
     '''
     Checks if a user token is valid
     '''
-    for token in data.data["token"]:
+    for token in data.data["tokens"]:
         return True
     return False
 
