@@ -3,9 +3,10 @@ Test functions for auth_*
 '''
 import pytest
 import server.auth_functions as auth
-import server.message_functions as message
+import server.channel_functions as channel
 import server.helpers as helpers
 import server.global_var as data
+from server.Error import AccessError
 
 # Testing Functions
 def test_auth_login():
@@ -45,16 +46,17 @@ def test_auth_logout():
     data.initialise_all()
 
     # A user is registered
-    login_details = auth.auth_register("validcorrect@g.com",  \
-        "valid_correct_password", "valid_first_name", "valid_last_name")
+    user = auth.auth_register("validcorrect@g.com", "valid_password", "a", "b")
 
     #Confirming user is logged in
-    assert message.message_send(login_details["token"], 1, "Hi") == {}
+    assert channel.channels_create(user["token"], "testing", False) == {
+        "channel_id": 0
+    }
 
-    # User is logged out, sending message will now raise token error
-    with pytest.raises(KeyError, match="token"):
-        login_details = auth.auth_logout(login_details)
-        message.message_send(login_details["token"], 1, "Hi")
+    # User is logged out, creating channel will now raise token error
+    auth.auth_logout(user["token"])
+    with pytest.raises(AccessError, match="token"):
+        channel.channels_create(user["token"], "testing2", False)
 
 def test_auth_register():
     '''

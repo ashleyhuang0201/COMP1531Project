@@ -121,12 +121,13 @@ def get_user_by_token(token):
         raise ValueError("Invalid token")
 
     # Decoding token
-    u_id = jwt.decode(token, data.SECRET, algorithms=['HS256'])
+    u_id = jwt.decode(token, data.SECRET, algorithms=['HS256'])["u_id"]
     
     # Finding user_id
     for user in data.data["users"]:
         if user.u_id == u_id:
             return user
+    return None
 
 def get_user_token_by_u_id(u_id):
     """
