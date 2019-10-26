@@ -2,8 +2,8 @@
 Test functions for auth_*
 '''
 import pytest
-from server.auth import auth_functions as auth
-from server.message import message_functions as message
+import server.auth_functions as auth
+import server.message_functions as message
 
 # Testing Functions
 def test_auth_login():

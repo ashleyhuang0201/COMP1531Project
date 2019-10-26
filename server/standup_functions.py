@@ -2,7 +2,7 @@ from threading import Timer
 import datetime
 from server.Error import AccessError
 import server.global_var as data
-from server.helpers import get_channel, get_user_by_token
+from server.helpers import get_channel_by_channel_id, get_user_by_token
 
 
 """
@@ -12,7 +12,7 @@ minute window then at the end of the 15 minute window a message will be added
 to the message queue in the channel from the user who started the standup.
 """
 def standup_start(token, channel_id):
-    channel = get_channel(channel_id)
+    channel = get_channel_by_channel_id(channel_id)
     user = get_user_by_token(token)
     if channel == None:
         raise ValueError("Channel Does Not Exist")
@@ -33,7 +33,7 @@ Sending a message to get buffered in the standup queue, assuming a standup
 is currently active
 """
 def standup_send(token, channel_id, message):
-    channel = get_channel(channel_id)
+    channel = get_channel_by_channel_id(channel_id)
     user = get_user_by_token(token)
     if channel == None:
         raise ValueError("Channel Does Not Exist")

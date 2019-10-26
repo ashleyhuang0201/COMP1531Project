@@ -9,7 +9,7 @@ import jwt
 
 import server.global_var as global_var
 from server.Error import AccessError
-from server.helpers import valid_token, get_channel_by_channel_id, get_user_by_token, token_is_admin, token_is_owner
+import server.helpers as helpers
 
 
 def message_sendlater(token, channel_id, message, time_sent):
@@ -18,11 +18,11 @@ def message_sendlater(token, channel_id, message, time_sent):
     channel_id automatically at a specified time in the future
     '''
 
-    channel = get_channel_by_channel_id(channel_id)
-    user = get_user_by_token(token)
+    channel = helpers.get_channel_by_channel_id(channel_id)
+    user = helpers.get_user_by_token(token)
 
     # Invalid user has accessed function
-    if not valid_token(token):
+    if not helpers.valid_token(token):
         raise AccessError("Invalid token")
 
     # Channel_id does not refer to a valid channel
@@ -57,11 +57,11 @@ def message_send(token, channel_id, message):
     Send a message from authorised_user to the channel specified by channel_id
     '''
 
-    channel = get_channel_by_channel_id(channel_id)
-    user = get_user_by_token(token)
+    channel = helpers.get_channel_by_channel_id(channel_id)
+    user = helpers.get_user_by_token(token)
 
     # Invalid user has accessed function
-    if valid_token(token) == False:
+    if helpers.valid_token(token) == False:
         raise AccessError("Invalid token")
 
     # Channel_id does not refer to a valid channel
@@ -91,12 +91,12 @@ def message_remove(token, message_id):
     Given a message ID, the message is removed
     '''
 
-    channel = get_channel_by_message_id(message_id)
-    message = get_message_by_message_id(message_id)
-    user = get_user_by_token(token)
+    channel = helpers.get_channel_by_message_id(message_id)
+    message = helpers.get_message_by_message_id(message_id)
+    user = helpers.get_user_by_token(token)
 
     # Invalid user has accessed function
-    if valid_token(token) == False:
+    if helpers.valid_token(token) == False:
         raise AccessError("Invalid token")
 
     # Message_id does not refer to an existing message
@@ -105,8 +105,8 @@ def message_remove(token, message_id):
 
     # User does not have permission to remove message
     if message.user_sent_message(user.u_id) == False and \
-            token_is_admin(token) == False and \
-            token_is_owner(token) == False and \
+            helpers.token_is_admin(token) == False and \
+            helpers.token_is_owner(token) == False and \
             channel.is_owner(user.u_id) == False:
         raise AccessError("User does not have permission")
 
@@ -120,12 +120,12 @@ def message_edit(token, message_id, message):
     Given a message, update it's text with new text
     '''
 
-    channel = get_channel_by_message_id(message_id)
-    message_obj = get_message_by_message_id(message_id)
-    user = get_user_by_token(token)
+    channel = helpers.get_channel_by_message_id(message_id)
+    message_obj = helpers.get_message_by_message_id(message_id)
+    user = helpers.get_user_by_token(token)
 
     # Invalid user has accessed function
-    if valid_token(token) == False:
+    if helpers.valid_token(token) == False:
         raise AccessError("Invalid token")
 
     # message_id does not refer to an existing message
@@ -138,8 +138,8 @@ def message_edit(token, message_id, message):
 
     # User does not have permission to edit message
     if message_obj.user_sent_message(user.u_id) == False and \
-            token_is_admin(token) == False and \
-            token_is_owner(token) == False and \
+            helpers.token_is_admin(token) == False and \
+            helpers.token_is_owner(token) == False and \
             channel.is_owner(user.u_id) == False:
         raise AccessError("User does not have permission")
 
@@ -154,12 +154,12 @@ def message_react(token, message_id, react_id):
     to that particular message
     '''
 
-    channel = get_channel_by_message_id(message_id)
-    message_obj = get_message_by_message_id(message_id)
-    user = get_user_by_token(token)
+    channel = helpers.get_channel_by_message_id(message_id)
+    message_obj = helpers.get_message_by_message_id(message_id)
+    user = helpers.get_user_by_token(token)
 
     # Invalid user has accessed function
-    if valid_token(token) == False:
+    if helpers.valid_token(token) == False:
         raise AccessError("Invalid token")
 
     # Message_id does not refer to an existing message
@@ -189,12 +189,12 @@ def message_unreact(token, message_id, react_id):
     "react" to that particular message
     '''
 
-    channel = get_channel_by_message_id(message_id)
-    message_obj = get_message_by_message_id(message_id)
-    user = get_user_by_token(token)
+    channel = helpers.get_channel_by_message_id(message_id)
+    message_obj = helpers.get_message_by_message_id(message_id)
+    user = helpers.get_user_by_token(token)
 
     # Invalid user has accessed function
-    if valid_token(token) == False:
+    if helpers.valid_token(token) == False:
         raise AccessError("Invalid token")
 
     # Message_id does not refer to an existing message
@@ -224,12 +224,12 @@ def message_pin(token, message_id):
     display treatment by the frontend
     '''
 
-    channel = get_channel_by_message_id(message_id)
-    message_obj = get_message_by_message_id(message_id)
-    user = get_user_by_token(token)
+    channel = helpers.get_channel_by_message_id(message_id)
+    message_obj = helpers.get_message_by_message_id(message_id)
+    user = helpers.get_user_by_token(token)
 
     # Invalid user has accessed function
-    if valid_token(token) == False:
+    if helpers.valid_token(token) == False:
         raise AccessError("Invalid token")
 
     # Message_id does not refer to an existing message
@@ -246,8 +246,8 @@ def message_pin(token, message_id):
 
     # User is not an owner of the channel
     if channel.is_owner(user.u_id) == False and \
-            token_is_admin(token) == False and \
-            token_is_owner(token) == False:
+            helpers.token_is_admin(token) == False and \
+            helpers.token_is_owner(token) == False:
         raise ValueError("User is not an admin")
 
     # Pin message
@@ -260,12 +260,12 @@ def message_unpin(token, message_id):
     Given a message within a channel, remove it's mark as unpinned
     '''
 
-    channel = get_channel_by_message_id(message_id)
-    message_obj = get_message_by_message_id(message_id)
-    user = get_user_by_token(token)
+    channel = helpers.get_channel_by_message_id(message_id)
+    message_obj = helpers.get_message_by_message_id(message_id)
+    user = helpers.get_user_by_token(token)
 
     # Invalid user has accessed function
-    if valid_token(token) == False:
+    if helpers.valid_token(token) == False:
         raise AccessError("Invalid token")
 
     # Message_id does not refer to an existing message
@@ -282,8 +282,8 @@ def message_unpin(token, message_id):
 
     # User is not an owner of the channel
     if channel.is_owner(user.u_id) == False and \
-            token_is_admin(token) == False and \
-            token_is_owner(token) == False:
+            helpers.token_is_admin(token) == False and \
+            helpers.token_is_owner(token) == False:
         raise ValueError("User is not an admin")
 
     # Unpinning message
@@ -311,28 +311,4 @@ def valid_message_id(message_id):
 def valid_react_id(react_id):
     if react_id == 1:
         return True
-
     return False
-
-# Returns the channel object corresponding to the channel_id
-def get_channel_by_channel_id(channel_id):
-    for channel in global_var.data["channels"]:
-        if channel_id == channel.id:
-            return channel
-
-# Returns the channel object according to the message_id
-def get_channel_by_message_id(message_id):
-    for channel in global_var.data["channels"]:
-        for message in channel.messages:
-            if message.id == message_id:
-                return channel
-
-# Returns the message object corresponding to message id
-def get_message_by_message_id(message_id):
-    for channel in global_var.data["channels"]:
-        for message in channel.messages:
-            if message.id == message_id:
-                return message
-
-
-

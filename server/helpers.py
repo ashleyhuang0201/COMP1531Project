@@ -164,3 +164,23 @@ def remove_reset(code):
 def add_reset(code, email):
     user = get_user_by_email(email)
     data.data["reset_code"].append({"reset_code": code, "user": user})
+
+# Returns the channel object corresponding to the channel_id
+def get_channel_by_channel_id(channel_id):
+    for channel in data.data["channels"]:
+        if channel_id == channel.id:
+            return channel
+
+# Returns the channel object according to the message_id
+def get_channel_by_message_id(message_id):
+    for channel in data.data["channels"]:
+        for message in channel.messages:
+            if message.id == message_id:
+                return channel
+
+# Returns the message object corresponding to message id
+def get_message_by_message_id(message_id):
+    for channel in data.data["channels"]:
+        for message in channel.messages:
+            if message.id == message_id:
+                return message

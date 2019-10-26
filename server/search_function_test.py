@@ -5,13 +5,14 @@ no message in channel, 1 result from one channel, two results from one channel,
 results from multiple channels)
 """
 import pytest
-from server.search import search_function as search
-from server.message.message_functions import message_send
-from server.auth.auth_functions import auth_register
-from server.channel.channel_functions import channels_create, channel_messages
+import server.search_function as search
+from server.message_functions import message_send
+from server.auth_functions import auth_register
+from server.channel_functions import channels_create, channel_messages
+from server.helpers import get_user_token_by_u_id
 
 # Search given invalid token
-def test_search_invalid_token:
+def test_search_invalid_token():
     with pytest.raises(ValueError, match="Invalid token"):
         # Creating user
         user = auth_register('user@test.com', 'password', 'search', 'test')
@@ -34,10 +35,10 @@ def test_search_none():
     channel_id = channel["channel_id"]
     
     # Adding messages to channel
-    def message_send(token, channel_id, "121"):
-    def message_send(token, channel_id, "321"):
-    def message_send(token, channel_id, "342"):
-    def message_send(token, channel_id, "499"):
+    message_send(token, channel_id, "121")
+    message_send(token, channel_id, "321")
+    message_send(token, channel_id, "342")
+    message_send(token, channel_id, "499")
     
     assert search.search(token, '') == {'messages': []}
 
@@ -52,10 +53,10 @@ def test_search_no_match():
     channel_id = channel["channel_id"]
     
     # Adding messages to channel
-    def message_send(token, channel_id, "121"):
-    def message_send(token, channel_id, "321"):
-    def message_send(token, channel_id, "342"):
-    def message_send(token, channel_id, "499"):
+    message_send(token, channel_id, "121")
+    message_send(token, channel_id, "321")
+    message_send(token, channel_id, "342")
+    message_send(token, channel_id, "499")
     
     assert search.search(token, 'hey') == {'messages': []}
 
@@ -82,10 +83,10 @@ def test_search_one():
     channel_id = channel["channel_id"]
     
     # Adding messages to channel
-    def message_send(token, channel_id, "121"):
-    def message_send(token, channel_id, "321"):
-    def message_send(token, channel_id, "342"):
-    def message_send(token, channel_id, "499"):
+    message_send(token, channel_id, "121")
+    message_send(token, channel_id, "321")
+    message_send(token, channel_id, "342")
+    message_send(token, channel_id, "499")
     
     assert search.search(token, '99') == {'messages': ['499']}
 
@@ -100,10 +101,10 @@ def test_search_single_channel():
     channel_id = channel["channel_id"]
     
     # Adding messages to channel
-    def message_send(token, channel_id, "121"):
-    def message_send(token, channel_id, "321"):
-    def message_send(token, channel_id, "342"):
-    def message_send(token, channel_id, "499"):
+    message_send(token, channel_id, "121")
+    message_send(token, channel_id, "321")
+    message_send(token, channel_id, "342")
+    message_send(token, channel_id, "499")
     
     assert search.search(token, '21') == {'messages': ['121', '321']}
 
@@ -122,7 +123,7 @@ def test_search_multi_channel():
     channel2_id = channel2["channel_id"]
     
     # Adding messages to channel
-    def message_send(token, channel1_id, "121"):
-    def message_send(token, channel2_id, "321"):
+    message_send(token, channel1_id, "121")
+    message_send(token, channel2_id, "321")
     
     assert search.search(token, '21') == {'messages': ['121', '321']}

@@ -4,7 +4,7 @@ File for all global variables, classes and functions
 import datetime
 import random
 from server.message_functions import message_send
-from server.helpers import get_user_by_token
+import server.helpers as helpers
 
 # Dictionary list containing all global data
 data = {
@@ -224,5 +224,8 @@ class Channel:
         message_send(token, self.id, message)
 
     def add_standup_message(self, token, message):
-        self.standup_messages.append({'user': get_user_by_token(token).handle, 'message': message})
+        self.standup_messages.append({
+            'user': helpers.get_user_by_token(token).handle, 
+            'message': message
+        })
 
