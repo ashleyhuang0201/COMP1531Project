@@ -10,13 +10,17 @@ from server.message_functions import message_send
 from server.auth_functions import auth_register
 from server.channel_functions import channels_create, channel_messages
 from server.helpers import get_user_token_by_u_id
+import server.global_var as global_var
 
 # Search given invalid token
 def test_search_invalid_token():
     with pytest.raises(ValueError, match="Invalid token"):
+        # Initialising
+        global_var.initialise_all()
+
         # Creating user
         user = auth_register('user@test.com', 'password', 'search', 'test')
-        token = get_user_token_by_u_id(user.u_id)
+        token = get_user_token_by_u_id(user["u_id"])
         
         # Creating channel
         channel = channels_create(token, "chat", True)
@@ -26,9 +30,12 @@ def test_search_invalid_token():
 
 # Search for nothing
 def test_search_none():
+    # Initialising
+    global_var.initialise_all()
+
     # Creating user
     user = auth_register('user@test.com', 'password', 'search', 'test')
-    token = get_user_token_by_u_id(user.u_id)
+    token = get_user_token_by_u_id(user["u_id"])
     
     # Creating channel
     channel = channels_create(token, "chat", True)
@@ -40,13 +47,16 @@ def test_search_none():
     message_send(token, channel_id, "342")
     message_send(token, channel_id, "499")
     
-    assert search.search(token, '') == {'messages': []}
+    assert search.search(token, '') == {'messages': ['499', '342', '321', '121']}
 
 # Search for message that does not exist and get nothing
 def test_search_no_match():
+    # Initialising
+    global_var.initialise_all()
+
     # Creating user
     user = auth_register('user@test.com', 'password', 'search', 'test')
-    token = get_user_token_by_u_id(user.u_id)
+    token = get_user_token_by_u_id(user["u_id"])
     
     # Creating channel
     channel = channels_create(token, "chat", True)
@@ -62,9 +72,12 @@ def test_search_no_match():
 
 # Search for message with the channel being empty
 def test_search_empty_channel():
+    # Initialising
+    global_var.initialise_all()
+
     # Creating user
     user = auth_register('user@test.com', 'password', 'search', 'test')
-    token = get_user_token_by_u_id(user.u_id)
+    token = get_user_token_by_u_id(user["u_id"])
     
     # Creating channel
     channel = channels_create(token, "chat", True)
@@ -74,9 +87,12 @@ def test_search_empty_channel():
 
 # Search and get 1 message back
 def test_search_one():
+    # Initialising
+    global_var.initialise_all()
+
     # Creating user
     user = auth_register('user@test.com', 'password', 'search', 'test')
-    token = get_user_token_by_u_id(user.u_id)
+    token = get_user_token_by_u_id(user["u_id"])
     
     # Creating channel
     channel = channels_create(token, "chat", True)
@@ -92,9 +108,12 @@ def test_search_one():
 
 # Search and get 2 messages from the same channel back
 def test_search_single_channel():
+    # Initialising
+    global_var.initialise_all()
+
     # Creating user
     user = auth_register('user@test.com', 'password', 'search', 'test')
-    token = get_user_token_by_u_id(user.u_id)
+    token = get_user_token_by_u_id(user["u_id"])
     
     # Creating channel
     channel = channels_create(token, "chat", True)
@@ -106,13 +125,16 @@ def test_search_single_channel():
     message_send(token, channel_id, "342")
     message_send(token, channel_id, "499")
     
-    assert search.search(token, '21') == {'messages': ['121', '321']}
+    assert search.search(token, '21') == {'messages': ['321', '121']}
 
 # Search and get 2 messages from different channels back
 def test_search_multi_channel():
+    # Initialising
+    global_var.initialise_all()
+
     # Creating user
     user = auth_register('user@test.com', 'password', 'search', 'test')
-    token = get_user_token_by_u_id(user.u_id)
+    token = get_user_token_by_u_id(user["u_id"])
     
     # Creating channel 1
     channel1 = channels_create(token, "chat1", True)
