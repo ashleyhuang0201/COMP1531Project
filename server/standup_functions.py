@@ -30,7 +30,7 @@ def standup_start(token, channel_id):
     # After 15 minutes call the channel.startupEnd method to collate all of the
     # startup contents
     channel.start_standup()
-    Timer(15 * 60, channel.end_standup)
+    Timer(60 * 15, channel.end_standup, args=[token]).start()
     time = datetime.datetime.now() + datetime.timedelta(minutes=15)
 
     return {"time" : time.timestamp()}

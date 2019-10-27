@@ -32,7 +32,7 @@ def message_sendlater(token, channel_id, message, time_sent):
         raise ValueError("Message length too long")
 
     # Time to be sent is in the past
-    if time_sent < datetime.datetime.now():
+    if time_sent < datetime.datetime.now().timestamp():
         raise ValueError("Time sent was in the past")
 
     # User has not joined the channel
@@ -43,8 +43,8 @@ def message_sendlater(token, channel_id, message, time_sent):
     message_object = global_var.Message(user.u_id, message, channel_id)
     message_object.time_created = time_sent
 
-    time_diff = (time_sent - datetime.datetime.now()).total_seconds()
-    Timer(time_diff, message_send, [token, channel_id, message_object])
+    time_diff = time_sent - datetime.datetime.now().timestamp()
+    Timer(time_diff, message_send, args=[token, channel_id, message_object.message]).start()
 
     return {
         "message_id": message_object.id

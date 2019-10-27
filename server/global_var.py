@@ -229,8 +229,11 @@ class Channel:
         self.in_standup = False
         message = ""
         for m in self.standup_messages:
-            line = ': '.join(m['user'], m['message'])
-            '\n'.join(message, line)
+            line = ': '.join([m['user'], m['message']])
+            print(f"line {line}")
+            message = '\n'.join([message, line])
+            print(f"msg: {message}")
+        print(f"msgend: {message}")
         self.standup_messages = []
         message_send(token, self.id, message)
 

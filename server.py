@@ -134,7 +134,6 @@ def channel_messages():
     channel_id = int(request.args.get("channel_id"))
     start = int(request.args.get("start"))
 
-    print(channel.channel_messages(token, channel_id, start))
     return dumps(
         channel.channel_messages(token, channel_id, start)
     )
@@ -233,7 +232,7 @@ def message_sendlater():
     msg = request.form.get("message")
     # Hopefully int is correct but this will be changed once we know how
     # frontend is called
-    time_sent = int(request.form.get("time_sent"))
+    time_sent = float(request.form.get("time_sent"))
 
     return dumps(
         message.message_sendlater(token, channel_id, msg, time_sent)
