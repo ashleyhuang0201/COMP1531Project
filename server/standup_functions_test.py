@@ -45,6 +45,10 @@ def test_standup_start():
     with pytest.raises(ValueError, match="Channel Does Not Exist"):
         standup_start(user["token"], 21512512521512)
 
+    # Start standup when already running
+    with pytest.raises(ValueError, match="Standup Already Running"):
+        standup_start(user["token"], channel2["channel_id"])
+
     # Standup works on private channel
     private = channel_func.channels_create(owner["token"], "Owner", False)
     end_ex = get_standup_end()

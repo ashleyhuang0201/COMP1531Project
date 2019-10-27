@@ -238,6 +238,10 @@ def test_channel_leave():
     with pytest.raises(ValueError, match="Channel does not exist"):
         func.channel_leave(token1, 100)
 
+    # The function is called using a invalid token
+    with pytest.raises(AccessError, match="Invalid token"):
+        func.channel_leave("12345", channel_id)
+
     # User is already removed, but will not cause Error
     assert func.channel_leave(token1, channel_id) == {}
 
@@ -272,6 +276,10 @@ def test_channel_join():
     with pytest.raises(ValueError, match="Channel does not exist"):
         func.channel_join(token1, 100)
 
+    # The function is called using a invalid token
+    with pytest.raises(AccessError, match="Invalid token"):
+        func.channel_join("1234asdasd5", 1)
+
     #if channel is private and user is not the admin
     with pytest.raises(AccessError, match=\
     "Channel is private and user is not admin"):
@@ -280,6 +288,7 @@ def test_channel_join():
     # A slackr owner leaves a private channel and can join back in
     func.channel_leave(token1, channel_ids)
     func.channel_join(token1, channel_ids)
+
 
 
 def test_channel_addowner():
@@ -333,6 +342,10 @@ def test_channel_addowner():
     "User is already an owner of the channel"):
         func.channel_addowner(token_owner, channel_id, userid1)
 
+    # The function is called using a invalid token
+    with pytest.raises(AccessError, match="Invalid token"):
+        func.channel_addowner("12345", channel_id, userid1)
+
 def test_channel_removeowner():
     '''
     Function tests for channel_removeowner
@@ -343,6 +356,7 @@ def test_channel_removeowner():
     "valid_correct_password", "valid_correct_first_name", \
     "valid_correct_last_name")
     token1 = user1["token"]
+    userid1 = user1["u_id"]
 
     user2 = auth_register("valid_correct_email@test2.com", \
     "valid_correct_password", "valid_correct_first_name", \
@@ -362,6 +376,11 @@ def test_channel_removeowner():
     "User id is not an owner of the channel"):
         func.channel_removeowner(token1, channel_id, userid2)
 
+    # user2 is not the owner and tries to remove owner of channel
+    with pytest.raises(AccessError, match=\
+    "User is not an owner of the channel or slackrowner"):
+        func.channel_removeowner(token2, channel_id, userid1)
+
     #token1 makes token2 the owner
     func.channel_addowner(token1, channel_id, userid2)
 
@@ -370,6 +389,10 @@ def test_channel_removeowner():
     #if given an invalid channel_id
     with pytest.raises(ValueError, match="Channel does not exist"):
         func.channel_removeowner(token1, 100, userid2)
+
+    # The function is called using a invalid token
+    with pytest.raises(AccessError, match="Invalid token"):
+        func.channel_removeowner("12345", channel_id, userid2)
 
 def test_channels_list():
     '''
@@ -407,6 +430,10 @@ def test_channels_list():
     #assert token2 is in two channels
     assert func.channels_list(token2) == {"channels" :[{"channel_id" : 1, \
     "name" : "TestChannel2"}, {"channel_id" : 2, "name" : "TestChannel3"}]}
+
+    # The function is called using a invalid token
+    with pytest.raises(AccessError, match="Invalid token"):
+        func.channels_list("12345")
 
 def test_channels_listall():
     '''
