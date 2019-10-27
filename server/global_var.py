@@ -90,8 +90,8 @@ class Message:
         self.sender = u_id
         self.message = message
         self.channel = channel_id
-        self.time_created = datetime.datetime.now
-        self.reacts = [{"react_id": 1, "u_id": []}]
+        self.time_created = datetime.datetime.now().timestamp()
+        self.reacts = [{"react_id": 1, "u_ids": []}]
         self.is_pinned = False
 
     # Checks if u_id was the sender of the message
@@ -105,7 +105,7 @@ class Message:
     def user_has_reacted(self, u_id):
         for react in self.reacts:
             if react["react_id"] == 1:
-                if u_id in react["u_id"]:
+                if u_id in react["u_ids"]:
                     return True
                 else:
                     return False
@@ -142,43 +142,57 @@ class Channel:
         self.name = name
         self.id = len(data["channels"])
         self.messages = [] 
-        self.owners = [u_id]
-        self.users = [u_id]
+        self.owners = []
+        self.users = []
         self.is_public = is_public
         self.in_standup = False
         self.standup_messages = []
+        self.add_owner(u_id)
+        self.add_user(u_id)
 
     # Adds a member to the channel
     def add_user(self, u_id):
-        self.users.append(u_id)
+        user = helpers.get_user_by_u_id(u_id)
+        self.users.append({
+            "u_id": user.u_id, 
+            "name_first": user.name_first, 
+            "name_last": user.name_last
+        })
 
     # Removes a member from the channel
     def remove_user(self, u_id):
-        if u_id in self.users:
-            self.users.remove(u_id)
+        for user in self.users:
+            if user["u_id"] == u_id:
+                self.users.remove(user)
 
     # Adds an owner to the channels
     def add_owner(self, u_id):
-        self.owners.append(u_id)
+        user = helpers.get_user_by_u_id(u_id)
+        self.owners.append({
+            "u_id": user.u_id, 
+            "name_first": user.name_first, 
+            "name_last": user.name_last
+        })
         
     # Removes an owner from the channel
     def remove_owner(self, u_id):
-        if u_id in self.owners:
-            self.owners.remove(u_id)
+        for user in self.owners:
+            if user["u_id"] == u_id:
+                self.owners.remove(user)
 
     # Checks if an user is a member
     def is_member(self, u_id):
-        if u_id in self.users:
-            return True
-        else:
-            return False
+        for user in self.users:
+            if user["u_id"] == u_id:
+                return True
+        return False
 
     # Checks if an user is a owner
     def is_owner(self, u_id):
-        if u_id in self.owners:
-            return True
-        else:
-            return False
+        for user in self.owners:
+            if user["u_id"] == u_id:
+                return True
+        return False
 
     # Adds a message to the channel
     def add_message(self, message):

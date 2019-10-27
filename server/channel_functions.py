@@ -88,7 +88,7 @@ def channel_messages(token, channel_id, start):
         raise AccessError("Authorised user is not a member of the channel")
 
     # If the start is greater than the number of messages in the channel given
-    if start >= len(channel.messages):
+    if start > len(channel.messages):
         raise ValueError("Start index is invalid")
 
     messages = []
@@ -100,8 +100,9 @@ def channel_messages(token, channel_id, start):
         # Gets message object at index
         message = channel.messages[start + i]
         # Insert additional information regarding reacts
-        reacts = message.reacts[0]["is_this_user_reacted"] = \
-             message.user_has_reacted(helpers.decode_token(token))
+        reacts = message.reacts
+        reacts[0]["is_this_user_reacted"] = \
+            message.user_has_reacted(helpers.decode_token(token))
 
         # Append message dictionary into list
         messages.append({
