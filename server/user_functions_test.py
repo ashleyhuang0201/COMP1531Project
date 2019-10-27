@@ -98,6 +98,10 @@ def test_profile_setemail():
     token = user["token"]
     u_id = user["u_id"]
 
+    # An email already in use is given
+    with pytest.raises(ValueError, match="Email already in use"):
+        funcs.user_profile_setemail(token, "test@gmail.com")
+
     # A valid email change
     assert funcs.user_profile_setemail(token, "test1@gmail.com") == {}
 
@@ -113,9 +117,7 @@ def test_profile_setemail():
     with pytest.raises(ValueError, match="Invalid email"):
         funcs.user_profile_setemail(token, "invalidEmail")
 
-    # An email already in use is given
-    with pytest.raises(ValueError, match="Email already in use"):
-        funcs.user_profile_setemail(token, "test2@gmail.com")
+    
 
 
 def test_profile_sethandle():

@@ -5,8 +5,6 @@ import { IconButton } from '@material-ui/core';
 
 import DeleteIcon from '@material-ui/icons/Delete';
 
-import { url } from '../../utils/constants';
-
 import AuthContext from '../../AuthContext';
 
 function MessageRemove({
@@ -16,9 +14,11 @@ function MessageRemove({
   const token = React.useContext(AuthContext);
 
   const messageRemove = () => {
-    axios.post(`${url}/message/remove`, {
-      token,
-      message_id,
+    axios.delete(`/message/remove`, {
+      data: {
+        token,
+        message_id,
+      }
     });
   };
 

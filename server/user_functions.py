@@ -5,7 +5,7 @@ Team: You_Things_Can_Choose
 import jwt
 from server.Error import AccessError
 from server.helpers import get_user_by_u_id, get_user_by_token,\
-valid_user_id, valid_email, valid_token
+valid_user_id, valid_email, valid_token, get_user_by_email
 
 def user_profile(token, u_id):
     """
@@ -63,11 +63,10 @@ def user_profile_setemail(token, email):
     - Email address is already being used by another user
 
     """
-
-    used_emails = ["test2@gmail.com", "test3@gmail.com"]
+    user = get_user_by_email(email)
     if valid_email(email) is False:
         raise ValueError("Invalid email")
-    if email in used_emails:
+    if user:
         raise ValueError("Email already in use")
 
     # Changes user's email in database
