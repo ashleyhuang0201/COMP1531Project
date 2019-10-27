@@ -9,8 +9,6 @@ import {
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbUpOutlinedIcon from '@material-ui/icons/ThumbUpOutlined';
 
-import { url } from '../../utils/constants';
-
 import AuthContext from '../../AuthContext';
 
 function MessageReact({
@@ -22,13 +20,13 @@ function MessageReact({
 
   const messageReact = (is_reacted) => {
     if (is_reacted) {
-      axios.post(`${url}/message/unreact`, {
+      axios.post(`/message/unreact`, {
         token,
         message_id,
         react_id: 1 /* FIXME */,
       });
     } else {
-      axios.post(`${url}/message/react`, {
+      axios.post(`/message/react`, {
         token,
         message_id,
         react_id: 1 /* FIXME */,
