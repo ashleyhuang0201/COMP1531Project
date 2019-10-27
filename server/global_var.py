@@ -2,6 +2,7 @@
 File for all global variables, classes and functions
 '''
 import datetime
+import hashlib
 import random
 from server.message_functions import message_send
 import server.helpers as helpers
@@ -35,14 +36,6 @@ def initialise_all():
     message_id_ticker = 0
 
 '''
-Object class for storing reset_codes
-'''
-class reset_code:
-    def __init__(self, u_id):
-        self.reset_code = random.random() # Planning to hash this later somehow
-        self.u_id = u_id
-
-'''
 Object class for storing an user's data
 '''
 class User:
@@ -68,7 +61,7 @@ class User:
 
     # Change password
     def change_password(self, new_password):
-        self.password = new_password
+        self.password = hashlib.sha256(new_password.encode()).hexdigest()
 
     # Updating user's first name
     def update_name_first(self, name_first):
@@ -97,8 +90,8 @@ class Message:
         self.sender = u_id
         self.message = message
         self.channel = channel_id
-        self.time_created = datetime.datetime.now
-        self.reacts = [{"react_id": 1, "u_id": []}]
+        self.time_created = datetime.datetime.now().timestamp()
+        self.reacts = [{"react_id": 1, "u_ids": []}]
         self.is_pinned = False
 
     # Checks if u_id was the sender of the message
@@ -112,7 +105,7 @@ class Message:
     def user_has_reacted(self, u_id):
         for react in self.reacts:
             if react["react_id"] == 1:
-                if u_id in react["u_id"]:
+                if u_id in react["u_ids"]:
                     return True
                 else:
                     return False
@@ -125,13 +118,13 @@ class Message:
     def add_react(self, u_id):
         for react in self.reacts:
             if react["react_id"] == 1:
-                react["u_id"].append(u_id)
+                react["u_ids"].append(u_id)
 
     # Remove a reaction to the message
     def remove_react(self, u_id):
         for react in self.reacts:
             if react["react_id"] == 1:
-                react["u_id"].remove(u_id)
+                react["u_ids"].remove(u_id)
 
     # Sets a message to be pinned
     def pin_message(self):
@@ -149,43 +142,57 @@ class Channel:
         self.name = name
         self.id = len(data["channels"])
         self.messages = [] 
-        #send_later: a list of dictionaries containing messages and a send time 
-        self.send_later = [] 
-        self.owners = [u_id]
-        self.users = [u_id]
+        self.owners = []
+        self.users = []
         self.is_public = is_public
+        self.in_standup = False
+        self.standup_messages = []
+        self.add_owner(u_id)
+        self.add_user(u_id)
 
     # Adds a member to the channel
     def add_user(self, u_id):
-        self.users.append(u_id)
+        user = helpers.get_user_by_u_id(u_id)
+        self.users.append({
+            "u_id": user.u_id, 
+            "name_first": user.name_first, 
+            "name_last": user.name_last
+        })
 
     # Removes a member from the channel
     def remove_user(self, u_id):
-        if u_id in self.users:
-            self.users.remove(u_id)
+        for user in self.users:
+            if user["u_id"] == u_id:
+                self.users.remove(user)
 
     # Adds an owner to the channels
     def add_owner(self, u_id):
-        self.owners.append(u_id)
+        user = helpers.get_user_by_u_id(u_id)
+        self.owners.append({
+            "u_id": user.u_id, 
+            "name_first": user.name_first, 
+            "name_last": user.name_last
+        })
         
     # Removes an owner from the channel
     def remove_owner(self, u_id):
-        if u_id in self.owners:
-            self.owners.remove(u_id)
+        for user in self.owners:
+            if user["u_id"] == u_id:
+                self.owners.remove(user)
 
     # Checks if an user is a member
     def is_member(self, u_id):
-        if u_id in self.users:
-            return True
-        else:
-            return False
+        for user in self.users:
+            if user["u_id"] == u_id:
+                return True
+        return False
 
     # Checks if an user is a owner
     def is_owner(self, u_id):
-        if u_id in self.owners:
-            return True
-        else:
-            return False
+        for user in self.owners:
+            if user["u_id"] == u_id:
+                return True
+        return False
 
     # Adds a message to the channel
     def add_message(self, message):
@@ -222,8 +229,11 @@ class Channel:
         self.in_standup = False
         message = ""
         for m in self.standup_messages:
-            line = ': '.join(m['user'], m['message'])
-            '\n'.join(message, line)
+            line = ': '.join([m['user'], m['message']])
+            print(f"line {line}")
+            message = '\n'.join([message, line])
+            print(f"msg: {message}")
+        print(f"msgend: {message}")
         self.standup_messages = []
         message_send(token, self.id, message)
 
@@ -234,17 +244,8 @@ class Channel:
         })
 
     def user_in_channel(self, u_id):
-        # Looping through users
-        for owner in self.owners:
-            # User found
-            if owner == u_id:
-                return True
-
-        # Looping through users
-        for user in self.users:
-            # User found
-            if user == u_id:
-                return True
+        if self.is_member(u_id) or self.is_owner(u_id):
+            return True
         
         # No such user
         return False

@@ -8,8 +8,7 @@ import server.global_var as global_var
 from server import channel_functions as func
 from server.auth_functions import auth_register
 from server.Error import AccessError
-from server.message_functions import message_send
-from server.search_function import search
+from server.message_functions import message_send, message_react, message_pin
 
 def test_channel_invite():
     '''
@@ -23,7 +22,6 @@ def test_channel_invite():
     user1 = auth_register("test_email@gmail.com", "password123", \
          "Rayden", "Smith")
     token_1 = user1["token"]
-    userid_1 = user1["u_id"]
 
     # Create user that is invited to channel
     user2 = auth_register("test_email2@gmail.com", "thisisapassword", \
@@ -35,12 +33,11 @@ def test_channel_invite():
     user3 = auth_register("test_email3@gmail.com", "arandompassword", \
          "Coen", "Kevin")
     token_3 = user3["token"]
-    userid_3 = user3["u_id"]
 
     # Create a channel
     channel = func.channels_create(token_1, "TestChannel1", True)
     channel_id = channel["channel_id"]
-    # Initialisation finished 
+    # Initialisation finished
 
     # User2 is successfully invited to channel
     assert func.channel_invite(token_1, channel_id, userid_2) == {}
@@ -50,7 +47,7 @@ def test_channel_invite():
          == {"message_id" : 0}
 
     # User leaves the channel
-    assert func.channel_leave(token_2,channel_id) == {}
+    assert func.channel_leave(token_2, channel_id) == {}
 
     # User is not invited if given an invalid token
     with pytest.raises(AccessError, match="Invalid token"):
@@ -63,7 +60,7 @@ def test_channel_invite():
     # Inviting user is not apart of the channel
     with pytest.raises(AccessError, \
          match="Authorised user is not a member of the channel"):
-         func.channel_invite(token_3,channel_id,userid_2)
+        func.channel_invite(token_3, channel_id, userid_2)
 
     # If user being invited is not an user
     with pytest.raises(ValueError, match="User id is not valid"):
@@ -80,13 +77,21 @@ def test_channel_details():
     "valid_correct_password", "valid_correct_first_name", \
     "valid_correct_last_name")
     token1 = user1["token"]
-    userid1 = user1["u_id"]
+    userdict1 = {
+        "u_id": 0,
+        "name_first": "valid_correct_first_name",
+        "name_last": "valid_correct_last_name"
+    }
 
     user2 = auth_register("valid_correct_email2@test.com", \
     "valid_correct_password", "valid_correct_first_name", \
     "valid_correct_last_name")
     token2 = user2["token"]
-    userid2 = user2["u_id"]
+    userdict2 = {
+        "u_id": 1,
+        "name_first": "valid_correct_first_name",
+        "name_last": "valid_correct_last_name"
+    }
 
     #token1 creates a channel and is automatically part of it as the owner
     channel = func.channels_create(token1, "TestChannel", True)
@@ -98,8 +103,8 @@ def test_channel_details():
         func.channel_details(token2, channel_id)
 
     assert func.channel_details(token1, channel_id) == \
-    {"name" : "TestChannel", "owner_members": [userid1], \
-         "all_members": [userid1]}
+    {"name" : "TestChannel", "owner_members": [userdict1], \
+         "all_members": [userdict1]}
 
     #if given an invalid channel_id
     with pytest.raises(ValueError, match="Channel does not exist"):
@@ -113,8 +118,8 @@ def test_channel_details():
     func.channel_join(token2, channel_id)
 
     assert func.channel_details(token1, channel_id) == \
-    {"name" : "TestChannel", "owner_members": [userid1], \
-         "all_members": [userid1, userid2]}
+    {"name" : "TestChannel", "owner_members": [userdict1], \
+         "all_members": [userdict1, userdict2]}
 
 def test_channel_messages():
     '''
@@ -125,6 +130,7 @@ def test_channel_messages():
 
     user1 = auth_register("channel_messages@test.com", "password", \
     "channel_messages", "test")
+    user_id1 = user1["u_id"]
     token1 = user1["token"]
 
     user2 = auth_register("channel_messages@test2.com", "password", \
@@ -136,11 +142,11 @@ def test_channel_messages():
     channel_id = channel["channel_id"]
 
     # Start index is invalid as there are no message
-    with pytest.raises (ValueError, match="Start index is invalid"):
-        func.channel_messages(token1, channel_id, 0)
+    with pytest.raises(ValueError, match="Start index is invalid"):
+        func.channel_messages(token1, channel_id, 1)
 
     # send a message to the channel and check that return is correct
-    message_send(token1, channel_id, '1 message')
+    assert message_send(token1, channel_id, '1 message') == {"message_id": 0}
 
     messages = func.channel_messages(token1, channel_id, 0)
     assert messages["start"] == 0
@@ -148,7 +154,18 @@ def test_channel_messages():
     assert messages["messages"][0]["message_id"] == 0
     assert messages["messages"][0]["u_id"] == user1["u_id"]
     assert messages["messages"][0]["message"] == "1 message"
-    
+    assert not messages["messages"][0]["is_pinned"]
+    assert messages["messages"][0]["reacts"] == \
+         [{"react_id": 1, "u_ids": [], "is_this_user_reacted": False}]
+
+    message_react(token1, 0, 1)
+    message_pin(token1, 0)
+
+    messages = func.channel_messages(token1, channel_id, 0)
+    assert messages["messages"][0]["reacts"] == \
+         [{"react_id": 1, "u_ids": [user_id1], "is_this_user_reacted": True}]
+    assert messages["messages"][0]["is_pinned"]
+
     # send a message to the channel and check that return is correct
     message_send(token1, channel_id, '2 message')
 
@@ -156,8 +173,8 @@ def test_channel_messages():
     assert messages["messages"][0]["message"] == "2 message"
     assert messages["messages"][1]["message"] == "1 message"
 
-    for i in range(3,51):
-        message_send(token1, channel_id, f'{i} message' )
+    for i in range(3, 51):
+        message_send(token1, channel_id, f'{i} message')
 
     # A total of 50 messages are sent
     messages = func.channel_messages(token1, channel_id, 0)
@@ -215,11 +232,15 @@ def test_channel_leave():
     # user has left channel and so can't send messages
     with pytest.raises(AccessError, \
          match="Authorised user is not a member of the channel"):
-         message_send(token1, channel_id, "can't send message")
+        message_send(token1, channel_id, "can't send message")
 
     #if given an invalid channel_id
     with pytest.raises(ValueError, match="Channel does not exist"):
         func.channel_leave(token1, 100)
+
+    # The function is called using a invalid token
+    with pytest.raises(AccessError, match="Invalid token"):
+        func.channel_leave("12345", channel_id)
 
     # User is already removed, but will not cause Error
     assert func.channel_leave(token1, channel_id) == {}
@@ -255,6 +276,10 @@ def test_channel_join():
     with pytest.raises(ValueError, match="Channel does not exist"):
         func.channel_join(token1, 100)
 
+    # The function is called using a invalid token
+    with pytest.raises(AccessError, match="Invalid token"):
+        func.channel_join("1234asdasd5", 1)
+
     #if channel is private and user is not the admin
     with pytest.raises(AccessError, match=\
     "Channel is private and user is not admin"):
@@ -263,6 +288,7 @@ def test_channel_join():
     # A slackr owner leaves a private channel and can join back in
     func.channel_leave(token1, channel_ids)
     func.channel_join(token1, channel_ids)
+
 
 
 def test_channel_addowner():
@@ -316,6 +342,10 @@ def test_channel_addowner():
     "User is already an owner of the channel"):
         func.channel_addowner(token_owner, channel_id, userid1)
 
+    # The function is called using a invalid token
+    with pytest.raises(AccessError, match="Invalid token"):
+        func.channel_addowner("12345", channel_id, userid1)
+
 def test_channel_removeowner():
     '''
     Function tests for channel_removeowner
@@ -326,6 +356,7 @@ def test_channel_removeowner():
     "valid_correct_password", "valid_correct_first_name", \
     "valid_correct_last_name")
     token1 = user1["token"]
+    userid1 = user1["u_id"]
 
     user2 = auth_register("valid_correct_email@test2.com", \
     "valid_correct_password", "valid_correct_first_name", \
@@ -345,6 +376,11 @@ def test_channel_removeowner():
     "User id is not an owner of the channel"):
         func.channel_removeowner(token1, channel_id, userid2)
 
+    # user2 is not the owner and tries to remove owner of channel
+    with pytest.raises(AccessError, match=\
+    "User is not an owner of the channel or slackrowner"):
+        func.channel_removeowner(token2, channel_id, userid1)
+
     #token1 makes token2 the owner
     func.channel_addowner(token1, channel_id, userid2)
 
@@ -353,6 +389,10 @@ def test_channel_removeowner():
     #if given an invalid channel_id
     with pytest.raises(ValueError, match="Channel does not exist"):
         func.channel_removeowner(token1, 100, userid2)
+
+    # The function is called using a invalid token
+    with pytest.raises(AccessError, match="Invalid token"):
+        func.channel_removeowner("12345", channel_id, userid2)
 
 def test_channels_list():
     '''
@@ -373,7 +413,7 @@ def test_channels_list():
     assert func.channels_list(token1) == {"channels": []}
 
     #user1 create a channel
-    channel = func.channels_create(token1, "TestChannel", True)
+    func.channels_create(token1, "TestChannel", True)
 
     #user2 create a channel
     func.channels_create(token2, "TestChannel2", True)
@@ -390,6 +430,10 @@ def test_channels_list():
     #assert token2 is in two channels
     assert func.channels_list(token2) == {"channels" :[{"channel_id" : 1, \
     "name" : "TestChannel2"}, {"channel_id" : 2, "name" : "TestChannel3"}]}
+
+    # The function is called using a invalid token
+    with pytest.raises(AccessError, match="Invalid token"):
+        func.channels_list("12345")
 
 def test_channels_listall():
     '''
@@ -461,4 +505,3 @@ def test_channels_create():
     with pytest.raises(ValueError, match=\
     "Name is longer than 20 characters"):
         func.channels_create(token1, "a" * 21, False)
-

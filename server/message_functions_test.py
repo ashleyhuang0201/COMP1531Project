@@ -7,12 +7,10 @@ Team: You_Things_Can_Choose
 import datetime
 import pytest
 import server.global_var as global_var
-import jwt
 from server import helpers
 from server import message_functions as funcs
 from server import auth_functions
 from server import channel_functions
-from server import search_function
 from server.Error import AccessError
 
 def test_message_sendlater():
@@ -37,37 +35,37 @@ def test_message_sendlater():
 
     #User sends message to created channel
     assert funcs.message_sendlater(token, channel_id, \
-            "This is a valid message", datetime.datetime(2020, 1, 1))  \
+            "This is a valid message", datetime.datetime(2020, 1, 1).timestamp())  \
                                                         == {"message_id": 0}
 
     #Sending a message of length 1000 is valid
     assert funcs.message_sendlater(token, channel_id, create_long_string(), \
-         datetime.datetime(2020, 1, 1)) == {"message_id": 1}
+         datetime.datetime(2020, 1, 1).timestamp()) == {"message_id": 1}
 
     #A message of length greater than 1000 is valid
     with pytest.raises(ValueError, match="Message length too long"):
         funcs.message_sendlater(token, channel_id, "1" + create_long_string(), \
-             datetime.datetime(2020, 1, 1))
+             datetime.datetime(2020, 1, 1).timestamp())
 
     #An exception is thrown if a invalid token is given
     with pytest.raises(AccessError, match="Invalid token"):
         funcs.message_sendlater("111111", channel_id, \
-             "This is a valid message", datetime.datetime(2020, 1, 1))
+             "This is a valid message", datetime.datetime(2020, 1, 1).timestamp())
 
     #The channel based on ID does not exist
     with pytest.raises(ValueError, match="Invalid Channel ID"):
         funcs.message_sendlater(token, 99, "This is a valid message", \
-             datetime.datetime(2020, 1, 1))
+             datetime.datetime(2020, 1, 1).timestamp())
 
     #Time sent is a time in the past
     with pytest.raises(ValueError, match="Time sent was in the past"):
         funcs.message_sendlater(token, channel_id, "This is a valid message", \
-             datetime.datetime(2019, 1, 1))
+             datetime.datetime(2019, 1, 1).timestamp())
 
     #All errors (Token error is caught first)
     with pytest.raises(AccessError, match="Invalid token"):
         funcs.message_sendlater("111111", 99, "1" + create_long_string(), \
-             datetime.datetime(2019, 1, 1))
+             datetime.datetime(2019, 1, 1).timestamp())
 
     #User leaves channel
     channel_functions.channel_leave(token, channel_id)
@@ -76,7 +74,7 @@ def test_message_sendlater():
     with pytest.raises(AccessError, \
          match="Authorised user is not a member of the channel"):
         funcs.message_sendlater(token, channel_id, "This is a valid message", \
-             datetime.datetime(2020, 1, 1))
+             datetime.datetime(2020, 1, 1).timestamp())
 
 
 def test_message_send():
@@ -218,7 +216,7 @@ def test_message_edit():
     channel_id = channel["channel_id"]
 
     #user joins the channel
-    channel_functions.channel_join(token,channel_id)
+    channel_functions.channel_join(token, channel_id)
 
     #3 messages are sent
     assert funcs.message_send(token, channel_id, "This is a valid message") \
@@ -237,7 +235,7 @@ def test_message_edit():
 
     #A invalid token is sent to the function
     with pytest.raises(AccessError, match="Invalid token"):
-        funcs.message_edit("111111", 0, "This is a valid edit") == {}
+        funcs.message_edit("111111", 0, "This is a valid edit")
 
     #A owner tries to edit a invalid message based on message_id
     with pytest.raises(ValueError, match="Message does not exist"):
@@ -270,10 +268,9 @@ def test_message_react():
     user_2 = auth_functions.auth_register("test2@gmail.com", "password", \
         "Bob", "Sally")
     token_2 = user_2["token"]
-    userid_2 = user_2["u_id"]
 
     #User creates a channel
-    channel = channel_functions.channels_create(token,"Name", True)
+    channel = channel_functions.channels_create(token, "Name", True)
     channel_id = channel["channel_id"]
 
     channel_functions.channel_join(token_2, channel_id)
@@ -289,7 +286,7 @@ def test_message_react():
 
     #An invalid token is sent to the function
     with pytest.raises(AccessError, match="Invalid token"):
-        funcs.message_react("111111", 0, 1) == {}
+        funcs.message_react("111111", 0, 1)
 
     #An user successfully reacts
     assert funcs.message_react(token, 0, 1) == {}
@@ -322,7 +319,7 @@ def test_message_unreact():
     token = user["token"]
 
     #User creates a channel
-    channel = channel_functions.channels_create(token,"Name", True)
+    channel = channel_functions.channels_create(token, "Name", True)
     channel_id = channel["channel_id"]
 
     #user sends 3 messages
@@ -340,7 +337,7 @@ def test_message_unreact():
     #A invalid token is sent to the function
     # (A invalid user is trying to use the function)
     with pytest.raises(AccessError, match="Invalid token"):
-        funcs.message_unreact("111111", 0, 1) == {}
+        funcs.message_unreact("111111", 0, 1)
 
     #A user successfully unreacts
     assert funcs.message_unreact(token, 0, 1) == {}
@@ -379,11 +376,11 @@ def test_message_pin():
     token = user["token"]
 
     #owner that creates the channel and so is the owner
-    channel = channel_functions.channels_create(owner_token,"Name", True)
+    channel = channel_functions.channels_create(owner_token, "Name", True)
     channel_id = channel["channel_id"]
 
     #user joins the channel
-    channel_functions.channel_join(token,channel_id)
+    channel_functions.channel_join(token, channel_id)
 
     #user sends 3 messages
     assert funcs.message_send(token, channel_id, "This is a valid message") \
@@ -429,7 +426,7 @@ def test_message_unpin():
     '''
     #Initialisation
     global_var.initialise_all()
-    
+
     #Create users
     owner = auth_functions.auth_register("test2@gmail.com", "pass123", \
          "Sally", "Bob")
@@ -440,11 +437,11 @@ def test_message_unpin():
     token = user["token"]
 
     #owner that creates the channel and so is the owner
-    channel = channel_functions.channels_create(owner_token,"Name", True)
+    channel = channel_functions.channels_create(owner_token, "Name", True)
     channel_id = channel["channel_id"]
 
     #user joins the channel
-    channel_functions.channel_join(token,channel_id)
+    channel_functions.channel_join(token, channel_id)
 
     #user sends 3 messages
     assert funcs.message_send(token, channel_id, "This is a valid message") \

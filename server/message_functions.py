@@ -3,9 +3,7 @@ Message functions Iteration 2 implementations
 Team: You_Things_Can_Choose
 '''
 import datetime
-from json import dumps
 from threading import Timer
-import jwt
 
 import server.global_var as global_var
 from server.Error import AccessError
@@ -26,7 +24,7 @@ def message_sendlater(token, channel_id, message, time_sent):
         raise AccessError("Invalid token")
 
     # Channel_id does not refer to a valid channel
-    if channel == None:
+    if channel is None:
         raise ValueError("Invalid Channel ID")
 
     # Message is not of appropriate length
@@ -34,7 +32,7 @@ def message_sendlater(token, channel_id, message, time_sent):
         raise ValueError("Message length too long")
 
     # Time to be sent is in the past
-    if time_sent < datetime.datetime.now():
+    if time_sent < datetime.datetime.now().timestamp():
         raise ValueError("Time sent was in the past")
 
     # User has not joined the channel
@@ -45,8 +43,8 @@ def message_sendlater(token, channel_id, message, time_sent):
     message_object = global_var.Message(user.u_id, message, channel_id)
     message_object.time_created = time_sent
 
-    timeDiff = (time_sent - datetime.datetime.now()).total_seconds()
-    Timer(timeDiff, message_send, [token, channel_id, message_object])
+    time_diff = time_sent - datetime.datetime.now().timestamp()
+    Timer(time_diff, message_send, args=[token, channel_id, message_object.message]).start()
 
     return {
         "message_id": message_object.id
@@ -61,11 +59,11 @@ def message_send(token, channel_id, message):
     user = helpers.get_user_by_token(token)
 
     # Invalid user has accessed function
-    if helpers.valid_token(token) == False:
+    if not helpers.valid_token(token):
         raise AccessError("Invalid token")
 
     # Channel_id does not refer to a valid channel
-    if channel == None:
+    if channel is None:
         raise ValueError("Invalid Channel ID")
 
     # Message is not of appropriate length
@@ -96,18 +94,18 @@ def message_remove(token, message_id):
     user = helpers.get_user_by_token(token)
 
     # Invalid user has accessed function
-    if helpers.valid_token(token) == False:
+    if not helpers.valid_token(token):
         raise AccessError("Invalid token")
 
     # Message_id does not refer to an existing message
-    if valid_message_id(message_id) == False:
+    if not valid_message_id(message_id):
         raise ValueError("Message does not exist")
 
     # User does not have permission to remove message
-    if message.user_sent_message(user.u_id) == False and \
-            helpers.token_is_admin(token) == False and \
-            helpers.token_is_owner(token) == False and \
-            channel.is_owner(user.u_id) == False:
+    if not message.user_sent_message(user.u_id) and \
+        not helpers.token_is_admin(token) and \
+        not helpers.token_is_owner(token) and \
+        not channel.is_owner(user.u_id):
         raise AccessError("User does not have permission")
 
     # Removing message
@@ -125,11 +123,11 @@ def message_edit(token, message_id, message):
     user = helpers.get_user_by_token(token)
 
     # Invalid user has accessed function
-    if helpers.valid_token(token) == False:
+    if not helpers.valid_token(token):
         raise AccessError("Invalid token")
 
     # message_id does not refer to an existing message
-    if valid_message_id(message_id) == False:
+    if not valid_message_id(message_id):
         raise ValueError("Message does not exist")
 
     # message is not of appropriate length
@@ -137,10 +135,10 @@ def message_edit(token, message_id, message):
         raise ValueError("Message length too long")
 
     # User does not have permission to edit message
-    if message_obj.user_sent_message(user.u_id) == False and \
-            helpers.token_is_admin(token) == False and \
-            helpers.token_is_owner(token) == False and \
-            channel.is_owner(user.u_id) == False:
+    if not  message_obj.user_sent_message(user.u_id) and \
+            not helpers.token_is_admin(token) and \
+            not helpers.token_is_owner(token) and \
+            not channel.is_owner(user.u_id):
         raise AccessError("User does not have permission")
 
     # Edit channel message
@@ -159,19 +157,19 @@ def message_react(token, message_id, react_id):
     user = helpers.get_user_by_token(token)
 
     # Invalid user has accessed function
-    if helpers.valid_token(token) == False:
+    if not helpers.valid_token(token):
         raise AccessError("Invalid token")
 
     # Message_id does not refer to an existing message
-    if valid_message_id(message_id) == False:
+    if not valid_message_id(message_id):
         raise ValueError("Message does not exist")
 
     # React_id does not refer to a valid react
-    if valid_react_id(react_id) == False:
+    if not valid_react_id(react_id):
         raise ValueError("Invalid React ID")
 
     # Message already has an react iD
-    if message_obj.user_has_reacted(user.u_id) == True:
+    if message_obj.user_has_reacted(user.u_id):
         raise ValueError("Message contains an active react")
 
     # User is not a member of the channel
@@ -194,19 +192,19 @@ def message_unreact(token, message_id, react_id):
     user = helpers.get_user_by_token(token)
 
     # Invalid user has accessed function
-    if helpers.valid_token(token) == False:
+    if not helpers.valid_token(token):
         raise AccessError("Invalid token")
 
     # Message_id does not refer to an existing message
-    if valid_message_id(message_id) == False:
+    if not valid_message_id(message_id):
         raise ValueError("Message does not exist")
 
     # React_id does not refer to a valid react
-    if valid_react_id(react_id) == False:
+    if not valid_react_id(react_id):
         raise ValueError("Invalid React ID")
 
     # Message already has an react iD
-    if message_obj.user_has_reacted(user.u_id) == False:
+    if not message_obj.user_has_reacted(user.u_id):
         raise ValueError("Message does not contain an active react")
 
     # User is not a member of the channel
@@ -229,15 +227,15 @@ def message_pin(token, message_id):
     user = helpers.get_user_by_token(token)
 
     # Invalid user has accessed function
-    if helpers.valid_token(token) == False:
+    if not helpers.valid_token(token):
         raise AccessError("Invalid token")
 
     # Message_id does not refer to an existing message
-    if valid_message_id(message_id) == False:
+    if not valid_message_id(message_id):
         raise ValueError("Message does not exist")
 
     # Message_id is already pinned
-    if message_obj.is_pinned == True:
+    if message_obj.is_pinned:
         raise ValueError("Message is currently pinned")
 
     # User is not a member of the channel
@@ -245,9 +243,9 @@ def message_pin(token, message_id):
         raise AccessError("Authorised user is not a member of the channel")
 
     # User is not an owner of the channel
-    if channel.is_owner(user.u_id) == False and \
-            helpers.token_is_admin(token) == False and \
-            helpers.token_is_owner(token) == False:
+    if not channel.is_owner(user.u_id) and \
+        not helpers.token_is_admin(token) and \
+        not helpers.token_is_owner(token):
         raise ValueError("User is not an admin")
 
     # Pin message
@@ -265,15 +263,15 @@ def message_unpin(token, message_id):
     user = helpers.get_user_by_token(token)
 
     # Invalid user has accessed function
-    if helpers.valid_token(token) == False:
+    if not helpers.valid_token(token):
         raise AccessError("Invalid token")
 
     # Message_id does not refer to an existing message
-    if valid_message_id(message_id) == False:
+    if not valid_message_id(message_id):
         raise ValueError("Message does not exist")
 
     # Message_id is already unpinned
-    if message_obj.is_pinned == False:
+    if not message_obj.is_pinned:
         raise ValueError("Message is currently unpinned")
 
     # User is not a member of the channel
@@ -281,9 +279,9 @@ def message_unpin(token, message_id):
         raise AccessError("Authorised user is not a member of the channel")
 
     # User is not an owner of the channel
-    if channel.is_owner(user.u_id) == False and \
-            helpers.token_is_admin(token) == False and \
-            helpers.token_is_owner(token) == False:
+    if not channel.is_owner(user.u_id) and \
+        not helpers.token_is_admin(token) and \
+        not helpers.token_is_owner(token):
         raise ValueError("User is not an admin")
 
     # Unpinning message
@@ -291,24 +289,27 @@ def message_unpin(token, message_id):
 
     return {}
 
-'''
- Helper Funtions
-'''
-
-# Checks the validity of a message
 def valid_message(message):
+    '''
+    Checks the validity of a message
+    '''
     return len(message) > 1000
 
-#Checks the validity of a message id
+
 def valid_message_id(message_id):
+    '''
+    Checks the validity of a message id
+    '''
     for channel in global_var.data["channels"]:
         for message in channel.messages:
             if message.id == message_id:
                 return True
     return False
 
-#Checks the validity of a react id
 def valid_react_id(react_id):
+    '''
+    Checks the validity of a react id
+    '''
     if react_id == 1:
         return True
     return False

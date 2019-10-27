@@ -5,12 +5,11 @@ import hashlib
 import jwt
 import random
 from flask import Flask
-from flask_mail import Mail, Message
+from flask_mail import Message
 from json import dumps
 
 import server.global_var as data
 import server.helpers as helper
-
 
 def auth_login(email, password):
     '''
@@ -73,7 +72,7 @@ def auth_register(email, password, name_first, name_last):
 
     data.data["tokens"].append(token)
 
-    return { "u_id": new_u_id, "token": token}
+    return {"u_id": new_u_id, "token": token}
 
 def auth_passwordreset_request(email):
     '''
@@ -85,29 +84,17 @@ def auth_passwordreset_request(email):
     if helper.valid_email(email) == False:
         raise ValueError("Email is not valid")
 
-    # Creating email server
-    APP = Flask(__name__)
-    APP.config.update(
-        MAIL_SERVER='smtp.gmail.com',
-        MAIL_PORT=465,
-        MAIL_USE_SSL=True,
-        MAIL_USERNAME = "comp1531shared@gmail.com",
-        MAIL_PASSWORD = "ThanksGuys"
-    )
-
     # Preparing reset code
     user = helper.get_user_by_email(email)
     reset_code = generate_reset_code(user)
 
     # Creating mail to send
-    mail = Mail(APP)
     msg = Message("Website Reset Request",
         sender="comp1531shared@gmail.com",
         recipients=[email])
     msg.body = f"Your reset code is: {reset_code}"
-    mail.send(msg)
 
-    return {}
+    return msg
 
 def auth_passwordreset_reset(reset_code, new_password):
     '''
@@ -117,10 +104,10 @@ def auth_passwordreset_reset(reset_code, new_password):
 
     user = helper.get_user_by_reset_code(reset_code)
 
-    if not user:
-        raise ValueError("Invalid Reset Code")
     if not valid_password(new_password):
         raise ValueError("Invalid Password")
+    if not user:
+        raise ValueError("Invalid Reset Code")
 
     user.change_password(new_password)
     helper.remove_reset(reset_code)
