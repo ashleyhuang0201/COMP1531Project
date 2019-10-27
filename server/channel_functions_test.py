@@ -8,7 +8,7 @@ import server.global_var as global_var
 from server import channel_functions as func
 from server.auth_functions import auth_register
 from server.Error import AccessError
-from server.message_functions import message_send
+from server.message_functions import message_send, message_react, message_pin
 
 def test_channel_invite():
     '''
@@ -78,8 +78,8 @@ def test_channel_details():
     "valid_correct_last_name")
     token1 = user1["token"]
     userdict1 = {
-        "u_id": 0, 
-        "name_first": "valid_correct_first_name", 
+        "u_id": 0,
+        "name_first": "valid_correct_first_name",
         "name_last": "valid_correct_last_name"
     }
 
@@ -88,8 +88,8 @@ def test_channel_details():
     "valid_correct_last_name")
     token2 = user2["token"]
     userdict2 = {
-        "u_id": 1, 
-        "name_first": "valid_correct_first_name", 
+        "u_id": 1,
+        "name_first": "valid_correct_first_name",
         "name_last": "valid_correct_last_name"
     }
 
@@ -130,6 +130,7 @@ def test_channel_messages():
 
     user1 = auth_register("channel_messages@test.com", "password", \
     "channel_messages", "test")
+    user_id1 = user1["u_id"]
     token1 = user1["token"]
 
     user2 = auth_register("channel_messages@test2.com", "password", \
@@ -145,7 +146,7 @@ def test_channel_messages():
         func.channel_messages(token1, channel_id, 1)
 
     # send a message to the channel and check that return is correct
-    message_send(token1, channel_id, '1 message')
+    assert message_send(token1, channel_id, '1 message') == {"message_id": 0}
 
     messages = func.channel_messages(token1, channel_id, 0)
     assert messages["start"] == 0
@@ -153,6 +154,17 @@ def test_channel_messages():
     assert messages["messages"][0]["message_id"] == 0
     assert messages["messages"][0]["u_id"] == user1["u_id"]
     assert messages["messages"][0]["message"] == "1 message"
+    assert not messages["messages"][0]["is_pinned"]
+    assert messages["messages"][0]["reacts"] == \
+         [{"react_id": 1, "u_ids": [], "is_this_user_reacted": False}]
+
+    message_react(token1, 0, 1)
+    message_pin(token1, 0)
+
+    messages = func.channel_messages(token1, channel_id, 0)
+    assert messages["messages"][0]["reacts"] == \
+         [{"react_id": 1, "u_ids": [user_id1], "is_this_user_reacted": True}]
+    assert messages["messages"][0]["is_pinned"]
 
     # send a message to the channel and check that return is correct
     message_send(token1, channel_id, '2 message')
