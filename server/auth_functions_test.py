@@ -45,6 +45,9 @@ def test_auth_logout():
 
     data.initialise_all()
 
+    # Test logging out a rubbish token
+    auth.auth_logout("bad")
+
     # A user is registered
     user = auth.auth_register("validcorrect@g.com", "valid_password", "a", "b")
 
@@ -104,6 +107,10 @@ def test_auth_passwordreset_request():
 
     # Password reset request is sent to valid email
     auth.auth_passwordreset_request("comp1531receive@gmail.com")
+
+    # Password reset request is sent to invalid email
+    with pytest.raises(ValueError, match="Email is not valid"):
+        auth.auth_passwordreset_request("comp1531receive.com")
 
 def test_auth_passwordreset_reset():
     '''
