@@ -9,7 +9,6 @@ from server import channel_functions as func
 from server.auth_functions import auth_register
 from server.Error import AccessError
 from server.message_functions import message_send
-from server.search_function import search
 
 def test_channel_invite():
     '''
@@ -23,7 +22,6 @@ def test_channel_invite():
     user1 = auth_register("test_email@gmail.com", "password123", \
          "Rayden", "Smith")
     token_1 = user1["token"]
-    userid_1 = user1["u_id"]
 
     # Create user that is invited to channel
     user2 = auth_register("test_email2@gmail.com", "thisisapassword", \
@@ -35,12 +33,11 @@ def test_channel_invite():
     user3 = auth_register("test_email3@gmail.com", "arandompassword", \
          "Coen", "Kevin")
     token_3 = user3["token"]
-    userid_3 = user3["u_id"]
 
     # Create a channel
     channel = func.channels_create(token_1, "TestChannel1", True)
     channel_id = channel["channel_id"]
-    # Initialisation finished 
+    # Initialisation finished
 
     # User2 is successfully invited to channel
     assert func.channel_invite(token_1, channel_id, userid_2) == {}
@@ -50,7 +47,7 @@ def test_channel_invite():
          == {"message_id" : 0}
 
     # User leaves the channel
-    assert func.channel_leave(token_2,channel_id) == {}
+    assert func.channel_leave(token_2, channel_id) == {}
 
     # User is not invited if given an invalid token
     with pytest.raises(AccessError, match="Invalid token"):
@@ -63,7 +60,7 @@ def test_channel_invite():
     # Inviting user is not apart of the channel
     with pytest.raises(AccessError, \
          match="Authorised user is not a member of the channel"):
-         func.channel_invite(token_3,channel_id,userid_2)
+        func.channel_invite(token_3, channel_id, userid_2)
 
     # If user being invited is not an user
     with pytest.raises(ValueError, match="User id is not valid"):
@@ -136,7 +133,7 @@ def test_channel_messages():
     channel_id = channel["channel_id"]
 
     # Start index is invalid as there are no message
-    with pytest.raises (ValueError, match="Start index is invalid"):
+    with pytest.raises(ValueError, match="Start index is invalid"):
         func.channel_messages(token1, channel_id, 0)
 
     # send a message to the channel and check that return is correct
@@ -148,7 +145,7 @@ def test_channel_messages():
     assert messages["messages"][0]["message_id"] == 0
     assert messages["messages"][0]["u_id"] == user1["u_id"]
     assert messages["messages"][0]["message"] == "1 message"
-    
+
     # send a message to the channel and check that return is correct
     message_send(token1, channel_id, '2 message')
 
@@ -156,8 +153,8 @@ def test_channel_messages():
     assert messages["messages"][0]["message"] == "2 message"
     assert messages["messages"][1]["message"] == "1 message"
 
-    for i in range(3,51):
-        message_send(token1, channel_id, f'{i} message' )
+    for i in range(3, 51):
+        message_send(token1, channel_id, f'{i} message')
 
     # A total of 50 messages are sent
     messages = func.channel_messages(token1, channel_id, 0)
@@ -215,7 +212,7 @@ def test_channel_leave():
     # user has left channel and so can't send messages
     with pytest.raises(AccessError, \
          match="Authorised user is not a member of the channel"):
-         message_send(token1, channel_id, "can't send message")
+        message_send(token1, channel_id, "can't send message")
 
     #if given an invalid channel_id
     with pytest.raises(ValueError, match="Channel does not exist"):
@@ -373,7 +370,7 @@ def test_channels_list():
     assert func.channels_list(token1) == {"channels": []}
 
     #user1 create a channel
-    channel = func.channels_create(token1, "TestChannel", True)
+    func.channels_create(token1, "TestChannel", True)
 
     #user2 create a channel
     func.channels_create(token2, "TestChannel2", True)
@@ -461,4 +458,3 @@ def test_channels_create():
     with pytest.raises(ValueError, match=\
     "Name is longer than 20 characters"):
         func.channels_create(token1, "a" * 21, False)
-
