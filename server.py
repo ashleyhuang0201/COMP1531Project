@@ -17,7 +17,6 @@ import server.admin_userpermission_change_function as permission
 
 APP = Flask(__name__)
 CORS(APP)
-<<<<<<< HEAD
 # Creating email server
 APP.config.update(
     MAIL_SERVER='smtp.gmail.com',
@@ -26,13 +25,6 @@ APP.config.update(
     MAIL_USERNAME = "comp1531shared@gmail.com",
     MAIL_PASSWORD = "ThanksGuys"
 )
-=======
-
-@APP.route('/auth/register', methods=['POST'])
-def echo4():
-    pass
-
->>>>>>> master
 
 @APP.route('/echo/get', methods=['GET'])
 def echo1():
