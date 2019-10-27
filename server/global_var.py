@@ -118,13 +118,13 @@ class Message:
     def add_react(self, u_id):
         for react in self.reacts:
             if react["react_id"] == 1:
-                react["u_id"].append(u_id)
+                react["u_ids"].append(u_id)
 
     # Remove a reaction to the message
     def remove_react(self, u_id):
         for react in self.reacts:
             if react["react_id"] == 1:
-                react["u_id"].remove(u_id)
+                react["u_ids"].remove(u_id)
 
     # Sets a message to be pinned
     def pin_message(self):
@@ -241,17 +241,8 @@ class Channel:
         })
 
     def user_in_channel(self, u_id):
-        # Looping through users
-        for owner in self.owners:
-            # User found
-            if owner == u_id:
-                return True
-
-        # Looping through users
-        for user in self.users:
-            # User found
-            if user == u_id:
-                return True
+        if self.is_member(u_id) or self.is_owner(u_id):
+            return True
         
         # No such user
         return False

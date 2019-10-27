@@ -77,13 +77,21 @@ def test_channel_details():
     "valid_correct_password", "valid_correct_first_name", \
     "valid_correct_last_name")
     token1 = user1["token"]
-    userid1 = user1["u_id"]
+    userdict1 = {
+        "u_id": 0, 
+        "name_first": "valid_correct_first_name", 
+        "name_last": "valid_correct_last_name"
+    }
 
     user2 = auth_register("valid_correct_email2@test.com", \
     "valid_correct_password", "valid_correct_first_name", \
     "valid_correct_last_name")
     token2 = user2["token"]
-    userid2 = user2["u_id"]
+    userdict2 = {
+        "u_id": 1, 
+        "name_first": "valid_correct_first_name", 
+        "name_last": "valid_correct_last_name"
+    }
 
     #token1 creates a channel and is automatically part of it as the owner
     channel = func.channels_create(token1, "TestChannel", True)
@@ -95,8 +103,8 @@ def test_channel_details():
         func.channel_details(token2, channel_id)
 
     assert func.channel_details(token1, channel_id) == \
-    {"name" : "TestChannel", "owner_members": [userid1], \
-         "all_members": [userid1]}
+    {"name" : "TestChannel", "owner_members": [userdict1], \
+         "all_members": [userdict1]}
 
     #if given an invalid channel_id
     with pytest.raises(ValueError, match="Channel does not exist"):
@@ -110,8 +118,8 @@ def test_channel_details():
     func.channel_join(token2, channel_id)
 
     assert func.channel_details(token1, channel_id) == \
-    {"name" : "TestChannel", "owner_members": [userid1], \
-         "all_members": [userid1, userid2]}
+    {"name" : "TestChannel", "owner_members": [userdict1], \
+         "all_members": [userdict1, userdict2]}
 
 def test_channel_messages():
     '''
@@ -134,7 +142,7 @@ def test_channel_messages():
 
     # Start index is invalid as there are no message
     with pytest.raises(ValueError, match="Start index is invalid"):
-        func.channel_messages(token1, channel_id, 0)
+        func.channel_messages(token1, channel_id, 1)
 
     # send a message to the channel and check that return is correct
     message_send(token1, channel_id, '1 message')
