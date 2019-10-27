@@ -35,37 +35,37 @@ def test_message_sendlater():
 
     #User sends message to created channel
     assert funcs.message_sendlater(token, channel_id, \
-            "This is a valid message", datetime.datetime(2020, 1, 1))  \
+            "This is a valid message", datetime.datetime(2020, 1, 1).timestamp())  \
                                                         == {"message_id": 0}
 
     #Sending a message of length 1000 is valid
     assert funcs.message_sendlater(token, channel_id, create_long_string(), \
-         datetime.datetime(2020, 1, 1)) == {"message_id": 1}
+         datetime.datetime(2020, 1, 1).timestamp()) == {"message_id": 1}
 
     #A message of length greater than 1000 is valid
     with pytest.raises(ValueError, match="Message length too long"):
         funcs.message_sendlater(token, channel_id, "1" + create_long_string(), \
-             datetime.datetime(2020, 1, 1))
+             datetime.datetime(2020, 1, 1).timestamp())
 
     #An exception is thrown if a invalid token is given
     with pytest.raises(AccessError, match="Invalid token"):
         funcs.message_sendlater("111111", channel_id, \
-             "This is a valid message", datetime.datetime(2020, 1, 1))
+             "This is a valid message", datetime.datetime(2020, 1, 1).timestamp())
 
     #The channel based on ID does not exist
     with pytest.raises(ValueError, match="Invalid Channel ID"):
         funcs.message_sendlater(token, 99, "This is a valid message", \
-             datetime.datetime(2020, 1, 1))
+             datetime.datetime(2020, 1, 1).timestamp())
 
     #Time sent is a time in the past
     with pytest.raises(ValueError, match="Time sent was in the past"):
         funcs.message_sendlater(token, channel_id, "This is a valid message", \
-             datetime.datetime(2019, 1, 1))
+             datetime.datetime(2019, 1, 1).timestamp())
 
     #All errors (Token error is caught first)
     with pytest.raises(AccessError, match="Invalid token"):
         funcs.message_sendlater("111111", 99, "1" + create_long_string(), \
-             datetime.datetime(2019, 1, 1))
+             datetime.datetime(2019, 1, 1).timestamp())
 
     #User leaves channel
     channel_functions.channel_leave(token, channel_id)
@@ -74,7 +74,7 @@ def test_message_sendlater():
     with pytest.raises(AccessError, \
          match="Authorised user is not a member of the channel"):
         funcs.message_sendlater(token, channel_id, "This is a valid message", \
-             datetime.datetime(2020, 1, 1))
+             datetime.datetime(2020, 1, 1).timestamp())
 
 
 def test_message_send():
