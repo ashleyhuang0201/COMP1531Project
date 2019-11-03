@@ -44,7 +44,7 @@ def message_sendlater(token, channel_id, message, time_sent):
     message_object.time_created = time_sent
 
     time_diff = time_sent - datetime.datetime.now().timestamp()
-    Timer(time_diff, message_send, args=[token, channel_id, message_object.message]).start()
+    Timer(time_diff, message_send, args=[token, channel_id, message_object]).start()
 
     return {
         "message_id": message_object.id
@@ -64,6 +64,7 @@ def message_send(token, channel_id, message):
 
     # Channel_id does not refer to a valid channel
     if channel is None:
+        print(f"tried to send to {channel_id}")
         raise ValueError("Invalid Channel ID")
 
     # Message is not of appropriate length
@@ -74,8 +75,13 @@ def message_send(token, channel_id, message):
     if not channel.is_member(user.u_id):
         raise AccessError("Authorised user is not a member of the channel")
 
-    # Create new message object
-    message_object = global_var.Message(user.u_id, message, channel_id)
+    # If passing a string then create a new message object otherwise use the
+    # message object given
+    if type(message) == str:
+        # Create new message object
+        message_object = global_var.Message(user.u_id, message, channel_id)
+    else:
+        message_object = message
 
     # Append message to channel list
     channel.add_message(message_object)

@@ -6,6 +6,7 @@ Team: You_Things_Can_Choose
 #Import functions for testing
 import datetime
 import pytest
+import time
 import server.global_var as global_var
 from server import helpers
 from server import message_functions as funcs
@@ -35,37 +36,39 @@ def test_message_sendlater():
 
     #User sends message to created channel
     assert funcs.message_sendlater(token, channel_id, \
-            "This is a valid message", datetime.datetime(2020, 1, 1).timestamp())  \
+            "This is a valid message", datetime.datetime.now().timestamp() + 1)  \
                                                         == {"message_id": 0}
+    time.sleep(1)
 
     #Sending a message of length 1000 is valid
     assert funcs.message_sendlater(token, channel_id, create_long_string(), \
-         datetime.datetime(2020, 1, 1).timestamp()) == {"message_id": 1}
+        datetime.datetime.now().timestamp() + 1) == {"message_id": 1}
+    time.sleep(1)
 
     #A message of length greater than 1000 is valid
     with pytest.raises(ValueError, match="Message length too long"):
         funcs.message_sendlater(token, channel_id, "1" + create_long_string(), \
-             datetime.datetime(2020, 1, 1).timestamp())
+            datetime.datetime.now().timestamp() + 1)
 
     #An exception is thrown if a invalid token is given
     with pytest.raises(AccessError, match="Invalid token"):
         funcs.message_sendlater("111111", channel_id, \
-             "This is a valid message", datetime.datetime(2020, 1, 1).timestamp())
+            "This is a valid message", datetime.datetime.now().timestamp() + 1)
 
     #The channel based on ID does not exist
     with pytest.raises(ValueError, match="Invalid Channel ID"):
         funcs.message_sendlater(token, 99, "This is a valid message", \
-             datetime.datetime(2020, 1, 1).timestamp())
+            datetime.datetime.now().timestamp() + 1)
 
     #Time sent is a time in the past
     with pytest.raises(ValueError, match="Time sent was in the past"):
         funcs.message_sendlater(token, channel_id, "This is a valid message", \
-             datetime.datetime(2019, 1, 1).timestamp())
+            datetime.datetime.now().timestamp() -1)
 
     #All errors (Token error is caught first)
     with pytest.raises(AccessError, match="Invalid token"):
         funcs.message_sendlater("111111", 99, "1" + create_long_string(), \
-             datetime.datetime(2019, 1, 1).timestamp())
+            datetime.datetime.now().timestamp() + 1)
 
     #User leaves channel
     channel_functions.channel_leave(token, channel_id)
@@ -74,8 +77,7 @@ def test_message_sendlater():
     with pytest.raises(AccessError, \
          match="Authorised user is not a member of the channel"):
         funcs.message_sendlater(token, channel_id, "This is a valid message", \
-             datetime.datetime(2020, 1, 1).timestamp())
-
+            datetime.datetime.now().timestamp() + 1)
 
 def test_message_send():
     '''

@@ -9,7 +9,7 @@ import server.global_var as data
 from server.helpers import get_channel_by_channel_id, get_user_by_token
 
 
-def standup_start(token, channel_id):
+def standup_start(token, channel_id, length):
 
     """
     For a given channel, start the standup period whereby for the next 15 minutes
@@ -30,7 +30,7 @@ def standup_start(token, channel_id):
     # After 15 minutes call the channel.startupEnd method to collate all of the
     # startup contents
     channel.start_standup()
-    Timer(60 * 15, channel.end_standup, args=[token]).start()
+    Timer(length, channel.end_standup, args=[token]).start()
     time = datetime.datetime.now() + datetime.timedelta(minutes=15)
 
     return {"time" : time.timestamp()}

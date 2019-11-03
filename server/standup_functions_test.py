@@ -3,6 +3,7 @@ Test functions for standup_*
 '''
 import datetime as dt
 import pytest
+import time
 from server.standup_functions import standup_send, standup_start
 import server.auth_functions as auth
 from server.Error import AccessError
@@ -23,37 +24,39 @@ def test_standup_start():
 
     channel1 = channel_func.channels_create(owner["token"], "Owner", True)
     channel2 = channel_func.channels_create(owner["token"], "User", True)
-
-    end_ex = get_standup_end()
-    end_ac = standup_start(owner["token"], channel1["channel_id"])
+    length = 1
+    end_ex = get_standup_end(length)
+    end_ac = standup_start(owner["token"], channel1["channel_id"], length)
     assert same_time(end_ex, end_ac["time"])
+    time.sleep(1)
 
     # A valid token and channel successfully starts a standup - User
     user = auth.auth_register("valid2@g.com", "valid_password", "a", "b")
 
     # User tries to start standup but has not joined the channel
     with pytest.raises(AccessError, match="Cannot Access Channel"):
-        standup_start(user["token"], channel2["channel_id"])
+        standup_start(user["token"], channel2["channel_id"], length)
 
     # user starts standup
     channel_func.channel_join(user["token"], channel2["channel_id"])
-    end_ex = get_standup_end()
-    end_ac = standup_start(user["token"], channel2["channel_id"])
+    end_ex = get_standup_end(length)
+    end_ac = standup_start(user["token"], channel2["channel_id"], length)
     assert same_time(end_ex, end_ac["time"])
 
     # Channel id given does not exist
     with pytest.raises(ValueError, match="Channel Does Not Exist"):
-        standup_start(user["token"], 21512512521512)
+        standup_start(user["token"], 21512512521512, length)
 
     # Start standup when already running
     with pytest.raises(ValueError, match="Standup Already Running"):
-        standup_start(user["token"], channel2["channel_id"])
+        standup_start(user["token"], channel2["channel_id"], length)
 
     # Standup works on private channel
     private = channel_func.channels_create(owner["token"], "Owner", False)
-    end_ex = get_standup_end()
-    end_ac = standup_start(owner["token"], private["channel_id"])
+    end_ex = get_standup_end(length)
+    end_ac = standup_start(owner["token"], private["channel_id"], length)
     assert same_time(end_ex, end_ac["time"])
+    time.sleep(1)
 
 def test_standup_send():
 
@@ -68,12 +71,14 @@ def test_standup_send():
 
     channel = channel_func.channels_create(owner["token"], "Owner", True)
 
+    length = 3
+
     # Channel is not currently in standup mode
     with pytest.raises(AccessError, match="Not Currently In Standup"):
         standup_send(owner["token"], channel["channel_id"], \
              "correct_and_valid_message")
 
-    standup_start(owner["token"], channel["channel_id"])
+    standup_start(owner["token"], channel["channel_id"], length)
 
     assert standup_send(owner["token"], channel["channel_id"], \
         "correct_and_valid_message") == {}
@@ -102,16 +107,17 @@ def test_standup_send():
 
     # Check still works in private channel
     private = channel_func.channels_create(owner["token"], "Owner", False)
-    standup_start(owner["token"], private["channel_id"])
+    standup_start(owner["token"], private["channel_id"], length)
     assert standup_send(owner["token"], private["channel_id"], \
         "correct_and_valid_message") == {}
 
-def get_standup_end():
+    time.sleep(4)
+
+def get_standup_end(length):
     '''
     Get the time that standup ends
     '''
-    time = dt.datetime.now() + dt.timedelta(minutes=15)
-    return time.timestamp()
+    return dt.datetime.now().timestamp() + length 
 
 def same_time(expected_time, actual_time):
     '''
