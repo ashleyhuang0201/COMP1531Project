@@ -409,13 +409,14 @@ STANDUP
 @APP.route('/standup/start', methods = ['POST'])
 def standup_start():
     '''
-    starts standup for 15 mins
+    starts standup for length seconds
     '''
     token = request.form.get("token")
     channel_id = int(request.form.get("channel_id"))
+    length = int(request.form.get("length"))
 
     return dumps(
-        standup.standup_start(token, channel_id)
+        standup.standup_start(token, channel_id, length)
     )
 
 @APP.route('/standup/send', methods = ['POST'])
