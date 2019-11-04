@@ -6,6 +6,7 @@ import jwt
 from server.Error import AccessError
 from server.helpers import get_user_by_u_id, get_user_by_token,\
 valid_user_id, valid_email, valid_token, get_user_by_email
+import server.global_var as global_var
 
 def user_profile(token, u_id):
     """
@@ -129,3 +130,14 @@ def user_profiles_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
     # The user's profile picture is changed
     return {}
 '''
+
+def users_all(token):
+    '''
+    Shows all users
+    '''
+    all_users = []
+
+    for user in global_var.data["users"]:
+        all_users.append({"Name": user.name_first + ' ' + user.name_last})
+
+    return all_users

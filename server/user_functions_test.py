@@ -187,6 +187,34 @@ def test_profiles_uploadphoto():
 
 '''
 
+def test_users_all():
+    '''
+    Shows all users
+    '''
+    # Initialisation
+    global_var.initialise_all()
+    assert global_var.data["users"] == []
+
+    # Creating a user
+    user = auth_functions.auth_register("test@gmail.com", "pass123", \
+         "Rayden", "Smith")
+
+    assert global_var.data["users"] != []
+
+    token = user["token"]
+
+    assert funcs.users_all(token) == [{"Name": "Rayden Smith"}]
+
+    # Creating a user
+    user = auth_functions.auth_register("test2@gmail.com", "pass1234", \
+         "Mary", "Lamb")
+
+    assert funcs.users_all(token) == [{"Name": "Rayden Smith"},\
+     {"Name": "Mary Lamb"}] 
+
+
+   
+
 #Helper funcions
 
 def create_50_string():
