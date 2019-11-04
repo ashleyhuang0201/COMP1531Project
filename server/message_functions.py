@@ -121,7 +121,7 @@ def message_remove(token, message_id):
 
 def message_edit(token, message_id, message):
     '''
-    Given a message, update it's text with new text
+    Given a message, update it's text with new text. If the new message is an empty string, the message is deleted.
     '''
 
     channel = helpers.get_channel_by_message_id(message_id)
@@ -148,7 +148,13 @@ def message_edit(token, message_id, message):
         raise AccessError("User does not have permission")
 
     # Edit channel message
-    message_obj.edit_message(message)
+    if not message.strip():
+        # If empty message, delete
+        channel = helpers.get_channel_by_message_id(message_id)
+        channel.remove_message(message_id)
+    else:
+        # Otherwise, edit message
+        message_obj.edit_message(message)
 
     return {}
 

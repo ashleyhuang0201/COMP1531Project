@@ -227,6 +227,8 @@ def test_message_edit():
          "This is another valid message") == {"message_id" : 1}
     assert funcs.message_send(owner_token, channel_id, \
          "This is not your message") == {"message_id" : 2}
+    assert funcs.message_send(token, channel_id, \
+         "This is another valid message") == {"message_id" : 3}
     #Init finished
 
     #A owner edits a message
@@ -234,6 +236,10 @@ def test_message_edit():
 
     #A user edits his own message
     assert funcs.message_edit(token, 1, "This is another valid edit") == {}
+
+    # A user edits a message with an empty string
+    assert funcs.message_edit(token, 1, "") == {}
+    assert funcs.message_edit(token, 3, "     ") == {}
 
     #A invalid token is sent to the function
     with pytest.raises(AccessError, match="Invalid token"):
