@@ -203,14 +203,13 @@ def test_users_all():
 
     token = user["token"]
 
-    assert funcs.users_all(token) == [{"Name": "Rayden Smith"}]
+    assert funcs.users_all(token) == ["Rayden Smith"]
 
     # Creating a user
     user = auth_functions.auth_register("test2@gmail.com", "pass1234", \
          "Mary", "Lamb")
 
-    assert funcs.users_all(token) == [{"Name": "Rayden Smith"},\
-     {"Name": "Mary Lamb"}] 
+    assert funcs.users_all(token) == ["Rayden Smith", "Mary Lamb"] 
 
 
    

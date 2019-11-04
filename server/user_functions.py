@@ -138,6 +138,6 @@ def users_all(token):
     all_users = []
 
     for user in global_var.data["users"]:
-        all_users.append({"Name": user.name_first + ' ' + user.name_last})
+        all_users.append(user.name_first + ' ' + user.name_last)
 
     return all_users
