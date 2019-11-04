@@ -402,6 +402,17 @@ def user_profiles_uploadphoto():
         user.user_profiles_uploadphoto(token, img_url, x_start, y_start, x_end, y_end)
     )
 
+@APP.route('/users/all', methods = ['GET'])
+def users_all():
+    '''
+    Show all users
+    '''
+    token = request.args.get("token")
+
+    return dumps(
+        user.users_all(token)
+    )
+
 '''
 STANDUP
 '''
