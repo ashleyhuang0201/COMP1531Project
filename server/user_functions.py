@@ -25,10 +25,14 @@ def user_profile(token, u_id):
 
 
     # Get user object by u_id
-
     user = get_user_by_u_id(u_id)
-    user_profile_return = {"email": user.email, "name_first": user.name_first, \
-    "name_last": user.name_last, "handle_str": user.handle}
+
+    '''
+    ADD PROFILE_IMG_URL
+    '''
+    user_profile_return = {"u_id": u_id, "email": user.email, \
+         "name_first": user.name_first, "name_last": user.name_last, \
+              "handle_str": user.handle}
 
     return user_profile_return
 
@@ -138,6 +142,15 @@ def users_all(token):
     all_users = []
 
     for user in global_var.data["users"]:
-        all_users.append(user.name_first + ' ' + user.name_last)
+        '''
+        ADD PROFILE_IMG_URL
+        '''
+        user_profile_return = {"u_id": user.u_id, "email": user.email, \
+         "name_first": user.name_first, "name_last": user.name_last, \
+              "handle_str": user.handle}
+        all_users.append(user_profile_return)
 
-    return all_users
+    return {"users": all_users} 
+
+
+    

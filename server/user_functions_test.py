@@ -27,8 +27,8 @@ def test_user_profile():
 
     # A valid user_id is provided, user details are returned
     assert funcs.user_profile(token, u_id) ==  \
-         {"email":'test@gmail.com', "name_first":'Raydon', "name_last":'Smith',\
-              "handle_str":'raydonsmith'}
+         {"u_id": u_id, "email":'test@gmail.com', "name_first":'Raydon', \
+              "name_last":'Smith', "handle_str":'raydonsmith'}
 
     # An exception occurs when the user_id is invalid
     with pytest.raises(ValueError, match="Invalid User ID"):
@@ -63,8 +63,8 @@ def test_profile_setname():
 
     # Checking if first and last name have been updated successfully
     assert funcs.user_profile(token, u_id) ==  \
-         {"email":'test@gmail.com', "name_first":'Hello', "name_last":'World', \
-              "handle_str":'raydensmith'}
+         {"u_id": u_id, "email":'test@gmail.com', "name_first":'Hello', \
+              "name_last":'World', "handle_str":'raydensmith'}
 
 
     # A name of 50 length is valid
@@ -110,15 +110,12 @@ def test_profile_setemail():
 
     # Checking if the user's email has been updated successfully
     assert funcs.user_profile(token, u_id) ==  \
-         {"email":'new@gmail.com', "name_first":'Rayden', "name_last":'Smith', \
-              "handle_str":'raydensmith'}
+         {"u_id": u_id, "email":'new@gmail.com', "name_first":'Rayden', \
+              "name_last":'Smith', "handle_str":'raydensmith'}
 
     # A invalid email is given
     with pytest.raises(ValueError, match="Invalid email"):
         funcs.user_profile_setemail(token, "invalidEmail")
-
-    
-
 
 def test_profile_sethandle():
     '''
@@ -145,8 +142,8 @@ def test_profile_sethandle():
 
     # Checking if the user's handle has been updated successfully
     assert funcs.user_profile(token, u_id) ==  \
-         {"email":'test@gmail.com', "name_first":'Rayden', "name_last":'Smith',\
-              "handle_str":'new handle'}
+         {"u_id": u_id, "email":'test@gmail.com', "name_first":'Rayden', \
+              "name_last":'Smith', "handle_str":'new handle'}
 
 
     # A invalid handle is given (50 characters)
@@ -203,16 +200,19 @@ def test_users_all():
 
     token = user["token"]
 
-    assert funcs.users_all(token) == ["Rayden Smith"]
+    assert funcs.users_all(token) == {"users":[{"u_id": 0, \
+         "email":'test@gmail.com', "name_first":'Rayden', "name_last":'Smith', \
+              "handle_str":'raydensmith'}]}
 
     # Creating a user
     user = auth_functions.auth_register("test2@gmail.com", "pass1234", \
          "Mary", "Lamb")
 
-    assert funcs.users_all(token) == ["Rayden Smith", "Mary Lamb"] 
-
-
-   
+    assert funcs.users_all(token) == {"users":[
+        {"u_id": 0, "email":'test@gmail.com', "name_first":'Rayden', \
+             "name_last":'Smith', "handle_str":'raydensmith'},
+         {"u_id": 1, "email":'test2@gmail.com', "name_first":'Mary', \
+              "name_last":'Lamb',"handle_str":'marylamb'}]} 
 
 #Helper funcions
 
