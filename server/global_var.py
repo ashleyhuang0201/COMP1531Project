@@ -205,14 +205,27 @@ class Channel:
                 self.messages.remove(message)
         
     # Searches for a message given a substring
-    def search_message(self, substring):
+    def search_message(self, token, substring):
         '''
         Given a query string, return a list of messages in the channel
         '''
         messages = []
         for message in self.messages:
             if (message.message).find(substring) != -1:
-                messages.append(message.message)
+                reacts = message.reacts
+                reacts[0]["is_this_user_reacted"] = \
+                message.user_has_reacted(helpers.decode_token(token))
+
+                # Append message dictionary into list
+                messages.append({
+                    "message_id": message.id,
+                    "u_id": message.sender,
+                    "message": message.message,
+                    "time_created": message.time_created,
+                    "reacts": reacts,
+                    "is_pinned": message.is_pinned,
+                })
+
         return messages
 
     def update_message_object(self, message_id, message_object):
