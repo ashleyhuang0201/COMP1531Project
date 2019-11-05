@@ -38,8 +38,9 @@ def auth_logout(token):
     # Deleting token
     if token in data.data["tokens"]:
         data.data["tokens"].remove(token)
+        return {"is_success": True}
 
-    return {}
+    return {"is_success": False}
 
 # Given a user's first and last name, email address, and password, create a new
 # account for them and return a new token for authentication in their session
@@ -76,7 +77,7 @@ def auth_register(email, password, name_first, name_last):
 
 def auth_passwordreset_request(email):
     '''
-    Given an email address, if the user is a registered user, send's them a an
+    Given an email address, if the user is a registered user, send's them an
     email containing a specific secret code, that when entered in
     auth_passwordreset_reset, shows that the user trying to reset the password
     is the one who got sent this email.
@@ -94,6 +95,7 @@ def auth_passwordreset_request(email):
         recipients=[email])
     msg.body = f"Your reset code is: {reset_code}"
 
+    # Empty dictionary is manually returned in server.py
     return msg
 
 def auth_passwordreset_reset(reset_code, new_password):
