@@ -211,8 +211,8 @@ def test_users_all():
     assert funcs.users_all(token) == {"users":[
         {"u_id": 0, "email":'test@gmail.com', "name_first":'Rayden', \
              "name_last":'Smith', "handle_str":'raydensmith'},
-         {"u_id": 1, "email":'test2@gmail.com', "name_first":'Mary', \
-              "name_last":'Lamb',"handle_str":'marylamb'}]} 
+        {"u_id": 1, "email":'test2@gmail.com', "name_first":'Mary', \
+              "name_last":'Lamb', "handle_str":'marylamb'}]}
 
 #Helper funcions
 

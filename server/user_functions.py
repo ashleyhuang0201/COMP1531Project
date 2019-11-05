@@ -2,7 +2,6 @@
 User functions Iteration 2 implementations
 Team: You_Things_Can_Choose
 '''
-import jwt
 from server.Error import AccessError
 from server.helpers import get_user_by_u_id, get_user_by_token,\
 valid_user_id, valid_email, valid_token, get_user_by_email
@@ -27,9 +26,7 @@ def user_profile(token, u_id):
     # Get user object by u_id
     user = get_user_by_u_id(u_id)
 
-    '''
-    ADD PROFILE_IMG_URL
-    '''
+    #ADD PROFILE_IMG_URL
     user_profile_return = {"u_id": u_id, "email": user.email, \
          "name_first": user.name_first, "name_last": user.name_last, \
               "handle_str": user.handle}
@@ -142,15 +139,11 @@ def users_all(token):
     all_users = []
 
     for user in global_var.data["users"]:
-        '''
-        ADD PROFILE_IMG_URL
-        '''
+
+        #ADD PROFILE_IMG_URL
         user_profile_return = {"u_id": user.u_id, "email": user.email, \
          "name_first": user.name_first, "name_last": user.name_last, \
               "handle_str": user.handle}
         all_users.append(user_profile_return)
 
-    return {"users": all_users} 
-
-
-    
+    return {"users": all_users}
