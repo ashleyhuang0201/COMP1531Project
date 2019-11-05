@@ -52,8 +52,22 @@ def test_search_all():
     message_send(token, channel_id, "342")
     message_send(token, channel_id, "499")
 
-    assert search.search(token, '') == {'messages': ['499', '342', '321', '121']}
+    messages = search.search(token, '')
 
+    # Assert the list of messages returned was correct
+    assert messages["messages"][0]["message"] == "499"
+    assert messages["messages"][0]["u_id"] == user["u_id"]
+    assert messages["messages"][1]["message"] == "342"
+    assert not messages["messages"][1]["is_pinned"]
+    assert messages["messages"][2]["message"] == "321"
+    assert messages["messages"][3]["message"] == "121"
+    assert messages["messages"][3]["reacts"] == \
+         [{"react_id": 1, "u_ids": [], "is_this_user_reacted": False}]
+
+    with pytest.raises(IndexError, match="list index out of range"):
+        messages["messages"][4]
+
+    
 # Search for message that does not exist and get nothing
 def test_search_no_match():
     """
@@ -120,7 +134,11 @@ def test_search_one():
     message_send(token, channel_id, "342")
     message_send(token, channel_id, "499")
 
-    assert search.search(token, '99') == {'messages': ['499']}
+    messages = search.search(token, '99') 
+    assert messages["messages"][0]["message"] == "499"
+    assert messages["messages"][0]["u_id"] == user["u_id"]
+    with pytest.raises(IndexError, match="list index out of range"):
+        messages["messages"][1]
 
 # Search and get 2 messages from the same channel back
 def test_search_single_channel():
@@ -145,7 +163,13 @@ def test_search_single_channel():
     message_send(token, channel_id, "342")
     message_send(token, channel_id, "499")
 
-    assert search.search(token, '21') == {'messages': ['321', '121']}
+    messages = search.search(token, '21')
+
+    assert messages["messages"][0]["message"] == "321"
+    assert messages["messages"][0]["u_id"] == user["u_id"]
+    assert messages["messages"][1]["message"] == "121"
+    with pytest.raises(IndexError, match="list index out of range"):
+        messages["messages"][2]
 
 # Search and get 2 messages from different channels back
 def test_search_multi_channel():
@@ -172,4 +196,10 @@ def test_search_multi_channel():
     message_send(token, channel1_id, "121")
     message_send(token, channel2_id, "321")
 
-    assert search.search(token, '21') == {'messages': ['121', '321']}
+    messages = search.search(token, '21')
+
+    assert messages["messages"][0]["message"] == "121"
+    assert messages["messages"][0]["u_id"] == user["u_id"]
+    assert messages["messages"][1]["message"] == "321"
+    with pytest.raises(IndexError, match="list index out of range"):
+        messages["messages"][2]
