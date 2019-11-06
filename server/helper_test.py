@@ -30,12 +30,12 @@ def test_encode_token_for_u_id():
     global_var.initialise_all()
 
     encoded = helpers.encode_token_for_u_id({"u_id": "1"})
-    assert encoded == "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1X2lkIjp\
-    7InVfaWQiOiIxIn19.jFcUwcBtXw6pUWh8-K_cBgdYVouYebtuptYD55LEk4Y"
+    assert encoded == "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1X2lkIj" +\
+    "p7InVfaWQiOiIxIn19.jFcUwcBtXw6pUWh8-K_cBgdYVouYebtuptYD55LEk4Y"
 
     encoded = helpers.encode_token_for_u_id({"u_id": "2521"})
-    assert encoded == "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1X2lkIjp\
-    7InVfaWQiOiIyNTIxIn19.AIupr3YzISaUBZq5b-osrslwhZyOaOlAEaMy0ECUWbc"
+    assert encoded == "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1X2lkIj" +\
+    "p7InVfaWQiOiIyNTIxIn19.AIupr3YzISaUBZq5b-osrslwhZyOaOlAEaMy0ECUWbc"
 
 # Test token is admin
 def test_token_is_admin():
@@ -298,7 +298,8 @@ def test_add_reset():
 
     # Unsuccessful - Wrong reset code
     for reset_code in global_var.data["reset_code"]:
-        if reset_code["reset_code"] == "invalid_reset_code" and reset_code["user"] == 1:
+        if reset_code["reset_code"] == "invalid_reset_code" and \
+        reset_code["user"] == 1:
             success = True
     assert success is False
 
