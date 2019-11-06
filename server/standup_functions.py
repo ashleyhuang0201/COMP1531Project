@@ -1,16 +1,13 @@
 '''
 Standup Functions
 '''
-
 from threading import Timer
 import datetime
 from server.Error import AccessError
 import server.global_var as data
 from server.helpers import get_channel_by_channel_id, get_user_by_token
 
-
 def standup_start(token, channel_id, length):
-
     """
     For a given channel, start the standup period whereby for the next 15 minutes
     if someone calls "standup_send" with a message, it is buffered during the 15
@@ -35,9 +32,7 @@ def standup_start(token, channel_id, length):
 
     return {"time" : time.timestamp()}
 
-
 def standup_send(token, channel_id, message):
-
     """
     Sending a message to get buffered in the standup queue, assuming a standup
     is currently active
@@ -57,3 +52,29 @@ def standup_send(token, channel_id, message):
     channel.add_standup_message(token, message)
 
     return {}
+
+def standup_active(token, channel_id):
+    '''
+    For a given channel, return whether a standup is active in it, and what
+    time the standup finishes. If no standup is active, then time_finish
+    returns None
+    '''
+    channel = get_channel_by_channel_id(channel_id)
+
+    # Checking if channel exists
+    if channel is None:
+        raise ValueError("Channel Does Not Exist")
+
+    # If standup is active
+    if channel.in_standup:
+        channel.standup
+    # If standup is not active
+    return {
+        "is_active" : False,
+        "time_finish" : None
+    }
+
+    return {}
+    return {"time" : time.timestamp()}
+
+    { is_active, time_finish }
