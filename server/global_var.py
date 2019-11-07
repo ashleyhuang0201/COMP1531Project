@@ -18,7 +18,7 @@ data = {
 # jwt secret
 SECRET = "token_hash"
 
-# global message id 
+# global message id
 message_id_ticker = 0
 
 # Resets all global data to initial state
@@ -47,14 +47,15 @@ class User:
         self.name_last = name_last
         self.handle = f"{name_first.lower()}{name_last.lower()}"
         self.permission = 3
+        self.profile_img_url = None
 
         '''
         An owner of slackr is an owner in every channel # 1
         An admin of slackr is an owner in every channel # 2
-        A member of slackr is a member in channels they are not owners of 
+        A member of slackr is a member in channels they are not owners of
         and an owner in channels they are owners of # 3
         '''
-    
+
     # Change permission of user
     def change_permissions(self, permission_id):
         self.permission = permission_id
@@ -78,6 +79,10 @@ class User:
     # Updating user's handle
     def update_handle(self, handle_str):
         self.handle = handle_str
+
+    # Uploads a photo
+    def upload_photo(self, profile_img_url):
+        self.profile_img_url = profile_img_url
 
 '''
 Object class for storing a message's data
@@ -141,7 +146,7 @@ class Channel:
     def __init__(self, name, u_id, is_public):
         self.name = name
         self.id = len(data["channels"])
-        self.messages = [] 
+        self.messages = []
         self.owners = []
         self.users = []
         self.is_public = is_public
@@ -154,8 +159,8 @@ class Channel:
     def add_user(self, u_id):
         user = helpers.get_user_by_u_id(u_id)
         self.users.append({
-            "u_id": user.u_id, 
-            "name_first": user.name_first, 
+            "u_id": user.u_id,
+            "name_first": user.name_first,
             "name_last": user.name_last
         })
 
@@ -169,11 +174,11 @@ class Channel:
     def add_owner(self, u_id):
         user = helpers.get_user_by_u_id(u_id)
         self.owners.append({
-            "u_id": user.u_id, 
-            "name_first": user.name_first, 
+            "u_id": user.u_id,
+            "name_first": user.name_first,
             "name_last": user.name_last
         })
-        
+
     # Removes an owner from the channel
     def remove_owner(self, u_id):
         for user in self.owners:
@@ -203,7 +208,7 @@ class Channel:
         for message in self.messages:
             if message_id == message.id:
                 self.messages.remove(message)
-        
+
     # Searches for a message given a substring
     def search_message(self, token, substring):
         '''
@@ -249,13 +254,12 @@ class Channel:
 
     def add_standup_message(self, token, message):
         self.standup_messages.append({
-            'user': helpers.get_user_by_token(token).handle, 
+            'user': helpers.get_user_by_token(token).handle,
             'message': message
         })
 
     def user_in_channel(self, u_id):
         if self.is_member(u_id) or self.is_owner(u_id):
             return True
-        
         # No such user
         return False
