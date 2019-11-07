@@ -6,7 +6,9 @@ from server.Error import AccessError
 from server.helpers import get_user_by_u_id, get_user_by_token,\
 valid_user_id, valid_email, valid_token, get_user_by_email, valid_urls
 import server.global_var as global_var
-import urllib.request
+from urllib.request import Request, urlopen
+from urllib.error import URLError, HTTPError
+import urllib
 from PIL import Image
 
 def user_profile(token, u_id):
@@ -118,49 +120,56 @@ def user_profiles_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
     - img_url returns an HTTP status other than 200 (2xx indicates success)
     - xy points are outside the dimensions of the image at the url
     """
+    # Checking if the user token is valid
     if valid_token(token) is False:
         raise AccessError("Invalid token")
 
-    imageObject = Image.open(img_url)
+    # Checking if the img_url is an accessable URL
+    try:
+        response = urlopen(img_url)
+    except HTTPError as e:
+        raise ValueError(f"The server cannot fulfil the request: {e.code}")
+    except URLError as e:
+        raise ValueError(f"The server cannot be reached: {e.reason}")
 
-    #NEED TO DO THIS
-    '''
-    if img_url in valid_urls:
-        pass
-    else:
-        raise ValueError("HTTP status not 200")
-    '''
-
+    # Check that the crop co-ordinates are valid
+    # Obtaining image
+    imageObject = Image.open(response)
     # Getting the width and height of image
     width, height = imageObject.size
 
-    # Check that the crop co-ordinates are valid
-    # Checking validity of x_start
+    # TODO: Turn this into a function for e.g. validcrop(x_start, x_end, y_start, y_end, image_width, image_height)
+    # Checking if the crop coordinates are within the bounds of the image
+    # Checking validity of x_start (x_start cannot be before the first pixel nor be the ending pixel)
     if x_start < 0 or x_start >= width:
         raise ValueError("x_start is invalid")
-    # Checking validity of x_end
-    if x_end <= 0 or x_end >= width:
+    # Checking validity of x_end (x_end cannot be the first pixel or after the final pixel)
+    if x_end <= 0 or x_end > width:
         raise ValueError("x_end is invalid")
-    # Checking validity of y_start
+    # Checking validity of y_start (y_start cannot be before the first pixel nor be the ending pixel)
     if y_start < 0 or y_start >= height:
         raise ValueError("y_start is invalid")
-    # Checking validity of y_end
-    if y_end <= 0 or y_end >= height:
+    # Checking validity of y_end (y_end cannot be the first pixel nor after the final pixel)
+    if y_end <= 0 or y_end > height:
         raise ValueError("y_end is invalid")
+    # Checking if the image is at least a pixel size
+    if x_start == x_end:
+        raise ValueError("An image of no pixels is not an image")
+    if y_start == y_end:
+        raise ValueError("An image of no pixels is not an image")
 
-    # Obtaining user_id (u_id is filename)
+    # Obtaining user_id (user_id will be the unique filename)
     user = get_user_by_token(token)
     u_id = user["u_id"]
 
     # Gets image from url and saves it in images folder
-    urllib.request.urlretrieve(img_url, "server/images/" + u_id + ".jpg")
+    urllib.request.urlretrieve(img_url, "../assets/images/user_profile/" + u_id + ".jpg")
 
     # Cropping image
     cropped = imageObject.crop((x_start, y_start, x_end, y_end))
-    cropped.save(img_url)
+    cropped.save("../assets/images/user_profile/" + u_id + ".jpg")
 
     return {}
-
 
 def users_all(token):
     '''
