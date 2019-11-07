@@ -7,6 +7,8 @@ from server import user_functions as funcs
 from server import auth_functions
 import server.global_var as global_var
 from server.Error import AccessError
+import urllib.request
+from PIL import Image
 
 def test_user_profile():
     '''
@@ -172,7 +174,7 @@ def test_profile_sethandle():
 
 
 def test_profiles_uploadphoto():
-    '''
+
     #Initialisation
     global_var.initialise_all()
     assert global_var.data["users"] == []
@@ -184,26 +186,47 @@ def test_profiles_uploadphoto():
     assert global_var.data["users"] != []
     token = user["token"]
 
+    #750 x 738 dimension
+    #Testing photo url
+    test_url = "https://i.redd.it/51p5c1efueoy.jpg"
+
     #A valid photo is uploaded and cropped
-    assert funcs.user_profiles_uploadphoto(token, \
-        "https://oc1.ocstatic.com/images/logo_small.png", 10, 10, 20 ,20) == {}
+    assert funcs.user_profiles_uploadphoto(token, test_url, 10, 10, 20 ,20) == {}
 
-    #The url is invalid
+    #The test_url is invalid
     with pytest.raises(ValueError, match = "HTTP status not 200"):
-        funcs.user_profiles_uploadphoto(token,\
-            "https://oc1.ocstatic.com/images/logo_small.png1", 10, 10, 20, 20 )
+        funcs.user_profiles_uploadphoto(token, "https://invalid_url.jpg", 10, 10, 20, 20 )
 
-    #Size of img2 = (0,0,256,256)
-    with pytest.raises(ValueError, match = "Crop values invalid"):
-        funcs.user_profiles_uploadphoto(token,\
-            "https://oc1.ocstatic.com/images/logo_small.png", 0, 0, 200, 300)
+    #Size of img = (0,0,750,738)
+    with pytest.raises(ValueError, match = "x_start is invalid"):
+        funcs.user_profiles_uploadphoto(token, test_url, -1, 0, 700, 700)
+
+    with pytest.raises(ValueError, match = "x_start is invalid"):
+        funcs.user_profiles_uploadphoto(token, test_url, 760, 0, 700, 700)
+
+    with pytest.raises(ValueError, match = "x_end is invalid"):
+        funcs.user_profiles_uploadphoto(token, test_url, 0, 0, -1, 700)
+
+    with pytest.raises(ValueError, match = "x_end is invalid"):
+        funcs.user_profiles_uploadphoto(token, test_url, 0, 0, 800, 700)
+
+    with pytest.raises(ValueError, match = "y_start is invalid"):
+        funcs.user_profiles_uploadphoto(token, test_url, 0, -1, 700, 700)
+
+    with pytest.raises(ValueError, match = "y_start is invalid"):
+        funcs.user_profiles_uploadphoto(token, test_url, 0, 800, 700, 700)
+
+    with pytest.raises(ValueError, match = "y_end is invalid"):
+        funcs.user_profiles_uploadphoto(token, test_url, 0, 0, 700, -1)
+
+    with pytest.raises(ValueError, match = "y_end is invalid"):
+        funcs.user_profiles_uploadphoto(token, test_url, 0, 0, 700, 800)
 
     # An exception occurs when token is invalid
     with pytest.raises(AccessError, match="Invalid token"):
-        funcs.user_profiles_uploadphoto("invalid_token", \
-        "https://oc1.ocstatic.com/images/logo_small.png", 10, 10, 20, 20)
+        funcs.user_profiles_uploadphoto("invalid_tok", test_url, 10, 10, 20, 20)
 
-'''
+
 
 def test_users_all():
     '''
