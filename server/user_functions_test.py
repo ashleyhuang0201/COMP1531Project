@@ -28,7 +28,8 @@ def test_user_profile():
     # A valid user_id is provided, user details are returned
     assert funcs.user_profile(token, u_id) ==  \
          {"u_id": u_id, "email":'test@gmail.com', "name_first":'Raydon', \
-              "name_last":'Smith', "handle_str":'raydonsmith'}
+              "name_last":'Smith', "handle_str":'raydonsmith', \
+              "profile_img_url": None}
 
     # An exception occurs when the user_id is invalid
     with pytest.raises(ValueError, match="Invalid User ID"):
@@ -64,7 +65,8 @@ def test_profile_setname():
     # Checking if first and last name have been updated successfully
     assert funcs.user_profile(token, u_id) ==  \
          {"u_id": u_id, "email":'test@gmail.com', "name_first":'Hello', \
-              "name_last":'World', "handle_str":'raydensmith'}
+              "name_last":'World', "handle_str":'raydensmith', \
+              "profile_img_url": None}
 
 
     # A name of 50 length is valid
@@ -78,6 +80,10 @@ def test_profile_setname():
     # Lasts name too long
     with pytest.raises(ValueError, match="Name too long"):
         funcs.user_profile_setname(token, "Raydon", create_50_string() + "a")
+
+    # An exception occurs when token is invalid
+    with pytest.raises(AccessError, match="Invalid token"):
+        funcs.user_profile_setname("invalid_token", "Raydon", "Smith")
 
 
 def test_profile_setemail():
@@ -111,11 +117,16 @@ def test_profile_setemail():
     # Checking if the user's email has been updated successfully
     assert funcs.user_profile(token, u_id) ==  \
          {"u_id": u_id, "email":'new@gmail.com', "name_first":'Rayden', \
-              "name_last":'Smith', "handle_str":'raydensmith'}
+              "name_last":'Smith', "handle_str":'raydensmith', \
+              "profile_img_url": None}
 
     # A invalid email is given
     with pytest.raises(ValueError, match="Invalid email"):
         funcs.user_profile_setemail(token, "invalidEmail")
+
+    # An exception occurs when token is invalid
+    with pytest.raises(AccessError, match="Invalid token"):
+        funcs.user_profile_setemail("invalid_token", "test1234@gmail.com")
 
 def test_profile_sethandle():
     '''
@@ -143,7 +154,8 @@ def test_profile_sethandle():
     # Checking if the user's handle has been updated successfully
     assert funcs.user_profile(token, u_id) ==  \
          {"u_id": u_id, "email":'test@gmail.com', "name_first":'Rayden', \
-              "name_last":'Smith', "handle_str":'new handle'}
+              "name_last":'Smith', "handle_str":'new handle', \
+              "profile_img_url": None}
 
 
     # A invalid handle is given (50 characters)
@@ -153,6 +165,10 @@ def test_profile_sethandle():
     # A invalid handle is given (2 characters)
     with pytest.raises(ValueError, match="Invalid Handle"):
         funcs.user_profile_sethandle(token, "aa")
+
+    # An exception occurs when token is invalid
+    with pytest.raises(AccessError, match="Invalid token"):
+        funcs.user_profile_sethandle("invalid_token", "helloworld")
 
 
 def test_profiles_uploadphoto():
@@ -182,6 +198,11 @@ def test_profiles_uploadphoto():
         funcs.user_profiles_uploadphoto(token,\
             "https://oc1.ocstatic.com/images/logo_small.png", 0, 0, 200, 300)
 
+    # An exception occurs when token is invalid
+    with pytest.raises(AccessError, match="Invalid token"):
+        funcs.user_profiles_uploadphoto("invalid_token", \
+        "https://oc1.ocstatic.com/images/logo_small.png", 10, 10, 20, 20)
+
 '''
 
 def test_users_all():
@@ -202,7 +223,7 @@ def test_users_all():
 
     assert funcs.users_all(token) == {"users":[{"u_id": 0, \
          "email":'test@gmail.com', "name_first":'Rayden', "name_last":'Smith', \
-              "handle_str":'raydensmith'}]}
+              "handle_str":'raydensmith', "profile_img_url": None}]}
 
     # Creating a user
     user = auth_functions.auth_register("test2@gmail.com", "pass1234", \
@@ -210,9 +231,15 @@ def test_users_all():
 
     assert funcs.users_all(token) == {"users":[
         {"u_id": 0, "email":'test@gmail.com', "name_first":'Rayden', \
-             "name_last":'Smith', "handle_str":'raydensmith'},
+             "name_last":'Smith', "handle_str":'raydensmith', \
+             "profile_img_url": None},
         {"u_id": 1, "email":'test2@gmail.com', "name_first":'Mary', \
-              "name_last":'Lamb', "handle_str":'marylamb'}]}
+              "name_last":'Lamb', "handle_str":'marylamb', \
+              "profile_img_url": None}]}
+
+    # An exception occurs when token is invalid
+    with pytest.raises(AccessError, match="Invalid token"):
+        funcs.users_all("invalid_token")
 
 #Helper funcions
 
