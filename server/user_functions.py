@@ -4,12 +4,13 @@ Team: You_Things_Can_Choose
 '''
 from server.Error import AccessError
 from server.helpers import get_user_by_u_id, get_user_by_token,\
-valid_user_id, valid_email, valid_token, get_user_by_email, valid_urls
+valid_user_id, valid_email, valid_token, get_user_by_email
 import server.global_var as global_var
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
 import urllib
 from PIL import Image
+import imghdr
 
 def user_profile(token, u_id):
     """
@@ -160,14 +161,18 @@ def user_profiles_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
 
     # Obtaining user_id (user_id will be the unique filename)
     user = get_user_by_token(token)
-    u_id = user["u_id"]
+    u_id = user.u_id
 
     # Gets image from url and saves it in images folder
-    urllib.request.urlretrieve(img_url, "../assets/images/user_profile/" + u_id + ".jpg")
+    urllib.request.urlretrieve(img_url, "../assets/images/user_profile/" + str(u_id) + ".jpg")
+
+    # Checks if image is a jpg
+    if imghdr.what("../assets/images/user_profile/" + str(u_id) + ".jpg") != 'jpeg':
+        raise ValueError("Image uploaded is not a JPG")
 
     # Cropping image
     cropped = imageObject.crop((x_start, y_start, x_end, y_end))
-    cropped.save("../assets/images/user_profile/" + u_id + ".jpg")
+    cropped.save("../assets/images/user_profile/" + str(u_id) + ".jpg")
 
     return {}
 
