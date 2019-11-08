@@ -2,39 +2,38 @@
 Authorisation functions abstracted from the HTTP routes
 '''
 import hashlib
-import jwt
 import random
-from flask import Flask
+import jwt
 from flask_mail import Message
-from json import dumps
-
 import server.global_var as data
 import server.helpers as helper
 
 def auth_login(email, password):
     '''
-    Given a registered user's email and password function generates and returns a 
-    user_id and token assigned to the account
+    Given a registered user's email and password function generates and
+    returns a user_id and token assigned to the account
     '''
     user = helper.get_user_by_email(email)
-    
+
     # Check validity of login
     if not helper.valid_email(email):
         raise ValueError("Invalid Email")
     if not user:
         raise ValueError("Email not registered")
-    
-    if not user.password == hashPassword(password):
+
+    if not user.password == hash_password(password):
         raise ValueError("Password Incorrect")
 
     token = get_token(user.u_id)
     data.data["tokens"].append(token)
     return {"u_id": user.u_id, "token": token}
 
-
-# Given an active token, invalidates the taken to log the user out. Given a
-# non-valid token, does nothing
 def auth_logout(token):
+    '''
+    Given an active token, invalidates the taken to log the user out. Given a
+    non-valid token, does nothing
+    '''
+
     # Deleting token
     if token in data.data["tokens"]:
         data.data["tokens"].remove(token)
@@ -42,9 +41,14 @@ def auth_logout(token):
 
     return {"is_success": False}
 
-# Given a user's first and last name, email address, and password, create a new
-# account for them and return a new token for authentication in their session
+
 def auth_register(email, password, name_first, name_last):
+    '''
+    Given a user's first and last name, email address, and password, create a
+    new account for them and return a new token for authentication in their
+    session
+    '''
+
     # Checking if registration details are valid
     user = helper.get_user_by_email(email)
 
@@ -63,10 +67,10 @@ def auth_register(email, password, name_first, name_last):
     new_u_id = len(data.data["users"])
     token = get_token(new_u_id)
 
-    user = data.User(new_u_id, email, hashPassword(password), name_first, name_last)
+    user = data.User(new_u_id, email, hash_password(password), name_first, name_last)
 
     # Make the first user slackr owner
-    if len(data.data["users"]) == 0:
+    if not data.data["users"]:
         user.change_permissions(1)
 
     data.data["users"].append(user)
@@ -82,7 +86,8 @@ def auth_passwordreset_request(email):
     auth_passwordreset_reset, shows that the user trying to reset the password
     is the one who got sent this email.
     '''
-    if helper.valid_email(email) == False:
+
+    if not helper.valid_email(email):
         raise ValueError("Email is not valid")
 
     # Preparing reset code
@@ -91,8 +96,8 @@ def auth_passwordreset_request(email):
 
     # Creating mail to send
     msg = Message("Website Reset Request",
-        sender="comp1531shared@gmail.com",
-        recipients=[email])
+                  sender="comp1531shared@gmail.com",
+                  recipients=[email])
     msg.body = f"Your reset code is: {reset_code}"
 
     # Empty dictionary is manually returned in server.py
@@ -116,25 +121,23 @@ def auth_passwordreset_reset(reset_code, new_password):
 
     return {}
 
-
 # Helper Functions specific to auth
 
 def valid_password(password):
-    ''' Checks if a password is a valid password to be registered''' 
-    if len(password) >= 6:
-        return True
-    else:
-        return False
+    ''' Checks if a password is a valid password to be registered'''
+    return len(password) >= 6
 
 def get_token(u_id):
+    ''' Encodes a user id to create a token '''
     return jwt.encode({"u_id": u_id}, data.SECRET, algorithm='HS256').decode("utf-8")
 
-# Creates a hashed password to store
-def hashPassword(password):
+def hash_password(password):
+    ''' Creates a hashed password to store '''
     return hashlib.sha256(password.encode()).hexdigest()
 
-# Generate reset code
+
 def generate_reset_code(user):
+    ''' Generate reset code '''
     reset_code = hashlib.sha256(str(random.random()).encode()).hexdigest()
     # Access and place reset code into data
     helper.add_reset(reset_code, user)
