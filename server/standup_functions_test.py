@@ -4,7 +4,7 @@ Test functions for standup_*
 import datetime as dt
 import pytest
 import time
-from server.standup_functions import standup_send, standup_start
+from server.standup_functions import standup_send, standup_start, standup_active
 import server.auth_functions as auth
 from server.Error import AccessError
 import server.channel_functions as channel_func
@@ -12,7 +12,6 @@ import server.helpers as helpers
 import server.global_var as data
 
 def test_standup_start():
-
     '''
     Test functions for standup_start
     '''
@@ -74,7 +73,7 @@ def test_standup_send():
     length = 3
 
     # Channel is not currently in standup mode
-    with pytest.raises(AccessError, match="Not Currently In Standup"):
+    with pytest.raises(ValueError, match="Not Currently In Standup"):
         standup_send(owner["token"], channel["channel_id"], \
              "correct_and_valid_message")
 
@@ -112,6 +111,26 @@ def test_standup_send():
         "correct_and_valid_message") == {}
 
     time.sleep(4)
+
+def test_standup_active():
+    data.initialise_all()
+
+    # A message is buffered in the standup queue - Owner
+    owner = auth.auth_register("validcorrect@g.com", "valid_password", "a", "b")
+
+    channel = channel_func.channels_create(owner["token"], "Owner", True)
+
+    # Channel given does not exist
+    with pytest.raises(ValueError, match="Channel Does Not Exist"):
+        standup_active(owner["token"], -1)
+
+    # Not in standup
+    assert standup_active(owner["token"], channel["channel_id"]) == {
+            "is_active": False,
+            "time_finish": None
+        }
+
+    # Currently in standup - not 100% testable as it depends on computer processing power
 
 def get_standup_end(length):
     '''

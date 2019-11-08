@@ -9,26 +9,27 @@ from server.helpers import get_channel_by_channel_id, get_user_by_token
 
 def standup_start(token, channel_id, length):
     """
-    For a given channel, start the standup period whereby for the next 15 minutes
-    if someone calls "standup_send" with a message, it is buffered during the 15
-    minute window then at the end of the 15 minute window a message will be added
-    to the message queue in the channel from the user who started the standup.
+    For a given channel, start the standup period whereby for the next "length"
+    seconds if someone calls "standup_send" with a message, it is buffered
+    during the X second window then at the end of the X second window a message
+    will be added to the message queue in the channel from the user who started
+    the standup. X is an integer that denotes the number of seconds that the
+    standup occurs for
     """
-
     channel = get_channel_by_channel_id(channel_id)
     user = get_user_by_token(token)
+
     if channel is None:
         raise ValueError("Channel Does Not Exist")
-    if channel.in_standup:
+    if channel.in_standup is not False:
         raise ValueError("Standup Already Running")
     if not channel.is_member(user.u_id):
         raise AccessError("Cannot Access Channel")
 
-    # After 15 minutes call the channel.startupEnd method to collate all of the
-    # startup contents
+    # Start standup and after length seconds end the standup
     channel.start_standup()
     Timer(length, channel.end_standup, args=[token]).start()
-    time = datetime.datetime.now() + datetime.timedelta(minutes=15)
+    time = datetime.datetime.now() + datetime.timedelta(seconds=length)
 
     return {"time" : time.timestamp()}
 
@@ -37,7 +38,6 @@ def standup_send(token, channel_id, message):
     Sending a message to get buffered in the standup queue, assuming a standup
     is currently active
     """
-
     channel = get_channel_by_channel_id(channel_id)
     user = get_user_by_token(token)
     if channel is None:
@@ -46,8 +46,8 @@ def standup_send(token, channel_id, message):
         raise ValueError("Message Too Long")
     if not channel.is_member(user.u_id):
         raise AccessError("Cannot Access Channel")
-    if not channel.in_standup:
-        raise AccessError("Not Currently In Standup")
+    if channel.in_standup is False:
+        raise ValueError("Not Currently In Standup")
 
     channel.add_standup_message(token, message)
 
@@ -65,16 +65,15 @@ def standup_active(token, channel_id):
     if channel is None:
         raise ValueError("Channel Does Not Exist")
 
-    # If standup is active
-    if channel.in_standup:
-        channel.standup
-    # If standup is not active
+    if channel.in_standup is not False:
+        # If channel is active
+        return {
+            "is_active": True,
+            "time_finish": channel.time_left_standup()
+        }
+    # Channel is not active
     return {
-        "is_active" : False,
-        "time_finish" : None
+        "is_active": False,
+        "time_finish": None
     }
 
-    return {}
-    return {"time" : time.timestamp()}
-
-    { is_active, time_finish }
