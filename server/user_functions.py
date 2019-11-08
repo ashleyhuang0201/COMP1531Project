@@ -9,7 +9,7 @@ from PIL import Image
 from server.Error import AccessError
 import server.global_var as global_var
 from server.helpers import get_user_by_u_id, get_user_by_token, valid_user_id,\
-valid_email, valid_token, get_user_by_email
+valid_email, valid_token, get_user_by_email, valid_crop
 
 def user_profile(token, u_id):
     """
@@ -143,25 +143,9 @@ def user_profiles_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
     # Getting the width and height of image
     width, height = imageObject.size
 
-    # TODO: Turn this into a function for e.g. validcrop(x_start, x_end, y_start, y_end, image_width, image_height)
     # Checking if the crop coordinates are within the bounds of the image
-    # Checking validity of x_start (x_start cannot be before the first pixel nor be the ending pixel)
-    if x_start < 0 or x_start >= width:
-        raise ValueError("x_start is invalid")
-    # Checking validity of x_end (x_end cannot be the first pixel or after the final pixel)
-    if x_end <= 0 or x_end > width:
-        raise ValueError("x_end is invalid")
-    # Checking validity of y_start (y_start cannot be before the first pixel nor be the ending pixel)
-    if y_start < 0 or y_start >= height:
-        raise ValueError("y_start is invalid")
-    # Checking validity of y_end (y_end cannot be the first pixel nor after the final pixel)
-    if y_end <= 0 or y_end > height:
-        raise ValueError("y_end is invalid")
-    # Checking if the image is at least a pixel size
-    if x_start == x_end:
-        raise ValueError("An image of no pixels is not an image")
-    if y_start == y_end:
-        raise ValueError("An image of no pixels is not an image")
+    valid_crop(x_start, x_end, y_start, y_end, width, height)
+
 
     # Obtaining user_id (user_id will be the unique filename)
     user = get_user_by_token(token)
