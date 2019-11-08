@@ -9,6 +9,8 @@ import server.global_var as global_var
 from server.Error import AccessError
 import urllib.request
 from PIL import Image
+from server.helpers import get_user_by_token, encode_token_for_u_id
+import os
 
 def test_user_profile():
     '''
@@ -69,7 +71,6 @@ def test_profile_setname():
          {"u_id": u_id, "email":'test@gmail.com', "name_first":'Hello', \
               "name_last":'World', "handle_str":'raydensmith', \
               "profile_img_url": None}
-
 
     # A name of 50 length is valid
     assert funcs.user_profile_setname(token, create_50_string(), \
@@ -159,7 +160,6 @@ def test_profile_sethandle():
               "name_last":'Smith', "handle_str":'new handle', \
               "profile_img_url": None}
 
-
     # A invalid handle is given (50 characters)
     with pytest.raises(ValueError, match="Invalid Handle"):
         funcs.user_profile_sethandle(token, create_50_string())
@@ -172,19 +172,24 @@ def test_profile_sethandle():
     with pytest.raises(AccessError, match="Invalid token"):
         funcs.user_profile_sethandle("invalid_token", "helloworld")
 
-
 def test_profiles_uploadphoto():
-
     #Initialisation
     global_var.initialise_all()
-    assert global_var.data["users"] == []
 
     #Creating a user
     user = auth_functions.auth_register("test@gmail.com", "pass123", \
          "Rayden", "Smith")
+    # Changing u_id of user so that the file does not impact an actual user
+    user_object = get_user_by_token(user["token"])
+    user_object.u_id = -1
+    user_object.token = encode_token_for_u_id(-1)
+    global_var.data["tokens"][0] = user_object.token
 
-    assert global_var.data["users"] != []
-    token = user["token"]
+    token = user_object.token
+
+    # URL does not exist
+    with pytest.raises(ValueError, match="The server cannot be reached"):
+        funcs.user_profiles_uploadphoto(token, "ass2.ley", 0, 1, 3, 4)
 
     #750 x 738 dimension
     #Testing photo url
@@ -242,6 +247,7 @@ def test_profiles_uploadphoto():
     with pytest.raises(AccessError, match="Invalid token"):
         funcs.user_profiles_uploadphoto("invalid_tok", test_url, 10, 10, 20, 20)
 
+    os.remove("../assets/images/user_profile/-1.jpg")
 
 def test_users_all():
     '''
