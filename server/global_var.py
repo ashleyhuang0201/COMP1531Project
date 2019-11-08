@@ -47,7 +47,7 @@ class User:
         self.name_last = name_last
         self.handle = f"{name_first.lower()}{name_last.lower()}"
         self.permission = 3
-        self.profile_img_url = None
+        self.has_photo = None
 
         '''
         An owner of slackr is an owner in every channel # 1
@@ -81,8 +81,12 @@ class User:
         self.handle = handle_str
 
     # Uploads a photo
-    def upload_photo(self, profile_img_url):
-        self.profile_img_url = profile_img_url
+    def upload_photo(self):
+        self.has_photo = "../assets/images/user_profile/" + str(self.u_id) + ".jpg"
+
+    # Removes a photo
+    def remove_photo(self):
+        self.has_photo = None
 
 '''
 Object class for storing a message's data

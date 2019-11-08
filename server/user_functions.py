@@ -2,15 +2,14 @@
 User functions Iteration 2 implementations
 Team: You_Things_Can_Choose
 '''
-from server.Error import AccessError
-from server.helpers import get_user_by_u_id, get_user_by_token,\
-valid_user_id, valid_email, valid_token, get_user_by_email
-import server.global_var as global_var
-from urllib.request import Request, urlopen
+from urllib.request import urlopen
 from urllib.error import URLError, HTTPError
 import urllib
 from PIL import Image
-import imghdr
+from server.Error import AccessError
+import server.global_var as global_var
+from server.helpers import get_user_by_u_id, get_user_by_token, valid_user_id,\
+valid_email, valid_token, get_user_by_email
 
 def user_profile(token, u_id):
     """
@@ -33,8 +32,8 @@ def user_profile(token, u_id):
 
     user_profile_return = {"u_id": u_id, "email": user.email, \
          "name_first": user.name_first, "name_last": user.name_last, \
-              "handle_str": user.handle, "profile_img_url": \
-              user.profile_img_url}
+              "handle_str": user.handle, "has_photo": \
+              user.has_photo}
 
     return user_profile_return
 
@@ -133,9 +132,14 @@ def user_profiles_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
     except URLError as e:
         raise ValueError(f"The server cannot be reached: {e.reason}")
 
-    # Check that the crop co-ordinates are valid
     # Obtaining image
     imageObject = Image.open(response)
+
+    # Checks if image is a jpg
+    if imageObject.format != "JPEG":
+        raise ValueError("Image uploaded is not a JPG")
+
+    # Check that the crop co-ordinates are valid
     # Getting the width and height of image
     width, height = imageObject.size
 
@@ -166,13 +170,11 @@ def user_profiles_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
     # Gets image from url and saves it in images folder
     urllib.request.urlretrieve(img_url, "../assets/images/user_profile/" + str(u_id) + ".jpg")
 
-    # Checks if image is a jpg
-    if imghdr.what("../assets/images/user_profile/" + str(u_id) + ".jpg") != 'jpeg':
-        raise ValueError("Image uploaded is not a JPG")
-
     # Cropping image
     cropped = imageObject.crop((x_start, y_start, x_end, y_end))
     cropped.save("../assets/images/user_profile/" + str(u_id) + ".jpg")
+
+    user.upload_photo()
 
     return {}
 
@@ -187,11 +189,10 @@ def users_all(token):
 
     for user in global_var.data["users"]:
 
-        #ADD PROFILE_IMG_URL
         user_profile_return = {"u_id": user.u_id, "email": user.email, \
          "name_first": user.name_first, "name_last": user.name_last, \
-              "handle_str": user.handle, "profile_img_url": \
-              user.profile_img_url}
+              "handle_str": user.handle, "has_photo": \
+              user.has_photo}
         all_users.append(user_profile_return)
 
     return {"users": all_users}
