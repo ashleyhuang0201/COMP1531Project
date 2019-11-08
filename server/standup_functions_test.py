@@ -15,7 +15,6 @@ def test_standup_start():
     '''
     Test functions for standup_start
     '''
-
     data.initialise_all()
 
     # A valid token and channel successfully starts a standup - Owner
@@ -24,6 +23,8 @@ def test_standup_start():
     channel1 = channel_func.channels_create(owner["token"], "Owner", True)
     channel2 = channel_func.channels_create(owner["token"], "User", True)
     length = 1
+
+    # Testing return time
     end_ex = get_standup_end(length)
     end_ac = standup_start(owner["token"], channel1["channel_id"], length)
     assert same_time(end_ex, end_ac["time"])
@@ -36,7 +37,7 @@ def test_standup_start():
     with pytest.raises(AccessError, match="Cannot Access Channel"):
         standup_start(user["token"], channel2["channel_id"], length)
 
-    # user starts standup
+    # User starts standup
     channel_func.channel_join(user["token"], channel2["channel_id"])
     end_ex = get_standup_end(length)
     end_ac = standup_start(user["token"], channel2["channel_id"], length)
@@ -113,6 +114,10 @@ def test_standup_send():
     time.sleep(4)
 
 def test_standup_active():
+    '''
+    Test functions for standup_active
+    '''
+
     data.initialise_all()
 
     # A message is buffered in the standup queue - Owner
@@ -130,7 +135,19 @@ def test_standup_active():
             "time_finish": None
         }
 
-    # Currently in standup - not 100% testable as it depends on computer processing power
+    # In standup
+    standup_start(owner["token"], channel["channel_id"], 3)
+    assert standup_active(owner["token"], channel["channel_id"]) == {
+            "is_active": True,
+            "time_finish": 3
+        }
+    time.sleep(1)
+    assert standup_active(owner["token"], channel["channel_id"]) == {
+            "is_active": True,
+            "time_finish": 2
+        }
+
+    time.sleep(3)
 
 def get_standup_end(length):
     '''

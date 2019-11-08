@@ -236,8 +236,9 @@ class Channel:
                 message.reacts = message_object.reacts
                 message.is_pinned = message_object.is_pinned
 
-    def start_standup(self):
+    def start_standup(self, length):
         self.in_standup = datetime.datetime.utcnow()
+        self.standup_duration = length
 
     def time_left_standup(self):
         if self.in_standup is False:

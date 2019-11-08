@@ -27,7 +27,7 @@ def standup_start(token, channel_id, length):
         raise AccessError("Cannot Access Channel")
 
     # Start standup and after length seconds end the standup
-    channel.start_standup()
+    channel.start_standup(length)
     Timer(length, channel.end_standup, args=[token]).start()
     time = datetime.datetime.now() + datetime.timedelta(seconds=length)
 
