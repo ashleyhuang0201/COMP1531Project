@@ -191,11 +191,12 @@ def test_profiles_uploadphoto():
     test_url = "https://i.redd.it/51p5c1efueoy.jpg"
 
     #A valid photo is uploaded and cropped
-    assert funcs.user_profiles_uploadphoto(token, test_url, 10, 10, 20 ,20) == {}
+    assert funcs.user_profiles_uploadphoto(token, test_url, 0, 0, 20 ,20) == {}
 
     #The test_url is invalid
     with pytest.raises(ValueError, match = "HTTP status not 200"):
-        funcs.user_profiles_uploadphoto(token, "https://invalid_url.jpg", 10, 10, 20, 20 )
+        funcs.user_profiles_uploadphoto(token, \
+        "https://invalid_url.jpg", 10, 10, 20, 20 )
 
     #Size of img = (0,0,750,738)
     with pytest.raises(ValueError, match = "x_start is invalid"):
@@ -222,10 +223,24 @@ def test_profiles_uploadphoto():
     with pytest.raises(ValueError, match = "y_end is invalid"):
         funcs.user_profiles_uploadphoto(token, test_url, 0, 0, 700, 800)
 
+    #if x_start == x_end
+    with pytest.raises(ValueError, match = \
+    "An image of no pixels is not an image"):
+        funcs.user_profiles_uploadphoto(token, test_url, 10, 0, 10, 700)
+
+    #if y_start == y_end
+    with pytest.raises(ValueError, match = \
+    "An image of no pixels is not an image"):
+        funcs.user_profiles_uploadphoto(token, test_url, 0, 10, 700, 10)
+
+    with pytest.raises(ValueError, match = "Image uploaded is not a JPG"):
+        funcs.user_profiles_uploadphoto(token, \
+        "https://myrealdomain.com/images/corgi-dogs-pictures-7.png", \
+        0, 10, 200, 700)
+
     # An exception occurs when token is invalid
     with pytest.raises(AccessError, match="Invalid token"):
         funcs.user_profiles_uploadphoto("invalid_tok", test_url, 10, 10, 20, 20)
-
 
 
 def test_users_all():
