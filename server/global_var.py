@@ -146,6 +146,7 @@ class Channel:
         self.users = []
         self.is_public = is_public
         self.in_standup = False
+        self.standup_duration = 0
         self.standup_messages = []
         self.add_owner(u_id)
         self.add_user(u_id)
@@ -236,10 +237,16 @@ class Channel:
                 message.is_pinned = message_object.is_pinned
 
     def start_standup(self):
-        self.in_standup = True
+        self.in_standup = datetime.datetime.utcnow()
+
+    def time_left_standup(self):
+        if self.in_standup is False:
+            return 0
+        return round(self.standup_duration - (datetime.datetime.utcnow() - self.in_standup).total_seconds())
 
     def end_standup(self, token):
         self.in_standup = False
+        self.standup_duration = 0
         message = ""
         for m in self.standup_messages:
             line = ': '.join([m['user'], m['message']])

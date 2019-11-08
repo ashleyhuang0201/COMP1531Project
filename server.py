@@ -443,6 +443,20 @@ def standup_send():
         standup.standup_send(token, channel_id, message)
     )
 
+@APP.route('/standup/active', methods = ['GET'])
+def standup_active():
+    '''
+    For a given channel, return whether a standup is active in it, and what
+    time the standup finishes. If no standup is active, then time_finish
+    returns None
+    '''
+    token = request.form.get("token")
+    channel_id = int(request.form.get("channel_id"))
+
+    return dumps(
+        standup.standup_active(token, channel_id)
+    )
+
 @APP.route('/search', methods = ['GET'])
 def search():
     '''
