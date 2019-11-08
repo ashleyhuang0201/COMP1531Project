@@ -227,3 +227,33 @@ def get_reset_code_from_email(email):
         if entry["user"].email == email:
             return entry["reset_code"]
     return None
+    
+def valid_crop(x_start, x_end, y_start, y_end, width, height):
+    """
+    Checking if the crop coordinates are within the bounds of the image
+    """
+    # Checking validity of x_start (x_start cannot be before the first
+    # pixel nor be the ending pixel)
+    if x_start < 0 or x_start >= width:
+        raise ValueError("x_start is invalid")
+
+    # Checking validity of x_end (x_end cannot be the first pixel or after
+    # the final pixel)
+    if x_end <= 0 or x_end > width:
+        raise ValueError("x_end is invalid")
+
+    # Checking validity of y_start (y_start cannot be before the first pixel
+    # nor be the ending pixel)
+    if y_start < 0 or y_start >= height:
+        raise ValueError("y_start is invalid")
+
+    # Checking validity of y_end (y_end cannot be the first pixel nor
+    # after the final pixel)
+    if y_end <= 0 or y_end > height:
+        raise ValueError("y_end is invalid")
+
+    # Checking if the image is at least a pixel size
+    if x_start == x_end:
+        raise ValueError("An image of no pixels is not an image")
+    if y_start == y_end:
+        raise ValueError("An image of no pixels is not an image")
