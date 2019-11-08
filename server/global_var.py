@@ -47,7 +47,7 @@ class User:
         self.name_last = name_last
         self.handle = f"{name_first.lower()}{name_last.lower()}"
         self.permission = 3
-        self.has_photo = None
+        self.photo = None
 
         '''
         An owner of slackr is an owner in every channel # 1

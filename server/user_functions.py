@@ -32,8 +32,8 @@ def user_profile(token, u_id):
 
     user_profile_return = {"u_id": u_id, "email": user.email, \
          "name_first": user.name_first, "name_last": user.name_last, \
-              "handle_str": user.handle, "has_photo": \
-              user.has_photo}
+              "handle_str": user.handle, "profile_img_url": \
+              user.photo}
 
     return user_profile_return
 
@@ -188,11 +188,10 @@ def users_all(token):
     all_users = []
 
     for user in global_var.data["users"]:
-
         user_profile_return = {"u_id": user.u_id, "email": user.email, \
          "name_first": user.name_first, "name_last": user.name_last, \
-              "handle_str": user.handle, "has_photo": \
-              user.has_photo}
+              "handle_str": user.handle, "profile_img_url": \
+              user.photo}
         all_users.append(user_profile_return)
 
     return {"users": all_users}

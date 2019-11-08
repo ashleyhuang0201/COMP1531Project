@@ -26,7 +26,7 @@ def test_user_profile():
     assert funcs.user_profile(token, u_id) ==  \
          {"u_id": u_id, "email":'test@gmail.com', "name_first":'Raydon', \
               "name_last":'Smith', "handle_str":'raydonsmith', \
-              "has_photo": None}
+              "profile_img_url": None}
 
     # An exception occurs when the user_id is invalid
     with pytest.raises(ValueError, match="Invalid User ID"):
@@ -59,7 +59,7 @@ def test_profile_setname():
     assert funcs.user_profile(token, u_id) ==  \
          {"u_id": u_id, "email":'test@gmail.com', "name_first":'Hello', \
               "name_last":'World', "handle_str":'raydensmith', \
-              "has_photo": None}
+              "profile_img_url": None}
 
     # A name of 50 length is valid
     assert funcs.user_profile_setname(token, "a"*50, "a"*50) == {}
@@ -100,7 +100,7 @@ def test_profile_setemail():
     assert funcs.user_profile(token, u_id) ==  \
          {"u_id": u_id, "email":'test1@gmail.com', "name_first":'Rayden', \
               "name_last":'Smith', "handle_str":'raydensmith', \
-              "has_photo": None}
+              "profile_img_url": None}
 
     # A invalid email is given
     with pytest.raises(ValueError, match="Invalid email"):
@@ -133,7 +133,7 @@ def test_profile_sethandle():
     assert funcs.user_profile(token, u_id) ==  \
          {"u_id": u_id, "email":'test@gmail.com', "name_first":'Rayden', \
               "name_last":'Smith', "handle_str":'new handle', \
-              "has_photo": None}
+              "profile_img_url": None}
 
     # A invalid handle is given (50 characters)
     with pytest.raises(ValueError, match="Invalid Handle"):
@@ -229,19 +229,15 @@ def test_users_all():
     '''
     # Initialisation
     global_var.initialise_all()
-    assert global_var.data["users"] == []
 
     # Creating a user
     user = auth_functions.auth_register("test@gmail.com", "pass123", \
          "Rayden", "Smith")
-
-    assert global_var.data["users"] != []
-
     token = user["token"]
 
     assert funcs.users_all(token) == {"users":[{"u_id": 0, \
          "email":'test@gmail.com', "name_first":'Rayden', "name_last":'Smith', \
-              "handle_str":'raydensmith', "has_photo": None}]}
+              "handle_str":'raydensmith', "profile_img_url": None}]}
 
     # Creating a user
     user = auth_functions.auth_register("test2@gmail.com", "pass1234", \
@@ -250,10 +246,10 @@ def test_users_all():
     assert funcs.users_all(token) == {"users":[
         {"u_id": 0, "email":'test@gmail.com', "name_first":'Rayden', \
              "name_last":'Smith', "handle_str":'raydensmith', \
-             "has_photo": None},
+             "profile_img_url": None},
         {"u_id": 1, "email":'test2@gmail.com', "name_first":'Mary', \
               "name_last":'Lamb', "handle_str":'marylamb', \
-              "has_photo": None}]}
+              "profile_img_url": None}]}
 
     # An exception occurs when token is invalid
     with pytest.raises(AccessError, match="Invalid token"):
