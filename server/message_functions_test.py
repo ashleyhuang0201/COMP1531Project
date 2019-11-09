@@ -8,7 +8,7 @@ import datetime
 import pytest
 import time
 import server.global_var as global_var
-from server import helpers
+from server.helpers import encode_token_for_u_id
 from server import message_functions as funcs
 from server import auth_functions
 from server import channel_functions
@@ -91,7 +91,7 @@ def test_message_send():
     #Creates an user
     user = auth_functions.auth_register("test@gmail.com", "pass123", \
             "Rayden", "Smith")
-    assert user == {"u_id": 0, "token": helpers.encode_token_for_u_id(0)}
+    assert user == {"u_id": 0, "token": encode_token_for_u_id(0)}
     token = user["token"]
     assert global_var.data["users"] != []
 
@@ -375,7 +375,7 @@ def test_message_pin():
     #Create users
     owner = auth_functions.auth_register("test2@gmail.com", "pass123", \
          "Sally", "Bob")
-    assert owner == {"u_id": 0, "token": helpers.encode_token_for_u_id(0)}
+    assert owner == {"u_id": 0, "token": encode_token_for_u_id(0)}
     owner_token = owner["token"]
 
     user = auth_functions.auth_register("test@gmail.com", "pass123", \

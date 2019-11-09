@@ -8,7 +8,6 @@ from server.standup_functions import standup_send, standup_start, standup_active
 import server.auth_functions as auth
 from server.Error import AccessError
 import server.channel_functions as channel_func
-import server.helpers as helpers
 import server.global_var as data
 
 def test_standup_start():

@@ -4,7 +4,8 @@ Test functions for auth_*
 import pytest
 import server.auth_functions as auth
 import server.channel_functions as channel
-import server.helpers as helpers
+from server.helpers import get_user_by_email, get_user_token_by_u_id, \
+     get_reset_code_from_email
 import server.global_var as data
 from server.Error import AccessError
 
@@ -23,8 +24,8 @@ def test_auth_login():
     login = auth.auth_login("registered@g.com", "registered_password") \
 
     # Check database for id and token
-    user_id = helpers.get_user_by_email("registered@g.com").u_id
-    user_token = helpers.get_user_token_by_u_id(user_id)
+    user_id = get_user_by_email("registered@g.com").u_id
+    user_token = get_user_token_by_u_id(user_id)
 
     assert login == {"u_id": user_id, "token": user_token}
 
@@ -72,8 +73,8 @@ def test_auth_register():
     user = auth.auth_register("registered@g.com", "valid_password", "a", "b")
 
     # Check database for id and token
-    user_id = helpers.get_user_by_email("registered@g.com").u_id
-    user_token = helpers.get_user_token_by_u_id(user_id)
+    user_id = get_user_by_email("registered@g.com").u_id
+    user_token = get_user_token_by_u_id(user_id)
 
     # confirm that register returned the correct ID and token
     assert user == {"u_id": user_id, "token": user_token}
@@ -126,7 +127,7 @@ def test_auth_passwordreset_reset():
     auth.auth_passwordreset_request("comp1531receive@gmail.com")
     
     # Password is reset when valid reset code and password is given
-    reset_code = helpers.get_reset_code_from_email("comp1531receive@gmail.com")
+    reset_code = get_reset_code_from_email("comp1531receive@gmail.com")
     auth.auth_passwordreset_reset(reset_code, "new_password")
     # Reset code is invalid
     with pytest.raises(ValueError, match="Invalid Reset Code"):

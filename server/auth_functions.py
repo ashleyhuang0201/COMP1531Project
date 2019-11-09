@@ -6,17 +6,18 @@ import random
 import jwt
 from flask_mail import Message
 import server.global_var as data
-import server.helpers as helper
+from server.helpers import get_user_by_email, valid_email, valid_name, \
+     get_user_by_reset_code, remove_reset, add_reset
 
 def auth_login(email, password):
     '''
     Given a registered user's email and password function generates and
     returns a user_id and token assigned to the account
     '''
-    user = helper.get_user_by_email(email)
+    user = get_user_by_email(email)
 
     # Check validity of login
-    if not helper.valid_email(email):
+    if not valid_email(email):
         raise ValueError("Invalid Email")
     if not user:
         raise ValueError("Email not registered")
@@ -50,17 +51,17 @@ def auth_register(email, password, name_first, name_last):
     '''
 
     # Checking if registration details are valid
-    user = helper.get_user_by_email(email)
+    user = get_user_by_email(email)
 
-    if not helper.valid_email(email):
+    if not valid_email(email):
         raise ValueError("Invalid Email")
     if user:
         raise ValueError("Email Already Registered")
     if not valid_password(password):
         raise ValueError("Password Not Strong")
-    if not helper.valid_name(name_first):
+    if not valid_name(name_first):
         raise ValueError("Invalid First Name")
-    if not helper.valid_name(name_last):
+    if not valid_name(name_last):
         raise ValueError("Invalid Last Name")
 
     # Adding new user details
@@ -87,11 +88,11 @@ def auth_passwordreset_request(email):
     is the one who got sent this email.
     '''
 
-    if not helper.valid_email(email):
+    if not valid_email(email):
         raise ValueError("Email is not valid")
 
     # Preparing reset code
-    user = helper.get_user_by_email(email)
+    user = get_user_by_email(email)
     reset_code = generate_reset_code(user)
 
     # Creating mail to send
@@ -109,7 +110,7 @@ def auth_passwordreset_reset(reset_code, new_password):
     provided
     '''
 
-    user = helper.get_user_by_reset_code(reset_code)
+    user = get_user_by_reset_code(reset_code)
 
     if not valid_password(new_password):
         raise ValueError("Invalid Password")
@@ -117,7 +118,7 @@ def auth_passwordreset_reset(reset_code, new_password):
         raise ValueError("Invalid Reset Code")
 
     user.change_password(new_password)
-    helper.remove_reset(reset_code)
+    remove_reset(reset_code)
 
     return {}
 
@@ -140,6 +141,6 @@ def generate_reset_code(user):
     ''' Generate reset code '''
     reset_code = hashlib.sha256(str(random.random()).encode()).hexdigest()
     # Access and place reset code into data
-    helper.add_reset(reset_code, user)
+    add_reset(reset_code, user)
 
     return reset_code
