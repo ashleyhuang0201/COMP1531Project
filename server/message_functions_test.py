@@ -169,7 +169,6 @@ def test_message_remove():
          "This is not your message") == {"message_id" : 2}
     #Initialisation finished
 
-
     #A invalid token is sent to the function
     with pytest.raises(AccessError, match="Invalid token"):
         funcs.message_remove("111111", 0)
@@ -462,6 +461,10 @@ def test_message_unpin():
 
     # A message is pinned
     assert funcs.message_pin(owner_token, 0) == {}
+
+    # (A invalid user is trying to use the function)
+    with pytest.raises(AccessError, match="Invalid token"):
+        funcs.message_unpin("111111", 0)
 
     #A user is not an admin
     with pytest.raises(ValueError, match="User is not an admin"):
