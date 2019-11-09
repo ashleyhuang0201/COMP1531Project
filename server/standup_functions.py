@@ -5,7 +5,7 @@ from threading import Timer
 import datetime
 from server.Error import AccessError
 import server.global_var as data
-from server.helpers import get_channel_by_channel_id, get_user_by_token
+from server.helpers import get_channel_by_channel_id, get_user_by_token, valid_token
 
 def standup_start(token, channel_id, length):
     """
@@ -18,7 +18,7 @@ def standup_start(token, channel_id, length):
     """
 
     # Invalid user has accessed function
-    if not helpers.valid_token(token):
+    if not valid_token(token):
         raise AccessError("Invalid token")
 
     channel = get_channel_by_channel_id(channel_id)
@@ -45,7 +45,7 @@ def standup_send(token, channel_id, message):
     """
 
     # Invalid user has accessed function
-    if not helpers.valid_token(token):
+    if not valid_token(token):
         raise AccessError("Invalid token")
 
     channel = get_channel_by_channel_id(channel_id)
@@ -72,7 +72,7 @@ def standup_active(token, channel_id):
     '''
 
     # Invalid user has accessed function
-    if not helpers.valid_token(token):
+    if not valid_token(token):
         raise AccessError("Invalid token")
 
     channel = get_channel_by_channel_id(channel_id)
