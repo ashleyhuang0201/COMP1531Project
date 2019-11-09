@@ -30,6 +30,10 @@ def test_standup_start():
     assert same_time(end_ex, end_ac["time"])
     time.sleep(1)
 
+    # A invalid token is used to access the function
+    with pytest.raises(AccessError, match="Invalid token"):
+        standup_start("123456", channel2["channel_id"], length)
+
     # A valid token and channel successfully starts a standup - User
     user = auth.auth_register("valid2@g.com", "valid_password", "a", "b")
 
@@ -83,6 +87,10 @@ def test_standup_send():
     assert standup_send(owner["token"], channel["channel_id"], \
         "correct_and_valid_message") == {}
 
+    # A invalid token is used to access the function
+    with pytest.raises(AccessError, match="Invalid token"):
+        standup_send("123456", channel["channel_id"], length)
+
     user = auth.auth_register("validcorrect1@g.com", "valid_password", "a", "b")
 
     # User tries to send message but has not joined channel
@@ -124,6 +132,10 @@ def test_standup_active():
     owner = auth.auth_register("validcorrect@g.com", "valid_password", "a", "b")
 
     channel = channel_func.channels_create(owner["token"], "Owner", True)
+
+    # A invalid token is used to access the function
+    with pytest.raises(AccessError, match="Invalid token"):
+        standup_active("123456", channel["channel_id"])
 
     # Channel given does not exist
     with pytest.raises(ValueError, match="Channel Does Not Exist"):
