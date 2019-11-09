@@ -11,6 +11,7 @@ import server.global_var as global_var
 from server.helpers import get_user_by_u_id, get_user_by_token, valid_user_id,\
 valid_email, valid_token, get_user_by_email, valid_crop
 
+@valid_token
 def user_profile(token, u_id):
     """
     For a valid user, returns information about their email, first name,
@@ -19,9 +20,6 @@ def user_profile(token, u_id):
     ValueError:
     - User with u_id is not a valid user
     """
-
-    if valid_token(token) is False:
-        raise AccessError("Invalid token")
 
     if valid_user_id(u_id) is False:
         raise ValueError("Invalid User ID")
@@ -36,6 +34,7 @@ def user_profile(token, u_id):
 
     return user_profile_return
 
+@valid_token
 def user_profile_setname(token, name_first, name_last):
     """
     Update the authorised user's first and last name
@@ -44,8 +43,7 @@ def user_profile_setname(token, name_first, name_last):
     - name_first is more than 50 characters
     - name_last is more than 50 characters
     """
-    if valid_token(token) is False:
-        raise AccessError("Invalid token")
+
     if len(name_first) > 50:
         raise ValueError("Name too long")
     if len(name_last) > 50:
@@ -61,6 +59,7 @@ def user_profile_setname(token, name_first, name_last):
 
     return {}
 
+@valid_token
 def user_profile_setemail(token, email):
     """
     Updates the authorised user's email address
@@ -70,8 +69,6 @@ def user_profile_setemail(token, email):
     - Email address is already being used by another user
 
     """
-    if valid_token(token) is False:
-        raise AccessError("Invalid token")
 
     user = get_user_by_email(email)
     if valid_email(email) is False:
@@ -87,6 +84,7 @@ def user_profile_setemail(token, email):
 
     return {}
 
+@valid_token
 def user_profile_sethandle(token, handle_str):
 
     """
@@ -95,8 +93,6 @@ def user_profile_sethandle(token, handle_str):
     ValueError:
     - handle_str is more than 20 characters
     """
-    if valid_token(token) is False:
-        raise AccessError("Invalid token")
 
     if len(handle_str) > 20 or len(handle_str) < 3:
         raise ValueError("Invalid Handle")
@@ -110,6 +106,7 @@ def user_profile_sethandle(token, handle_str):
 
     return {}
 
+@valid_token
 def user_profiles_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
     """
     Given a URL of an image on the internet, crops the image within x and
@@ -119,9 +116,6 @@ def user_profiles_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
     - img_url returns an HTTP status other than 200 (2xx indicates success)
     - xy points are outside the dimensions of the image at the url
     """
-    # Checking if the user token is valid
-    if valid_token(token) is False:
-        raise AccessError("Invalid token")
 
     # Checking if the img_url is an accessable URL
     try:
@@ -161,12 +155,11 @@ def user_profiles_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
 
     return {}
 
+@valid_token
 def users_all(token):
     '''
     Shows all users
     '''
-    if valid_token(token) is False:
-        raise AccessError("Invalid token")
 
     all_users = []
 

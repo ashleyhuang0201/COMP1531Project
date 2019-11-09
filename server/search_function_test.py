@@ -6,6 +6,7 @@ channel, results from multiple channels)
 """
 import pytest
 import server.search_function as search
+from server.Error import AccessError
 from server.message_functions import message_send
 from server.auth_functions import auth_register
 from server.channel_functions import channels_create
@@ -17,7 +18,7 @@ def test_search_invalid_token():
     """
     Tests what happens if search is given an invalid token
     """
-    with pytest.raises(ValueError, match="Invalid token"):
+    with pytest.raises(AccessError, match="Invalid token"):
         # Initialising
         global_var.initialise_all()
 

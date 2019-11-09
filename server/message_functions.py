@@ -11,7 +11,7 @@ from server.helpers import get_channel_by_channel_id, valid_token, \
      get_user_by_token, get_channel_by_message_id, get_message_by_message_id, \
          token_is_admin, token_is_owner
 
-
+@valid_token
 def message_sendlater(token, channel_id, message, time_sent):
     '''
     Sends a message from authorised_user to the channel specified by
@@ -20,10 +20,6 @@ def message_sendlater(token, channel_id, message, time_sent):
 
     channel = get_channel_by_channel_id(channel_id)
     user = get_user_by_token(token)
-
-    # Invalid user has accessed function
-    if not valid_token(token):
-        raise AccessError("Invalid token")
 
     # Channel_id does not refer to a valid channel
     if channel is None:
@@ -52,6 +48,7 @@ def message_sendlater(token, channel_id, message, time_sent):
         "message_id": message_object.id
     }
 
+@valid_token
 def message_send(token, channel_id, message):
     '''
     Send a message from authorised_user to the channel specified by channel_id
@@ -59,10 +56,6 @@ def message_send(token, channel_id, message):
 
     channel = get_channel_by_channel_id(channel_id)
     user = get_user_by_token(token)
-
-    # Invalid user has accessed function
-    if not valid_token(token):
-        raise AccessError("Invalid token")
 
     # Channel_id does not refer to a valid channel
     if channel is None:
@@ -92,6 +85,7 @@ def message_send(token, channel_id, message):
         "message_id": message_object.id
     }
 
+@valid_token
 def message_remove(token, message_id):
     '''
     Given a message ID, the message is removed
@@ -100,10 +94,6 @@ def message_remove(token, message_id):
     channel = get_channel_by_message_id(message_id)
     message = get_message_by_message_id(message_id)
     user = get_user_by_token(token)
-
-    # Invalid user has accessed function
-    if not valid_token(token):
-        raise AccessError("Invalid token")
 
     # Message_id does not refer to an existing message
     if not valid_message_id(message_id):
@@ -121,6 +111,7 @@ def message_remove(token, message_id):
 
     return {}
 
+@valid_token
 def message_edit(token, message_id, message):
     '''
     Given a message, update it's text with new text. If the new message is an empty string, the message is deleted.
@@ -129,10 +120,6 @@ def message_edit(token, message_id, message):
     channel = get_channel_by_message_id(message_id)
     message_obj = get_message_by_message_id(message_id)
     user = get_user_by_token(token)
-
-    # Invalid user has accessed function
-    if not valid_token(token):
-        raise AccessError("Invalid token")
 
     # message_id does not refer to an existing message
     if not valid_message_id(message_id):
@@ -160,6 +147,7 @@ def message_edit(token, message_id, message):
 
     return {}
 
+@valid_token
 def message_react(token, message_id, react_id):
     '''
     Given a message within a channel the authorised user is part of, add a "react"
@@ -169,10 +157,6 @@ def message_react(token, message_id, react_id):
     channel = get_channel_by_message_id(message_id)
     message_obj = get_message_by_message_id(message_id)
     user = get_user_by_token(token)
-
-    # Invalid user has accessed function
-    if not valid_token(token):
-        raise AccessError("Invalid token")
 
     # Message_id does not refer to an existing message
     if not valid_message_id(message_id):
@@ -195,6 +179,7 @@ def message_react(token, message_id, react_id):
 
     return {}
 
+@valid_token
 def message_unreact(token, message_id, react_id):
     '''
     Given a message within a channel the authorised user is part of, remove a
@@ -204,10 +189,6 @@ def message_unreact(token, message_id, react_id):
     channel = get_channel_by_message_id(message_id)
     message_obj = get_message_by_message_id(message_id)
     user = get_user_by_token(token)
-
-    # Invalid user has accessed function
-    if not valid_token(token):
-        raise AccessError("Invalid token")
 
     # Message_id does not refer to an existing message
     if not valid_message_id(message_id):
@@ -230,6 +211,7 @@ def message_unreact(token, message_id, react_id):
 
     return {}
 
+@valid_token
 def message_pin(token, message_id):
     '''
     Given a message within a channel, mark it as "pinned" to be given special
@@ -239,10 +221,6 @@ def message_pin(token, message_id):
     channel = get_channel_by_message_id(message_id)
     message_obj = get_message_by_message_id(message_id)
     user = get_user_by_token(token)
-
-    # Invalid user has accessed function
-    if not valid_token(token):
-        raise AccessError("Invalid token")
 
     # Message_id does not refer to an existing message
     if not valid_message_id(message_id):
@@ -267,6 +245,7 @@ def message_pin(token, message_id):
 
     return {}
 
+@valid_token
 def message_unpin(token, message_id):
     '''
     Given a message within a channel, remove it's mark as unpinned
@@ -275,10 +254,6 @@ def message_unpin(token, message_id):
     channel = get_channel_by_message_id(message_id)
     message_obj = get_message_by_message_id(message_id)
     user = get_user_by_token(token)
-
-    # Invalid user has accessed function
-    if not valid_token(token):
-        raise AccessError("Invalid token")
 
     # Message_id does not refer to an existing message
     if not valid_message_id(message_id):

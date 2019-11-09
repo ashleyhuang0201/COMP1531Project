@@ -8,6 +8,27 @@ import jwt
 import server.global_var as data
 from server.Error import AccessError
 
+
+# Checks if a token is valid
+
+#def valid_token(token):
+#    '''
+#    Checks if a user token is valid
+#    '''
+#    for tok in data.data["tokens"]:
+#        if tok == token:
+#            return True
+#    return False
+
+def valid_token(function):
+    def wrapper(*args, **kwargs):
+        token = list(args)[0]
+        for tok in data.data["tokens"]:
+            if tok == token:
+                return function(*args, **kwargs)
+        raise AccessError("Invalid token")
+    return wrapper
+
 # Decodes a token
 def decode_token(token):
     """
@@ -25,13 +46,11 @@ def encode_token_for_u_id(u_id):
         }, data.SECRET, algorithm='HS256').decode("utf-8")
 
 # Checks if a token is an admin
+@valid_token
 def token_is_admin(token):
     """
     Checks if a token is related to an admin
     """
-    # Checking validity of token
-    if not valid_token(token):
-        raise ValueError("Invalid token")
 
     # Checking if token is an admin
     user = get_user_by_token(token)
@@ -40,13 +59,11 @@ def token_is_admin(token):
     return False
 
 # Checks if a token is an owner
+@valid_token
 def token_is_owner(token):
     """
     Checks if a token is related to an owner
     """
-    # Checking validity of token
-    if not valid_token(token):
-        raise ValueError("Invalid token")
 
     # Checking if token is an owner
     user = get_user_by_token(token)
@@ -83,16 +100,6 @@ def valid_user_id(u_id):
             return True
     return False
 
-# Checks if a token is valid
-def valid_token(token):
-    '''
-    Checks if a user token is valid
-    '''
-    for tok in data.data["tokens"]:
-        if tok == token:
-            return True
-    return False
-
 # Checks if a permission_id is valid
 def valid_permission_id(permission_id):
     """
@@ -118,13 +125,11 @@ def get_user_by_u_id(u_id):
     return None
 
 # Obtain user object using a token
+@valid_token
 def get_user_by_token(token):
     """
     Returns user object according to their token
     """
-    # Checking validity of token
-    if not valid_token(token):
-        raise AccessError("Invalid token")
 
     # Decoding token
     u_id = jwt.decode(token, data.SECRET, algorithms=['HS256'])["u_id"]

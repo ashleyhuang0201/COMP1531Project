@@ -5,8 +5,10 @@ from threading import Timer
 import datetime
 from server.Error import AccessError
 import server.global_var as data
-from server.helpers import get_channel_by_channel_id, get_user_by_token, valid_token
+from server.helpers import get_channel_by_channel_id, get_user_by_token, \
+     valid_token
 
+@valid_token
 def standup_start(token, channel_id, length):
     """
     For a given channel, start the standup period whereby for the next "length"
@@ -16,10 +18,6 @@ def standup_start(token, channel_id, length):
     the standup. X is an integer that denotes the number of seconds that the
     standup occurs for
     """
-
-    # Invalid user has accessed function
-    if not valid_token(token):
-        raise AccessError("Invalid token")
 
     channel = get_channel_by_channel_id(channel_id)
     user = get_user_by_token(token)
@@ -38,15 +36,12 @@ def standup_start(token, channel_id, length):
 
     return {"time" : time.timestamp()}
 
+@valid_token
 def standup_send(token, channel_id, message):
     """
     Sending a message to get buffered in the standup queue, assuming a standup
     is currently active
     """
-
-    # Invalid user has accessed function
-    if not valid_token(token):
-        raise AccessError("Invalid token")
 
     channel = get_channel_by_channel_id(channel_id)
     user = get_user_by_token(token)
@@ -64,16 +59,13 @@ def standup_send(token, channel_id, message):
 
     return {}
 
+@valid_token
 def standup_active(token, channel_id):
     '''
     For a given channel, return whether a standup is active in it, and what
     time the standup finishes. If no standup is active, then time_finish
     returns None
     '''
-
-    # Invalid user has accessed function
-    if not valid_token(token):
-        raise AccessError("Invalid token")
 
     channel = get_channel_by_channel_id(channel_id)
 

@@ -9,6 +9,7 @@ import server.global_var as data
 from server.helpers import get_user_by_email, valid_email, valid_name, \
      get_user_by_reset_code, remove_reset, add_reset
 
+
 def auth_login(email, password):
     '''
     Given a registered user's email and password function generates and

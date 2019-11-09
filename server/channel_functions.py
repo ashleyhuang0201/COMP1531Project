@@ -9,16 +9,13 @@ from server.helpers import get_channel_by_channel_id, valid_token, \
      decode_token, valid_user_id, get_user_by_token, token_is_admin, \
          token_is_owner
 
+@valid_token
 def channel_invite(token, channel_id, u_id):
     '''
     Invites a user to join a channel
     '''
 
     channel = get_channel_by_channel_id(channel_id)
-
-    # Invalid user has accessed function
-    if not valid_token(token):
-        raise AccessError("Invalid token")
 
     # Channel_id does not refer to a valid channel
     if channel is None:
@@ -37,16 +34,13 @@ def channel_invite(token, channel_id, u_id):
 
     return {}
 
+@valid_token
 def channel_details(token, channel_id):
     '''
     Provide basic details about the channel
     '''
 
     channel = get_channel_by_channel_id(channel_id)
-
-    # Invalid user has accessed function
-    if not valid_token(token):
-        raise AccessError("Invalid token")
 
     # channel_id does not refer to a valid channel
     if channel is None:
@@ -62,7 +56,7 @@ def channel_details(token, channel_id):
 
     return channel_detail
 
-
+@valid_token
 def channel_messages(token, channel_id, start):
     '''
     return up to 50 messages between index "start" and "start + 50".
@@ -76,10 +70,6 @@ def channel_messages(token, channel_id, start):
     '''
 
     channel = get_channel_by_channel_id(channel_id)
-
-    # Invalid user has accessed function
-    if not valid_token(token):
-        raise AccessError("Invalid token")
 
     # channel_id does not refer to a valid channel
     if channel is None:
@@ -119,7 +109,7 @@ def channel_messages(token, channel_id, start):
     # End index is the 50th message
     return {"messages": messages, "start": start, "end": start + 49}
 
-
+@valid_token
 def channel_leave(token, channel_id):
     '''
     Given a channel ID, the user is removed as a member of the channel
@@ -127,10 +117,6 @@ def channel_leave(token, channel_id):
 
     channel = get_channel_by_channel_id(channel_id)
     user = get_user_by_token(token)
-
-    # Invalid user has accesed function
-    if not valid_token(token):
-        raise AccessError("Invalid token")
 
     # channel_id does not refer to a valid channel
     if channel is None:
@@ -142,7 +128,7 @@ def channel_leave(token, channel_id):
 
     return {}
 
-
+@valid_token
 def channel_join(token, channel_id):
     '''
     Given a channel_id of a channel that the authorised user can join
@@ -151,10 +137,6 @@ def channel_join(token, channel_id):
 
     channel = get_channel_by_channel_id(channel_id)
     user = get_user_by_token(token)
-
-    # Invalid user has accesed function
-    if not valid_token(token):
-        raise AccessError("Invalid token")
 
     # channel_id does not refer to a valid channel
     if channel is None:
@@ -171,17 +153,13 @@ def channel_join(token, channel_id):
 
     return {}
 
-
+@valid_token
 def channel_addowner(token, channel_id, u_id):
     '''
     make an user an owner of the channel
     '''
 
     channel = get_channel_by_channel_id(channel_id)
-
-    # Invalid user has accesed function
-    if not valid_token(token):
-        raise AccessError("Invalid token")
 
     # channel_id does not refer to a valid channel
     if channel is None:
@@ -201,17 +179,13 @@ def channel_addowner(token, channel_id, u_id):
 
     return {}
 
-
+@valid_token
 def channel_removeowner(token, channel_id, u_id):
     '''
     Remove user with user id u_id an owner of this channel
     '''
 
     channel = get_channel_by_channel_id(channel_id)
-
-    # Invalid user has accesed function
-    if not valid_token(token):
-        raise AccessError("Invalid token")
 
     # channel_id does not refer to a valid channel
     if channel is None:
@@ -231,15 +205,11 @@ def channel_removeowner(token, channel_id, u_id):
 
     return {}
 
-
+@valid_token
 def channels_list(token):
     '''
     Provides a list of all channels and details that the auth user is part of
     '''
-
-    # Invalid user has accessed function
-    if not valid_token(token):
-        raise AccessError("Invalid token")
 
     user = get_user_by_token(token)
     channels_user_is_member = []
@@ -252,14 +222,11 @@ def channels_list(token):
 
     return {"channels": channels_user_is_member}
 
+@valid_token
 def channels_listall(token):
     '''
     Provides a list of channels and their associated details
     '''
-
-    # Invalid user has accessed function
-    if not valid_token(token):
-        raise AccessError("Invalid token")
 
     all_channels = []
 
@@ -270,6 +237,7 @@ def channels_listall(token):
 
     return {"channels": all_channels}
 
+@valid_token
 def channels_create(token, name, is_public):
     '''
     Create a channel with the name that is either public or private
@@ -278,10 +246,6 @@ def channels_create(token, name, is_public):
     # Exception raised
     if len(name) > 20:
         raise ValueError("Name is longer than 20 characters")
-
-    # Invalid user has accessed function
-    if not valid_token(token):
-        raise AccessError("Invalid token")
 
     # token is decoded to find user id
     user = get_user_by_token(token)
