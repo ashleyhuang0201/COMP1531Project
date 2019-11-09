@@ -235,7 +235,7 @@ def channels_list(token):
     Provides a list of all channels and details that the auth user is part of
     '''
 
-    # Exception raised
+    # Invalid user has accessed function
     if not helpers.valid_token(token):
         raise AccessError("Invalid token")
 
@@ -255,7 +255,7 @@ def channels_listall(token):
     Provides a list of channels and their associated details
     '''
 
-    # Exception raised
+    # Invalid user has accessed function
     if not helpers.valid_token(token):
         raise AccessError("Invalid token")
 
@@ -277,6 +277,7 @@ def channels_create(token, name, is_public):
     if len(name) > 20:
         raise ValueError("Name is longer than 20 characters")
 
+    # Invalid user has accessed function
     if not helpers.valid_token(token):
         raise AccessError("Invalid token")
 

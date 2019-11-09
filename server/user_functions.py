@@ -20,12 +20,11 @@ def user_profile(token, u_id):
     - User with u_id is not a valid user
     """
 
-    if valid_user_id(u_id) is False:
-        raise ValueError("Invalid User ID")
-
     if valid_token(token) is False:
         raise AccessError("Invalid token")
 
+    if valid_user_id(u_id) is False:
+        raise ValueError("Invalid User ID")
 
     # Get user object by u_id
     user = get_user_by_u_id(u_id)

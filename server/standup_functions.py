@@ -16,6 +16,11 @@ def standup_start(token, channel_id, length):
     the standup. X is an integer that denotes the number of seconds that the
     standup occurs for
     """
+
+    # Invalid user has accessed function
+    if not helpers.valid_token(token):
+        raise AccessError("Invalid token")
+
     channel = get_channel_by_channel_id(channel_id)
     user = get_user_by_token(token)
 
@@ -38,8 +43,14 @@ def standup_send(token, channel_id, message):
     Sending a message to get buffered in the standup queue, assuming a standup
     is currently active
     """
+
+    # Invalid user has accessed function
+    if not helpers.valid_token(token):
+        raise AccessError("Invalid token")
+
     channel = get_channel_by_channel_id(channel_id)
     user = get_user_by_token(token)
+
     if channel is None:
         raise ValueError("Channel Does Not Exist")
     if len(message) > 1000:
@@ -59,6 +70,11 @@ def standup_active(token, channel_id):
     time the standup finishes. If no standup is active, then time_finish
     returns None
     '''
+
+    # Invalid user has accessed function
+    if not helpers.valid_token(token):
+        raise AccessError("Invalid token")
+
     channel = get_channel_by_channel_id(channel_id)
 
     # Checking if channel exists
