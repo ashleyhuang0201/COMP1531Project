@@ -496,6 +496,10 @@ def test_channels_create():
     assert func.channels_create(token1, "Channel2", False) == \
     {"channel_id" : 2}
 
+    # Channel cannot be created by an invalid token
+    with pytest.raises(AccessError, match="Invalid token"):
+        func.channels_create("12345", "Channel3", True)
+
     #public channel, name longer than 20 characters
     with pytest.raises(ValueError, match=\
     "Name is longer than 20 characters"):
