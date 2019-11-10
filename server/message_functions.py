@@ -5,7 +5,7 @@ Team: You_Things_Can_Choose
 import datetime
 from threading import Timer
 
-import server.global_var as global_var
+from server import global_var
 from server.Error import AccessError
 from server.helpers import get_channel_by_channel_id, valid_token, \
      get_user_by_token, get_channel_by_message_id, get_message_by_message_id, \

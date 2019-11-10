@@ -5,7 +5,7 @@ Gets data
 '''
 import re
 import jwt
-import server.global_var as data
+from server import global_var as data
 from server.Error import AccessError
 
 
