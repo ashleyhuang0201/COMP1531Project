@@ -48,7 +48,10 @@ def auth_register(email, password, name_first, name_last):
     '''
     Given a user's first and last name, email address, and password, create a
     new account for them and return a new token for authentication in their
-    session
+    session. A handle is generated that is the concatentation of a
+    lowercase-only first name and last name. If the concatenation is longer
+    than 20 characters, it is cutoff at 20 characters. If the handle is already
+    taken, you may modify the handle in any way you see fit to make it unique.
     '''
 
     # Checking if registration details are valid

@@ -5,7 +5,7 @@ import pytest
 import server.auth_functions as auth
 import server.channel_functions as channel
 from server.helpers import get_user_by_email, get_user_token_by_u_id, \
-     get_reset_code_from_email
+     get_reset_code_from_email, get_user_by_token
 import server.global_var as data
 from server.Error import AccessError
 
@@ -95,6 +95,17 @@ def test_auth_register():
     # Last name is invalid
     with pytest.raises(ValueError, match="Invalid Last Name"):
         auth.auth_register("validcorrect@g.com", "valid_password", "a", invalid)
+
+    # Testing unique handle
+    # Creating user: first_name="asd", last_name="dsa"
+    user1 = auth.auth_register("g@g.com", "valid_password", "asd", "dsa")
+    user1 = get_user_by_token(user1["token"])
+    assert user1.handle == "asddsa"
+
+    # Creating user: first_name="asd", last_name="dsa"
+    user2 = auth.auth_register("a@g.com", "valid_password", "asd", "dsa")
+    user2 = get_user_by_token(user2["token"])
+    assert user2.handle == "2asddsa"
 
 def test_auth_passwordreset_request():
     '''

@@ -262,3 +262,34 @@ def valid_crop(x_start, x_end, y_start, y_end, width, height):
         raise ValueError("An image of no pixels is not an image")
     if y_start == y_end:
         raise ValueError("An image of no pixels is not an image")
+
+def generate_handle(name_first, name_last, u_id):
+    """
+    A handle is generated that is the concatentation of a lowercase-only first
+    name and last name. If the concatenation is longer than 20 characters, it
+    is cutoff at 20 characters. If the handle is already taken, you may modify
+    the handle in any way you see fit to make it unique.
+    """
+    # A handle is the concatentation of lower-case first_name and last_name
+    handle = str(name_first.lower()) + str(name_last.lower())
+
+    # If the concatenation is longer than 20 characters, it is cutoff at 20
+    handle = handle[:20]
+
+    # Checking if unique handle
+    if unique_handle(handle):
+        # Unique handle, can use
+        return handle
+    # Not unique handle
+    handle = str(u_id) + handle
+    handle = handle[:20]
+    return handle
+
+def unique_handle(handle):
+    '''
+    Checks if a handle is unique
+    '''
+    for user in data.data["users"]:
+        if user.handle == handle:
+            return False
+    return True
