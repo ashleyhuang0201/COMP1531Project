@@ -9,7 +9,7 @@ from PIL import Image
 from server.Error import AccessError
 import server.global_var as global_var
 from server.helpers import get_user_by_u_id, get_user_by_token, valid_user_id,\
-valid_email, valid_token, get_user_by_email, valid_crop
+valid_email, valid_token, get_user_by_email, valid_crop, unique_handle
 
 @valid_token
 def user_profile(token, u_id):
@@ -86,19 +86,15 @@ def user_profile_setemail(token, email):
 
 @valid_token
 def user_profile_sethandle(token, handle_str):
-
     """
     Update the authorised user's handle
-
-    ValueError:
-    - handle_str is more than 20 characters
     """
-
     if len(handle_str) > 20 or len(handle_str) < 3:
         raise ValueError("Invalid Handle")
+    if not unique_handle(handle_str):
+        raise ValueError("Handle Taken")
 
     # Changes user's handle in database
-
     user = get_user_by_token(token)
 
     # Update user's handle

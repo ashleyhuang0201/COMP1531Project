@@ -45,7 +45,7 @@ class User:
         self.password = password
         self.name_first = name_first
         self.name_last = name_last
-        self.handle = f"{name_first.lower()}{name_last.lower()}"
+        self.handle = helpers.generate_handle(name_first, name_last, u_id)
         self.permission = 3
         self.photo = None
 

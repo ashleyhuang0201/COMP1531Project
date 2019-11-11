@@ -135,17 +135,23 @@ def test_profile_sethandle():
               "name_last":'Smith', "handle_str":'new handle', \
               "profile_img_url": None}
 
-    # A invalid handle is given (50 characters)
+    # An invalid handle is given (50 characters)
     with pytest.raises(ValueError, match="Invalid Handle"):
         funcs.user_profile_sethandle(token, "a"*50)
 
-    # A invalid handle is given (2 characters)
+    # An invalid handle is given (2 characters)
     with pytest.raises(ValueError, match="Invalid Handle"):
         funcs.user_profile_sethandle(token, "aa")
 
     # An exception occurs when token is invalid
     with pytest.raises(AccessError, match="Invalid token"):
         funcs.user_profile_sethandle("invalid_token", "helloworld")
+
+    # An exception occurs when the handle is already used
+    with pytest.raises(ValueError, match="Handle Taken"):
+        user1 = auth_functions.auth_register("test1@gmail.com", "pass123", \
+         "Rayden", "Smith")
+        funcs.user_profile_sethandle(user1["token"], "new handle")
 
 def test_profiles_uploadphoto():
     """
