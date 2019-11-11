@@ -281,8 +281,15 @@ def generate_handle(name_first, name_last, u_id):
         # Unique handle, can use
         return handle
     # Not unique handle
+    # Trying to use the requested handle
     handle = str(u_id) + handle
     handle = handle[:20]
+    if not unique_handle(handle):
+        # Further processing is required - using a number as the handle
+        for i in range(99999999999999999999):
+            if unique_handle(str(i)):
+                handle = str(i)
+                break
     return handle
 
 def unique_handle(handle):
