@@ -47,7 +47,7 @@ class User:
         self.name_last = name_last
         self.handle = helpers.generate_handle(name_first, name_last, u_id)
         self.permission = 3
-        self.photo = None
+        self.has_photo = None
 
         '''
         An owner of slackr is an owner in every channel # 1
