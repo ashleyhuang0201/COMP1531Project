@@ -9,6 +9,7 @@ from server import channel_functions as func
 from server.auth_functions import auth_register
 from server.Error import AccessError
 from server.message_functions import message_send, message_react, message_pin
+from server.user_functions import user_profile_setname
 
 def test_channel_invite():
     '''
@@ -108,6 +109,15 @@ def test_channel_details():
     {"name" : "TestChannel", "owner_members": [userdict1], \
          "all_members": [userdict1]}
 
+    # If a user changes names, this is reflected in channel_details
+    user_profile_setname(token1,"another", "name")
+    userdict1["name_first"] = "another"
+    userdict1["name_last"] = "name"
+
+    assert func.channel_details(token1, channel_id) == \
+    {"name" : "TestChannel", "owner_members": [userdict1], \
+         "all_members": [userdict1]}
+
     #if given an invalid channel_id
     with pytest.raises(ValueError, match="Channel does not exist"):
         func.channel_details(token1, 100)
@@ -122,6 +132,9 @@ def test_channel_details():
     assert func.channel_details(token1, channel_id) == \
     {"name" : "TestChannel", "owner_members": [userdict1], \
          "all_members": [userdict1, userdict2]}
+
+
+
 
 def test_channel_messages():
     '''
