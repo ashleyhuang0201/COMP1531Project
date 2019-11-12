@@ -196,6 +196,24 @@ class Channel:
                 return True
         return False
 
+    # Returns a list of dictionaries containing information for channel_details
+    def get_members_details(self):
+        members = []
+        for user in self.users:
+            members.append({"u_id": user.u_id, "name_first": user.name_first, \
+                 "name_last": user.name_last, \
+                      "profile_img_url": user.profile_img_url})
+        return members
+
+    # Returns a list of dictionaries containing information for channel_details
+    def get_owners_details(self):
+        owners = []
+        for user in self.owners:
+            owners.append({"u_id": user.u_id, "name_first": user.name_first, \
+                 "name_last": user.name_last, \
+                      "profile_img_url": user.profile_img_url})
+        return owners
+
     # Adds a message to the channel
     def add_message(self, message):
         self.messages.insert(0, message)

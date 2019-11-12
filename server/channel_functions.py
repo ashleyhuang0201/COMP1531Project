@@ -50,9 +50,13 @@ def channel_details(token, channel_id):
     if not channel.is_member(decode_token(token)):
         raise AccessError("Authorised user is not a member of the channel")
 
+    # Get details regarding the owners and members of the channel
+    owners = channel.get_owner_details
+    members = channel.get_member_details
+
     # Returns the channel details corresponding to that channel id
-    channel_detail = {"name": channel.name, "owner_members": channel.owners, \
-        "all_members": channel.users}
+    channel_detail = {"name": channel.name, "owner_members": owners, \
+        "all_members": members}
 
     return channel_detail
 
