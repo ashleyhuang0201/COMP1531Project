@@ -82,11 +82,11 @@ class User:
 
     # Uploads a photo
     def upload_photo(self):
-        self.photo = "../assets/images/user_profile/" + str(self.u_id) + ".jpg"
+        self.has_photo = "../assets/images/user_profile/" + str(self.u_id) + ".jpg"
 
     # Removes a photo
     def remove_photo(self):
-        self.photo = None
+        self.has_photo = None
 
 '''
 Object class for storing a message's data
@@ -202,7 +202,7 @@ class Channel:
         for user in self.users:
             members.append({"u_id": user.u_id, "name_first": user.name_first, \
                  "name_last": user.name_last, \
-                      "profile_img_url": user.photo})
+                      "profile_img_url": user.has_photo})
         return members
 
     # Returns a list of dictionaries containing information for channel_details
@@ -211,7 +211,7 @@ class Channel:
         for user in self.owners:
             owners.append({"u_id": user.u_id, "name_first": user.name_first, \
                  "name_last": user.name_last, \
-                      "profile_img_url": user.photo})
+                      "profile_img_url": user.has_photo})
         return owners
 
     # Adds a message to the channel
