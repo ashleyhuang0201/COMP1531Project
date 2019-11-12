@@ -163,44 +163,36 @@ class Channel:
     # Adds a member to the channel
     def add_user(self, u_id):
         user = helpers.get_user_by_u_id(u_id)
-        self.users.append({
-            "u_id": user.u_id,
-            "name_first": user.name_first,
-            "name_last": user.name_last
-        })
+        self.users.append(user)
 
     # Removes a member from the channel
     def remove_user(self, u_id):
         for user in self.users:
-            if user["u_id"] == u_id:
+            if user.u_id == u_id:
                 self.users.remove(user)
 
     # Adds an owner to the channels
     def add_owner(self, u_id):
         user = helpers.get_user_by_u_id(u_id)
-        self.owners.append({
-            "u_id": user.u_id,
-            "name_first": user.name_first,
-            "name_last": user.name_last
-        })
+        self.owners.append(user)
 
     # Removes an owner from the channel
     def remove_owner(self, u_id):
         for user in self.owners:
-            if user["u_id"] == u_id:
+            if user.u_id == u_id:
                 self.owners.remove(user)
 
     # Checks if an user is a member
     def is_member(self, u_id):
         for user in self.users:
-            if user["u_id"] == u_id:
+            if user.u_id == u_id:
                 return True
         return False
 
     # Checks if an user is a owner
     def is_owner(self, u_id):
         for user in self.owners:
-            if user["u_id"] == u_id:
+            if user.u_id == u_id:
                 return True
         return False
 
