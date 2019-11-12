@@ -30,7 +30,7 @@ def user_profile(token, u_id):
     user_profile_return = {"u_id": u_id, "email": user.email, \
          "name_first": user.name_first, "name_last": user.name_last, \
               "handle_str": user.handle, "profile_img_url": \
-              user.photo}
+              user.has_photo}
 
     return user_profile_return
 
@@ -163,7 +163,7 @@ def users_all(token):
         user_profile_return = {"u_id": user.u_id, "email": user.email, \
          "name_first": user.name_first, "name_last": user.name_last, \
               "handle_str": user.handle, "profile_img_url": \
-              user.photo}
+              user.has_photo}
         all_users.append(user_profile_return)
 
     return {"users": all_users}
