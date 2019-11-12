@@ -80,7 +80,8 @@ def test_channel_details():
     userdict1 = {
         "u_id": 0,
         "name_first": "valid_correct_first_name",
-        "name_last": "valid_correct_last_name"
+        "name_last": "valid_correct_last_name", 
+        "profile_img_url": None
     }
 
     user2 = auth_register("valid_correct_email2@test.com", \
@@ -90,7 +91,8 @@ def test_channel_details():
     userdict2 = {
         "u_id": 1,
         "name_first": "valid_correct_first_name",
-        "name_last": "valid_correct_last_name"
+        "name_last": "valid_correct_last_name",
+        "profile_img_url": None
     }
 
     #token1 creates a channel and is automatically part of it as the owner
