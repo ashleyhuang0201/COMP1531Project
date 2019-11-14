@@ -81,8 +81,8 @@ class User:
         self.handle = handle_str
 
     # Uploads a photo
-    def upload_photo(self):
-        self.has_photo = "../assets/images/user_profile/" + str(self.u_id) + ".jpg"
+    def upload_photo(self, img_path):
+        self.has_photo = f"http://localhost:5001/imgurl/{img_path}"
 
     # Removes a photo
     def remove_photo(self):

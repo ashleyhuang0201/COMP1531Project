@@ -2,7 +2,7 @@
 import sys
 from flask_cors import CORS
 from json import dumps
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 from flask_mail import Mail, Message
 from werkzeug.exceptions import HTTPException
 
@@ -26,7 +26,7 @@ def defaultHandler(err):
     response.content_type = 'application/json'
     return response
 
-APP = Flask(__name__)
+APP = Flask(__name__, static_url_path='/frontend/prebundle/directoryName')
 APP.config['TRAP_HTTP_EXCEPTIONS'] = True
 APP.register_error_handler(Exception, defaultHandler)
 CORS(APP)
@@ -407,10 +407,10 @@ def user_profiles_uploadphoto():
     '''
     token = request.form.get("token")
     img_url = request.form.get("img_url")
-    x_start = request.form.get("x_start")
-    y_start = request.form.get("y_start")
-    x_end = request.form.get("x_end")
-    y_end = request.form.get("y_end")
+    x_start = int(request.form.get("x_start"))
+    y_start = int(request.form.get("y_start"))
+    x_end = int(request.form.get("x_end"))
+    y_end = int(request.form.get("y_end"))
 
     return dumps(
         user.user_profiles_uploadphoto(token, img_url, x_start, y_start, x_end, y_end)
@@ -498,6 +498,13 @@ def admin_userpermission_change():
         permission.admin_userpermission_change(token, u_id, permission_id)
     )
 
+@APP.route('/imgurl/<path:path>', methods = ['GET'])
+def get_image(path):
+    '''
+    Serve a local image to the flask server
+    '''
+  
+    return send_from_directory('', path)
 
 
 if __name__ == '__main__':

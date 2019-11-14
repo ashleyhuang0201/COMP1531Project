@@ -2,14 +2,16 @@
 User functions Iteration 2 implementations
 Team: You_Things_Can_Choose
 '''
-from urllib.request import urlopen
-from urllib.error import URLError, HTTPError
+
 import urllib
+from urllib.request import urlopen, Request
+from urllib.error import URLError, HTTPError
 from PIL import Image
 from server.Error import AccessError, ValueError
 import server.global_var as global_var
 from server.helpers import get_user_by_u_id, get_user_by_token, valid_user_id,\
-valid_email, valid_token, get_user_by_email, valid_crop, unique_handle
+    valid_email, valid_token, get_user_by_email, valid_crop, unique_handle, \
+    create_photo_path
 
 @valid_token
 def user_profile(token, u_id):
@@ -27,10 +29,14 @@ def user_profile(token, u_id):
     # Get user object by u_id
     user = get_user_by_u_id(u_id)
 
-    user_profile_return = {"u_id": u_id, "email": user.email, \
-         "name_first": user.name_first, "name_last": user.name_last, \
-              "handle_str": user.handle, "profile_img_url": \
-              user.has_photo}
+    user_profile_return = {
+        "u_id": u_id, 
+        "email": user.email,
+        "name_first": user.name_first, 
+        "name_last": user.name_last,
+        "handle_str": user.handle, 
+        "profile_img_url": user.has_photo
+    }
 
     return user_profile_return
 
@@ -112,11 +118,13 @@ def user_profiles_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
     - img_url returns an HTTP status other than 200 (2xx indicates success)
     - xy points are outside the dimensions of the image at the url
     """
-
+    
+    req = Request(img_url, headers = {"User-Agent": "Mozilla/5.0"})
     # Checking if the img_url is an accessable URL
     try:
-        response = urlopen(img_url)
+        response = urlopen(req)
     except HTTPError as e:
+        print(e)
         raise ValueError(f"The server cannot fulfil the request: {e.code}")
     except URLError as e:
         raise ValueError(f"The server cannot be reached: {e.reason}")
@@ -135,19 +143,22 @@ def user_profiles_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
     # Checking if the crop coordinates are within the bounds of the image
     valid_crop(x_start, x_end, y_start, y_end, width, height)
 
-
     # Obtaining user_id (user_id will be the unique filename)
     user = get_user_by_token(token)
     u_id = user.u_id
 
+    img_file_path = f"server/assets/images/{create_photo_path(user)}.jpg"
+
+
     # Gets image from url and saves it in images folder
-    urllib.request.urlretrieve(img_url, "../assets/images/user_profile/" + str(u_id) + ".jpg")
+    urllib.request.urlretrieve(img_url, img_file_path)
 
     # Cropping image
+    img_file = open(img_file_path, "wb")
     cropped = imageObject.crop((x_start, y_start, x_end, y_end))
-    cropped.save("../assets/images/user_profile/" + str(u_id) + ".jpg")
+    cropped.save(img_file)
 
-    user.upload_photo()
+    user.upload_photo(img_file_path)
 
     return {}
 

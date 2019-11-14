@@ -5,6 +5,7 @@ Gets data
 '''
 import re
 import jwt
+from hashlib import sha256
 from server import global_var as data
 from server.Error import AccessError, ValueError
 
@@ -300,3 +301,6 @@ def unique_handle(handle):
         if user.handle == handle:
             return False
     return True
+
+def create_photo_path(user):
+    return(sha256(f"{user.email}{user.password}".encode()).hexdigest())

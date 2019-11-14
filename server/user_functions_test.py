@@ -3,8 +3,10 @@ Testing user functions
 Team: You_Things_Can_Choose
 '''
 import os
+import glob
 import pytest
-from server import user_functions as funcs, auth_functions
+import server.user_functions as funcs
+import server.auth_functions as auth_functions
 import server.global_var as global_var
 from server.Error import AccessError, ValueError
 from server.helpers import get_user_by_token, encode_token_for_u_id
@@ -23,10 +25,14 @@ def test_user_profile():
     u_id = user["u_id"]
 
     # A valid user_id is provided, user details are returned
-    assert funcs.user_profile(token, u_id) ==  \
-         {"u_id": u_id, "email":'test@gmail.com', "name_first":'Raydon', \
-              "name_last":'Smith', "handle_str":'raydonsmith', \
-              "profile_img_url": None}
+    assert funcs.user_profile(token, u_id) ==  {
+        "u_id": u_id, 
+        "email":'test@gmail.com', 
+        "name_first":'Raydon', 
+        "name_last":'Smith', 
+        "handle_str":'raydonsmith', 
+        "profile_img_url": None
+    }
 
     # An exception occurs when the user_id is invalid
     with pytest.raises(ValueError, match="Invalid User ID"):
@@ -56,10 +62,14 @@ def test_profile_setname():
     funcs.user_profile_setname(token, "Hello", "World")
 
     # Checking if first and last name have been updated successfully
-    assert funcs.user_profile(token, u_id) ==  \
-         {"u_id": u_id, "email":'test@gmail.com', "name_first":'Hello', \
-              "name_last":'World', "handle_str":'raydensmith', \
-              "profile_img_url": None}
+    assert funcs.user_profile(token, u_id) ==  {
+        "u_id": u_id, 
+        "email":'test@gmail.com', 
+        "name_first":'Hello',
+        "name_last":'World', 
+        "handle_str":'raydensmith', 
+        "profile_img_url": None
+    }
 
     # A name of 50 length is valid
     assert funcs.user_profile_setname(token, "a"*50, "a"*50) == {}
@@ -97,10 +107,14 @@ def test_profile_setemail():
     assert funcs.user_profile_setemail(token, "test1@gmail.com") == {}
 
     # Checking if the user's email has been updated successfully
-    assert funcs.user_profile(token, u_id) ==  \
-         {"u_id": u_id, "email":'test1@gmail.com', "name_first":'Rayden', \
-              "name_last":'Smith', "handle_str":'raydensmith', \
-              "profile_img_url": None}
+    assert funcs.user_profile(token, u_id) ==  {
+        "u_id": u_id, 
+        "email":'test1@gmail.com', 
+        "name_first":'Rayden', 
+        "name_last":'Smith', 
+        "handle_str":'raydensmith',
+        "profile_img_url": None
+    }
 
     # A invalid email is given
     with pytest.raises(ValueError, match="Invalid email"):
@@ -130,10 +144,14 @@ def test_profile_sethandle():
     funcs.user_profile_sethandle(token, "new handle")
 
     # Checking if the user's handle has been updated successfully
-    assert funcs.user_profile(token, u_id) ==  \
-         {"u_id": u_id, "email":'test@gmail.com', "name_first":'Rayden', \
-              "name_last":'Smith', "handle_str":'new handle', \
-              "profile_img_url": None}
+    assert funcs.user_profile(token, u_id) == {
+        "u_id": u_id, 
+        "email":"test@gmail.com", 
+        "name_first":"Rayden", 
+        "name_last":"Smith", 
+        "handle_str":"new handle", 
+        "profile_img_url": None
+    }
 
     # An invalid handle is given (50 characters)
     with pytest.raises(ValueError, match="Invalid Handle"):
@@ -176,7 +194,10 @@ def test_profiles_uploadphoto():
     test_url = "https://i.redd.it/51p5c1efueoy.jpg"
 
     # A valid photo is uploaded and cropped
-    assert funcs.user_profiles_uploadphoto(token, test_url, 0, 0, 20, 20) == {}
+    assert funcs.user_profiles_uploadphoto(token, test_url, 300, 300, 500, 500) == {}
+
+    # A valid photo is uploaded and cropped - replace current photo
+    assert funcs.user_profiles_uploadphoto(token, test_url, 200, 200, 500, 500) == {}
 
     # Size of img = (0, 0, 750, 738)
     with pytest.raises(ValueError, match="x_start is invalid"):
@@ -222,7 +243,10 @@ def test_profiles_uploadphoto():
     with pytest.raises(AccessError, match="Invalid token"):
         funcs.user_profiles_uploadphoto("invalid_tok", test_url, 10, 10, 20, 20)
 
-    os.remove("../assets/images/user_profile/-1.jpg")
+    # Clean up test images
+    files = glob.glob('server/assets/images/*')
+    for f in files:
+        os.remove(f)
 
 def test_users_all():
     '''
@@ -236,21 +260,43 @@ def test_users_all():
          "Rayden", "Smith")
     token = user["token"]
 
-    assert funcs.users_all(token) == {"users":[{"u_id": 0, \
-         "email":'test@gmail.com', "name_first":'Rayden', "name_last":'Smith', \
-              "handle_str":'raydensmith', "profile_img_url": None}]}
+    assert funcs.users_all(token) == {
+        "users":[
+            {
+                "u_id": 0,
+                "email":'test@gmail.com',
+                "name_first":'Rayden',
+                "name_last":'Smith',
+                "handle_str":'raydensmith',
+                "profile_img_url": None
+            }
+        ]
+    }
 
     # Creating a user
     user = auth_functions.auth_register("test2@gmail.com", "pass1234", \
          "Mary", "Lamb")
 
-    assert funcs.users_all(token) == {"users":[
-        {"u_id": 0, "email":'test@gmail.com', "name_first":'Rayden', \
-             "name_last":'Smith', "handle_str":'raydensmith', \
-             "profile_img_url": None},
-        {"u_id": 1, "email":'test2@gmail.com', "name_first":'Mary', \
-              "name_last":'Lamb', "handle_str":'marylamb', \
-              "profile_img_url": None}]}
+    assert funcs.users_all(token) == {
+        "users":[
+            {
+                "u_id": 0, 
+                "email":'test@gmail.com', 
+                "name_first":'Rayden',
+                "name_last":'Smith', 
+                "handle_str":'raydensmith', 
+                "profile_img_url": None
+            },
+            {
+                "u_id": 1, 
+                "email":'test2@gmail.com', 
+                "name_first":'Mary',
+                "name_last":'Lamb',
+                "handle_str":'marylamb',
+                "profile_img_url": None
+            }
+        ]
+    }
 
     # An exception occurs when token is invalid
     with pytest.raises(AccessError, match="Invalid token"):
