@@ -12,7 +12,7 @@ from server.helpers import get_channel_by_channel_id, valid_token, \
 # Constants
 MAX_MESSAGES = 50
 MAX_CHANNEL_LENGTH = 20
-LIKE_REACT_INDEX  = 0
+LIKE_REACT_INDEX = 0
 
 @valid_token
 def channel_invite(token, channel_id, u_id):
