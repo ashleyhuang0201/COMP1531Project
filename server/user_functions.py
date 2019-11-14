@@ -6,7 +6,7 @@ from urllib.request import urlopen
 from urllib.error import URLError, HTTPError
 import urllib
 from PIL import Image
-from server.Error import AccessError
+from server.Error import AccessError, ValueError
 import server.global_var as global_var
 from server.helpers import get_user_by_u_id, get_user_by_token, valid_user_id,\
 valid_email, valid_token, get_user_by_email, valid_crop, unique_handle

@@ -6,7 +6,7 @@ channel, results from multiple channels)
 """
 import pytest
 import server.search_function as search
-from server.Error import AccessError
+from server.Error import AccessError, ValueError
 from server.message_functions import message_send
 from server.auth_functions import auth_register
 from server.channel_functions import channels_create

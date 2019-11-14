@@ -4,7 +4,7 @@ Functions to test helper
 import pytest
 from server import auth_functions
 import server.global_var as global_var
-from server.Error import AccessError
+from server.Error import AccessError, ValueError
 from server import helpers
 
 # Tests decode_token

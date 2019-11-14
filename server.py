@@ -4,8 +4,9 @@ from flask_cors import CORS
 from json import dumps
 from flask import Flask, request
 from flask_mail import Mail, Message
-from flask_cors import CORS
+from werkzeug.exceptions import HTTPException
 
+from server.Error import AccessError, ValueError
 import server.global_var as global_var
 import server.auth_functions as auth
 import server.channel_functions as channel
@@ -15,8 +16,21 @@ import server.message_functions as message
 import server.search_function as Search
 import server.admin_userpermission_change_function as permission
 
+def defaultHandler(err):
+    response = err.get_response()
+    response.data = dumps({
+        "code": err.code,
+        "name": "System Error",
+        "message": err.description,
+    })
+    response.content_type = 'application/json'
+    return response
+
 APP = Flask(__name__)
+APP.config['TRAP_HTTP_EXCEPTIONS'] = True
+APP.register_error_handler(Exception, defaultHandler)
 CORS(APP)
+
 # Creating email server
 APP.config.update(
     MAIL_SERVER='smtp.gmail.com',
@@ -450,8 +464,8 @@ def standup_active():
     time the standup finishes. If no standup is active, then time_finish
     returns None
     '''
-    token = request.form.get("token")
-    channel_id = int(request.form.get("channel_id"))
+    token = request.args.get("token")
+    channel_id = int(request.args.get("channel_id"))
 
     return dumps(
         standup.standup_active(token, channel_id)

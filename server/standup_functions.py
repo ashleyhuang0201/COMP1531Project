@@ -3,7 +3,7 @@ Standup Functions
 '''
 from threading import Timer
 import datetime
-from server.Error import AccessError
+from server.Error import AccessError, ValueError
 import server.global_var as data
 from server.helpers import get_channel_by_channel_id, get_user_by_token, \
      valid_token

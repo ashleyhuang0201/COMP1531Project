@@ -7,7 +7,7 @@ import pytest
 import server.global_var as global_var
 from server import channel_functions as func
 from server.auth_functions import auth_register
-from server.Error import AccessError
+from server.Error import AccessError, ValueError
 from server.message_functions import message_send, message_react, message_pin
 from server.user_functions import user_profile_setname
 

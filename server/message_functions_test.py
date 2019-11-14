@@ -12,7 +12,7 @@ from server.helpers import encode_token_for_u_id
 from server import message_functions as funcs
 from server import auth_functions
 from server import channel_functions
-from server.Error import AccessError
+from server.Error import AccessError, ValueError
 
 def test_message_sendlater():
     '''

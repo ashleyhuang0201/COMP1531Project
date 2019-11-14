@@ -7,7 +7,7 @@ import server.channel_functions as channel
 from server.helpers import get_user_by_email, get_user_token_by_u_id, \
      get_reset_code_from_email, get_user_by_token
 import server.global_var as data
-from server.Error import AccessError
+from server.Error import AccessError, ValueError
 
 # Testing Functions
 def test_auth_login():

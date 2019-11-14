@@ -6,7 +6,7 @@ Gets data
 import re
 import jwt
 from server import global_var as data
-from server.Error import AccessError
+from server.Error import AccessError, ValueError
 
 
 # Checks if a token is valid

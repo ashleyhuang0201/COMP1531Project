@@ -2,7 +2,7 @@
 Admin Functions
 admin_userpermission_change: Change user's permission
 """
-from server.Error import AccessError
+from server.Error import AccessError, ValueError
 import server.global_var as global_var
 from server.helpers import valid_token, valid_user_id, valid_permission_id, \
      token_is_admin, token_is_owner, get_user_by_u_id

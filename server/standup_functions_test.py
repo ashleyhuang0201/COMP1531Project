@@ -6,7 +6,7 @@ import pytest
 import time
 from server.standup_functions import standup_send, standup_start, standup_active
 import server.auth_functions as auth
-from server.Error import AccessError
+from server.Error import AccessError, ValueError
 import server.channel_functions as channel_func
 import server.global_var as data
 

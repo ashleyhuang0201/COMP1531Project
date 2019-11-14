@@ -8,7 +8,7 @@ import pytest
 from server.admin_userpermission_change_function import admin_userpermission_change
 from server.helpers import get_user_token_by_u_id, get_user_by_u_id
 from server.auth_functions import auth_register
-from server.Error import AccessError
+from server.Error import AccessError, ValueError
 import server.global_var as global_var
 
 # Invalid token for admin_userpermission_change
