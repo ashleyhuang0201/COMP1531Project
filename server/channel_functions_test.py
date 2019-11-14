@@ -40,6 +40,7 @@ def test_channel_invite():
     channel_id = channel["channel_id"]
     # Initialisation finished
 
+
     # User2 is successfully invited to channel
     assert func.channel_invite(token_1, channel_id, userid_2) == {}
 
@@ -71,7 +72,7 @@ def test_channel_details():
     '''
     Function tests for channel_details
     '''
-    #initialisation
+    #Initialisation
     global_var.initialise_all()
 
     user1 = auth_register("valid_correct_email@test.com", \
@@ -99,6 +100,7 @@ def test_channel_details():
     #token1 creates a channel and is automatically part of it as the owner
     channel = func.channels_create(token1, "TestChannel", True)
     channel_id = channel["channel_id"]
+    # Initialisation finished
 
     #if user is not a member of the channel, has not joined yet
     with pytest.raises(AccessError, match=\
@@ -133,14 +135,12 @@ def test_channel_details():
     {"name" : "TestChannel", "owner_members": [userdict1], \
          "all_members": [userdict1, userdict2]}
 
-
-
-
 def test_channel_messages():
     '''
     Function tests for channel_messages
     '''
-    #initialisation
+
+    #Initialisation
     global_var.initialise_all()
 
     user1 = auth_register("channel_messages@test.com", "password", \
@@ -155,6 +155,8 @@ def test_channel_messages():
     #create a channel
     channel = func.channels_create(token1, "TestChannel", True)
     channel_id = channel["channel_id"]
+    # Initialisation finished
+
 
     # Start index is invalid as there are no message
     with pytest.raises(ValueError, match="Start index is invalid"):
@@ -164,6 +166,7 @@ def test_channel_messages():
     assert message_send(token1, channel_id, '1 message') == {"message_id": 0}
 
     messages = func.channel_messages(token1, channel_id, 0)
+
     assert messages["start"] == 0
     assert messages["end"] == -1
     assert messages["messages"][0]["message_id"] == 0
@@ -173,6 +176,7 @@ def test_channel_messages():
     assert messages["messages"][0]["reacts"] == \
          [{"react_id": 1, "u_ids": [], "is_this_user_reacted": False}]
 
+    # Check details return is changed when the message is reacted and pinned
     message_react(token1, 0, 1)
     message_pin(token1, 0)
 
@@ -180,7 +184,7 @@ def test_channel_messages():
     assert messages["messages"][0]["reacts"] == \
          [{"react_id": 1, "u_ids": [user_id1], "is_this_user_reacted": True}]
     assert messages["messages"][0]["is_pinned"]
-
+    
     # send a message to the channel and check that return is correct
     message_send(token1, channel_id, '2 message')
 
@@ -188,10 +192,10 @@ def test_channel_messages():
     assert messages["messages"][0]["message"] == "2 message"
     assert messages["messages"][1]["message"] == "1 message"
 
+    # A total of 50 messages are sent
     for i in range(3, 51):
         message_send(token1, channel_id, f'{i} message')
 
-    # A total of 50 messages are sent
     messages = func.channel_messages(token1, channel_id, 0)
     assert messages["start"] == 0
     assert messages["end"] == 49
@@ -204,11 +208,10 @@ def test_channel_messages():
     assert messages["messages"][0]["message"] == "49 message"
     assert messages["messages"][48]["message"] == "1 message"
 
-    # test exceptions
+    # Test exceptions
     with pytest.raises(ValueError, match="Channel does not exist"):
         func.channel_messages(token1, -1, 0)
 
-    # The function is called using a invalid token
     with pytest.raises(AccessError, match="Invalid token"):
         func.channel_messages("12345", channel_id, 0)
 
@@ -223,7 +226,7 @@ def test_channel_leave():
     '''
     Function tests for channel_leave
     '''
-    #initialisation
+    #Initialisation
     global_var.initialise_all()
 
     user1 = auth_register("valid_correct_email@test.com", \
@@ -234,22 +237,24 @@ def test_channel_leave():
     #create a channel
     channel = func.channels_create(token1, "TestChannel", True)
     channel_id = channel["channel_id"]
+    # Initialisation finished
+
+    # User is in channel so can send message
+    message_send(token1, channel_id, "can send message")
+
+    # User has left channel and so can't send messages
+    assert func.channel_leave(token1, channel_id) == {}
+
+    with pytest.raises(AccessError, \
+         match="Authorised user is not a member of the channel"):
+        message_send(token1, channel_id, "can't send message")
+
 
     # The function is called using a invalid token
     with pytest.raises(AccessError, match="Invalid token"):
         func.channel_leave("12345", channel_id)
 
-    # User is in channel so can send message
-    message_send(token1, channel_id, "can send message")
-
-    assert func.channel_leave(token1, channel_id) == {}
-
-    # user has left channel and so can't send messages
-    with pytest.raises(AccessError, \
-         match="Authorised user is not a member of the channel"):
-        message_send(token1, channel_id, "can't send message")
-
-    #if given an invalid channel_id
+    #If given an invalid channel_id
     with pytest.raises(ValueError, match="Channel does not exist"):
         func.channel_leave(token1, 100)
 
@@ -264,7 +269,7 @@ def test_channel_join():
     '''
     Function tests for channel_join
     '''
-    #initialisation
+    #Initialisation
     global_var.initialise_all()
 
     user1 = auth_register("valid_correct_email@test.com", \
@@ -280,6 +285,8 @@ def test_channel_join():
     #user 2 create a channel
     channel = func.channels_create(token1, "PublicChannel", True)
     channel_ids = channel["channel_id"]
+    # Initialisation finished
+
 
     #user 2 create a private channel
     channel2 = func.channels_create(token1, "PrivateChannel", False)
@@ -305,11 +312,12 @@ def test_channel_join():
     func.channel_join(token1, channel_ids)
 
 
-
 def test_channel_addowner():
     '''
     Function tests for channel_addowner
     '''
+
+    #Initialisation
     global_var.initialise_all()
 
     owner = auth_register("valid_correct_email@test.com", \
@@ -332,6 +340,8 @@ def test_channel_addowner():
     #owner creates a channel and is automatically the owner
     channel = func.channels_create(token_owner, "TestChannel", True)
     channel_id = channel["channel_id"]
+    # Initialisation finished
+
 
     #if given an invalid channel_id
     with pytest.raises(ValueError, match="Channel does not exist"):
@@ -365,6 +375,8 @@ def test_channel_removeowner():
     '''
     Function tests for channel_removeowner
     '''
+
+    #Initialisation
     global_var.initialise_all()
 
     user1 = auth_register("valid_correct_email@test.com", \
@@ -385,6 +397,8 @@ def test_channel_removeowner():
 
     #token2 joins the channel token1 made
     func.channel_join(token2, channel_id)
+    # Initialisation finished
+
 
     #user2 is not the owner, thus trying to removeowner raises an error
     with pytest.raises(ValueError, match=\
@@ -396,7 +410,7 @@ def test_channel_removeowner():
     "User is not an owner of the channel or slackrowner"):
         func.channel_removeowner(token2, channel_id, userid1)
 
-    #token1 makes token2 the owner
+    #token1 makes token2 a owner
     func.channel_addowner(token1, channel_id, userid2)
 
     assert func.channel_removeowner(token1, channel_id, userid2) == {}
@@ -413,6 +427,8 @@ def test_channels_list():
     '''
     Function tests for channels_list
     '''
+
+    #Initialisation
     global_var.initialise_all()
 
     user1 = auth_register("valid_correct_email@t.com", \
@@ -424,6 +440,8 @@ def test_channels_list():
     "valid_correct_password", "valid_correct_first_name", \
     "valid_correct_last_name")
     token2 = user2["token"]
+    # Initialisation finished
+
 
     assert func.channels_list(token1) == {"channels": []}
 
@@ -454,6 +472,8 @@ def test_channels_listall():
     '''
     Function tests for channels_listall
     '''
+
+    #Initialisation
     global_var.initialise_all()
 
     user1 = auth_register("valid_correct_email@t.com", \
@@ -465,6 +485,8 @@ def test_channels_listall():
     "valid_correct_password", "valid_correct_first_name", \
     "valid_correct_last_name")
     token2 = user2["token"]
+    # Initialisation finished
+
 
     assert func.channels_listall(token1) == {"channels": []}
 
@@ -496,6 +518,8 @@ def test_channels_create():
     '''
     Function tests for channels_create
     '''
+
+    #Initialisation
     global_var.initialise_all()
 
     user1 = auth_register("valid_correct_email@t.com", \
@@ -505,7 +529,9 @@ def test_channels_create():
 
     #user1 create a channel
     func.channels_create(token1, "TestChannel", True)
+    # Initialisation finished
 
+    
     assert func.channels_create(token1, "Channel1", True) == \
     {"channel_id" : 1}
     assert func.channels_create(token1, "Channel2", False) == \
