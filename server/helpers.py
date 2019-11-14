@@ -4,8 +4,8 @@ Checks user validity
 Gets data
 '''
 import re
-import jwt
 from hashlib import sha256
+import jwt
 from server import global_var as data
 from server.Error import AccessError, ValueError
 
@@ -174,7 +174,7 @@ def get_reset_code_from_email(email):
         if entry["user"].email == email:
             return entry["reset_code"]
     return None
-    
+
 def valid_crop(x_start, x_end, y_start, y_end, width, height):
     '''
     Checking if the crop coordinates are within the bounds of the image
@@ -243,4 +243,4 @@ def unique_handle(handle):
 
 def create_photo_path(user):
     '''INSERT FUNCTION HEADER '''
-    return(sha256(f"{user.email}{user.password}".encode()).hexdigest())
+    return sha256(f"{user.email}{user.password}".encode()).hexdigest()
