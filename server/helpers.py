@@ -228,7 +228,7 @@ def generate_handle(name_first, name_last, u_id):
     handle = handle[:MAX_HANDLE_LENGTH]
     if not unique_handle(handle):
         # Further processing is required - using a number as the handle
-        for i in range(99999999999999999999):
+        for i in range(10 ** MAX_HANDLE_LENGTH - 1):
             if unique_handle(str(i)):
                 handle = str(i)
                 break
