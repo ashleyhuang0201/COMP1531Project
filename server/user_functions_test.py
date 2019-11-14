@@ -164,13 +164,8 @@ def test_profiles_uploadphoto():
     # Creating a user
     user = auth_functions.auth_register("test@gmail.com", "pass123", "Rayden",\
         "Smith")
-    # Changing u_id of user so that the file does not impact an actual user
-    user = get_user_by_token(user["token"])
-    user.u_id = -1
-    user.token = encode_token_for_u_id(-1)
-    global_var.data["tokens"][0] = user.token
 
-    token = user.token
+    token = user["token"]
 
     # URL does not exist
     with pytest.raises(ValueError, match="The server cannot be reached"):
