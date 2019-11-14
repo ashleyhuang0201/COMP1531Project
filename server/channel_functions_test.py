@@ -82,7 +82,7 @@ def test_channel_details():
     userdict1 = {
         "u_id": 0,
         "name_first": "valid_correct_first_name",
-        "name_last": "valid_correct_last_name", 
+        "name_last": "valid_correct_last_name",
         "profile_img_url": None
     }
 
@@ -112,7 +112,7 @@ def test_channel_details():
          "all_members": [userdict1]}
 
     # If a user changes names, this is reflected in channel_details
-    user_profile_setname(token1,"another", "name")
+    user_profile_setname(token1, "another", "name")
     userdict1["name_first"] = "another"
     userdict1["name_last"] = "name"
 
@@ -184,7 +184,7 @@ def test_channel_messages():
     assert messages["messages"][0]["reacts"] == \
          [{"react_id": 1, "u_ids": [user_id1], "is_this_user_reacted": True}]
     assert messages["messages"][0]["is_pinned"]
-    
+
     # send a message to the channel and check that return is correct
     message_send(token1, channel_id, '2 message')
 
@@ -531,7 +531,6 @@ def test_channels_create():
     func.channels_create(token1, "TestChannel", True)
     # Initialisation finished
 
-    
     assert func.channels_create(token1, "Channel1", True) == \
     {"channel_id" : 1}
     assert func.channels_create(token1, "Channel2", False) == \
