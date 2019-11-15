@@ -6,6 +6,8 @@ from server import auth_functions
 import server.global_var as global_var
 from server.Error import AccessError, ValueError
 from server import helpers
+from server import channel_functions
+from server import message_functions
 
 # Tests decode_token
 def test_decode_token():
@@ -317,3 +319,60 @@ def test_add_reset():
         if reset_code["reset_code"] == "code1" and reset_code["user"] == 1:
             success = True
     assert success is True
+
+def test_get_channel_by_channel_id():
+    # Initialisation
+    global_var.initialise_all()
+
+    # Creating a user
+    user = auth_functions.auth_register("test@gmail.com", "pass123", \
+    "Raydon", "Smith")
+
+    token = user["token"]
+    # Creating channels
+    # Creating first channel
+    channel_1 = channel_functions.channels_create(token, "Channel 1", True)
+    channel_1_id = channel_1["channel_id"]
+    # Creating second channel
+    channel_2 = channel_functions.channels_create(token, "Channel 2", True)
+    channel_2_id = channel_2["channel_id"]
+    # Ensuring that first channel has id
+    assert helpers.get_channel_by_channel_id(channel_1_id).id == 0
+    # Ensuring that second channel has id
+    assert helpers.get_channel_by_channel_id(channel_2_id).id == 1
+
+def test_get_channel_by_message_id():
+    # Initalise
+    global_var.initialise_all()
+    # Creating a user
+    user = auth_functions.auth_register("test@gmail.com", "pass123", \
+    "Raydon", "Smith")
+
+    token = user["token"]
+    # Create a channel
+    channel = channel_functions.channels_create(token, "Channel 1", True)
+    channel_id = channel["channel_id"]
+    # Sending one message in channel
+    assert message_functions.message_send(token, channel_id, "Hello Everyone") == {"message_id" : 0}
+	# Check message obtain from first message
+    assert helpers.get_channel_by_message_id(0).id == channel_id
+
+
+def test_get_message_by_message_id():
+	# Initalise
+    global_var.initialise_all()
+
+    # Creating a user
+    user = auth_functions.auth_register("test@gmail.com", "pass123", \
+    "Raydon", "Smith")
+    token = user["token"]
+
+    # Create channel
+    channel = channel_functions.channels_create(token, "Channel 1", True)
+    channel_id = channel["channel_id"]
+    # Send message
+    assert message_functions.message_send(token, channel_id, "Hello Everyone") == {"message_id" : 0}
+
+    # Assert that channel id is the same as given by message
+    assert helpers.get_message_by_message_id(0).message == "Hello Everyone"
+
