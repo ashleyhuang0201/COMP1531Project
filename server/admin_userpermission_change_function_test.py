@@ -10,10 +10,7 @@ from server.helpers import get_user_token_by_u_id, get_user_by_u_id
 from server.auth_functions import auth_register
 from server.Error import AccessError, ValueError
 import server.global_var as global_var
-
-SLACKR_OWNER = 1
-SLACKR_ADMIN = 2
-SLACKR_USER = 3
+from server.constants import SLACKR_ADMIN, SLACKR_OWNER, SLACKR_USER
 
 # Invalid token for admin_userpermission_change
 def test_admin_userpermission_change_invalid_token():
