@@ -164,9 +164,9 @@ def test_admin_userpermission_change_user_owner():
 
 
 def test_admin_userpermission_change_user_permission_possible_permissions():
-    """
+    '''
     Testing if it is possible to go through the entire permission set
-    """
+    '''
     # Initialising
     global_var.initialise_all()
 
@@ -180,15 +180,15 @@ def test_admin_userpermission_change_user_permission_possible_permissions():
 
     # Changing normal member to admin
     admin_userpermission_change(get_user_token_by_u_id(owner["u_id"]), \
-         user["u_id"], SLACKR_ADMIN)
+                                                user["u_id"], SLACKR_ADMIN)
     assert get_user_by_u_id(user["u_id"]).permission == SLACKR_ADMIN
 
     # Changing admin to owner
     admin_userpermission_change(get_user_token_by_u_id(owner["u_id"]), \
-         user["u_id"], SLACKR_OWNER)
+                                                user["u_id"], SLACKR_OWNER)
     assert get_user_by_u_id(user["u_id"]).permission == SLACKR_OWNER
 
     # Changing owner to member
     admin_userpermission_change(get_user_token_by_u_id(owner["u_id"]), \
-         user["u_id"], SLACKR_USER)
+                                                user["u_id"], SLACKR_USER)
     assert get_user_by_u_id(user["u_id"]).permission == SLACKR_USER
