@@ -10,14 +10,8 @@ from hashlib import sha256
 
 from server import global_var as data
 from server.Error import AccessError, ValueError
-
-#Constants
-MIN_NAME_LENGTH = 1
-MAX_NAME_LENGTH = 50
-MAX_HANDLE_LENGTH = 20
-SLACKER_OWNER = 1
-SLACKER_ADMIN = 2
-SLACKR_USER = 3
+from server.constants import MAX_NAME_LENGTH, MIN_NAME_LENGTH, \
+    MAX_HANDLE_LENGTH, SLACKR_ADMIN, SLACKR_OWNER, SLACKR_USER
 
 def valid_token(function):
     ''' Decorator for checking if a token is valid '''
@@ -39,11 +33,36 @@ def encode_token_for_u_id(u_id):
         "u_id": u_id
         }, data.SECRET, algorithm='HS256').decode("utf-8")
 
+def activate_token(token):
+    ''' Sets a token as an active token '''
+    data.data["tokens"].append(token)
+
+def deactive_token(token):
+    ''' Sets a token as inactive '''
+    if token in data.data["tokens"]:
+        data.data["tokens"].remove(token)
+        return True
+    return False
+
+def first_user():
+    ''' Returns true if user is first slackr user '''
+    if not data.data["users"]:
+        return True
+    return False
+
+def get_new_u_id():
+    ''' Returns a new u_id '''
+    return len(data.data["users"])
+
+def add_user(user):
+    ''' Appends a new user object to the data '''
+    data.data["users"].append(user)
+
 @valid_token
 def token_is_admin(token):
     ''' Checks if a token is  an admin '''
     user = get_user_by_token(token)
-    if user.permission == SLACKER_ADMIN:
+    if user.permission == SLACKR_ADMIN:
         return True
     return False
 
@@ -51,7 +70,7 @@ def token_is_admin(token):
 def token_is_owner(token):
     ''' Checks if a token is  an owner '''
     user = get_user_by_token(token)
-    if user.permission == SLACKER_OWNER:
+    if user.permission == SLACKR_OWNER:
         return True
     return False
 
@@ -77,7 +96,7 @@ def valid_user_id(u_id):
 
 def valid_permission_id(permission_id):
     ''' Checks if a permission is valid '''
-    if permission_id < SLACKER_OWNER or permission_id > SLACKR_USER:
+    if permission_id < SLACKR_OWNER or permission_id > SLACKR_USER:
         return False
     return True
 
@@ -142,7 +161,6 @@ def remove_reset(code):
 
 def add_reset(code, user):
     ''' Adds a new reset code '''
-
     data.data["reset_code"].append({"reset_code": code, "user": user})
 
 def get_channel_by_channel_id(channel_id):
@@ -206,6 +224,8 @@ def valid_crop(x_start, x_end, y_start, y_end, width, height):
         raise ValueError("An image of no pixels is not an image")
     if y_start == y_end:
         raise ValueError("An image of no pixels is not an image")
+
+    return True
 
 def generate_handle(name_first, name_last, u_id):
     """

@@ -10,8 +10,7 @@ import server.auth_functions as auth_functions
 import server.global_var as global_var
 from server.Error import AccessError, ValueError
 from server.helpers import get_user_by_token, encode_token_for_u_id
-
-STRING_LENGTH = 50
+from server.constants import STRING_LENGTH
 
 def test_user_profile():
     '''
@@ -28,11 +27,11 @@ def test_user_profile():
 
     # A valid user_id is provided, user details are returned
     assert funcs.user_profile(token, u_id) ==  {
-        "u_id": u_id, 
-        "email":'test@gmail.com', 
-        "name_first":'Raydon', 
-        "name_last":'Smith', 
-        "handle_str":'raydonsmith', 
+        "u_id": u_id,
+        "email":'test@gmail.com',
+        "name_first":'Raydon',
+        "name_last":'Smith',
+        "handle_str":'raydonsmith',
         "profile_img_url": None
     }
 
@@ -65,11 +64,11 @@ def test_profile_setname():
 
     # Checking if first and last name have been updated successfully
     assert funcs.user_profile(token, u_id) ==  {
-        "u_id": u_id, 
-        "email":'test@gmail.com', 
+        "u_id": u_id,
+        "email":'test@gmail.com',
         "name_first":'Hello',
-        "name_last":'World', 
-        "handle_str":'raydensmith', 
+        "name_last":'World',
+        "handle_str":'raydensmith',
         "profile_img_url": None
     }
 
@@ -110,10 +109,10 @@ def test_profile_setemail():
 
     # Checking if the user's email has been updated successfully
     assert funcs.user_profile(token, u_id) ==  {
-        "u_id": u_id, 
-        "email":'test1@gmail.com', 
-        "name_first":'Rayden', 
-        "name_last":'Smith', 
+        "u_id": u_id,
+        "email":'test1@gmail.com',
+        "name_first":'Rayden',
+        "name_last":'Smith',
         "handle_str":'raydensmith',
         "profile_img_url": None
     }
@@ -147,11 +146,11 @@ def test_profile_sethandle():
 
     # Checking if the user's handle has been updated successfully
     assert funcs.user_profile(token, u_id) == {
-        "u_id": u_id, 
-        "email":"test@gmail.com", 
-        "name_first":"Rayden", 
-        "name_last":"Smith", 
-        "handle_str":"new handle", 
+        "u_id": u_id,
+        "email":"test@gmail.com",
+        "name_first":"Rayden",
+        "name_last":"Smith",
+        "handle_str":"new handle",
         "profile_img_url": None
     }
 
@@ -282,16 +281,16 @@ def test_users_all():
     assert funcs.users_all(token) == {
         "users":[
             {
-                "u_id": 0, 
-                "email":'test@gmail.com', 
+                "u_id": 0,
+                "email":'test@gmail.com',
                 "name_first":'Rayden',
-                "name_last":'Smith', 
-                "handle_str":'raydensmith', 
+                "name_last":'Smith',
+                "handle_str":'raydensmith',
                 "profile_img_url": None
             },
             {
-                "u_id": 1, 
-                "email":'test2@gmail.com', 
+                "u_id": 1,
+                "email":'test2@gmail.com',
                 "name_first":'Mary',
                 "name_last":'Lamb',
                 "handle_str":'marylamb',

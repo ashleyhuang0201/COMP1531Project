@@ -8,11 +8,8 @@ from server.Error import AccessError, ValueError
 from server.helpers import get_channel_by_channel_id, valid_token, \
      decode_token, valid_user_id, get_user_by_token, token_is_admin, \
          token_is_owner
-
-# Constants
-MAX_MESSAGES = 50
-MAX_CHANNEL_LENGTH = 20
-LIKE_REACT_INDEX = 0
+from server.constants import MAX_MESSAGES, MAX_CHANNEL_LENGTH, LIKE_REACT, \
+    LIKE_REACT_INDEX
 
 @valid_token
 def channel_invite(token, channel_id, u_id):
@@ -105,7 +102,7 @@ def channel_messages(token, channel_id, start):
         # Add information regarding if user has reacted to this message
         reacts = message.reacts
         reacts[LIKE_REACT_INDEX]["is_this_user_reacted"] = \
-            message.user_has_reacted(decode_token(token))
+            message.user_has_reacted(decode_token(token), LIKE_REACT )
 
         # Append message dictionary into messages list
         messages.append({

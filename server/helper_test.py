@@ -321,6 +321,9 @@ def test_add_reset():
     assert success is True
 
 def test_get_channel_by_channel_id():
+    """
+    Ensures get_channel_by_channel_id returns correct channel id
+    """
     # Initialisation
     global_var.initialise_all()
 
@@ -342,6 +345,9 @@ def test_get_channel_by_channel_id():
     assert helpers.get_channel_by_channel_id(channel_2_id).id == 1
 
 def test_get_channel_by_message_id():
+    """
+    Ensures get_channel_by_message_id returns the correct channel
+    """
     # Initalise
     global_var.initialise_all()
     # Creating a user
@@ -359,6 +365,9 @@ def test_get_channel_by_message_id():
 
 
 def test_get_message_by_message_id():
+    """
+    Ensures get_message_by_message_id returns the correct message
+    """
 	# Initalise
     global_var.initialise_all()
 
@@ -377,21 +386,24 @@ def test_get_message_by_message_id():
     assert helpers.get_message_by_message_id(0).message == "Hello Everyone"
 
 def test_generate_handle():
+    """
+    Ensures handles that are generated are unique
+    """
     # Initialisation
     global_var.initialise_all()
-    
+
     # First instance of handle in server
     user1 = auth_functions.auth_register("test1@gmail.com", "pass123", \
         "Ashley", "Huang")
     user1 = helpers.get_user_by_token(user1["token"])
     assert user1.handle == "ashleyhuang"
-    
+
     # Non-first instance of handle in server - substitute found
     user2 = auth_functions.auth_register("test2@gmail.com", "pass123", \
     	"Ashley", "Huang")
     user2 = helpers.get_user_by_token(user2["token"])
     assert user2.handle == "1ashleyhuang"
-    
+
     # Non-first instance of handle in server - first no substitute found
     auth_functions.auth_register("test3@gmail.com", "pass123", \
         "3Ashley", "Huang")
@@ -407,16 +419,88 @@ def test_generate_handle():
         "Ashley", "Huang")
     user6 = helpers.get_user_by_token(user6["token"])
     assert user6.handle == "1"
-    
+
 def test_unique_handle():
+    """
+    Ensure that handles are unique
+    """
     # Initialisation
     global_var.initialise_all()
 
     # Testing unique handle
     assert helpers.unique_handle("AshleyHuang") is True
-    
+
     # Testing not unique handle
     user = auth_functions.auth_register("ashley@gmail.com", "pass123", \
         "Ashley", "Huang")
+    get_user = helpers.get_user_by_token(user["token"])
+    assert helpers.unique_handle(get_user.handle) is False
 
-    assert helpers.unique_handle("ashleyhuang") is False
+def test_valid_crop():
+    """
+    Ensure given values for cropping are valid
+    """
+  	# Initalistion
+    global_var.initialise_all()
+    '''
+X START, X END, Y START, Y END, WIDTH, HEIGHT
+    '''
+    # Test errors
+    # x_start is before the first pixel
+    with pytest.raises(ValueError, match="x_start is invalid"):
+    	helpers.valid_crop(-2, 2, 2, 4, 100, 100)
+
+    # x_start is on the last pixel
+    with pytest.raises(ValueError, match="x_start is invalid"):
+      	helpers.valid_crop(100, 100, 2, 20, 100, 400)
+
+    # x_start is after the last pixel
+    with pytest.raises(ValueError, match="x_start is invalid"):
+      	helpers.valid_crop(200, 100, 2, 40, 100, 600)
+
+    # x_end is before the first pixel
+    with pytest.raises(ValueError, match="x_end is invalid"):
+        helpers.valid_crop(20, -1, 10, 20, 100, 40)
+
+    # x_end is after the last pixel
+    with pytest.raises(ValueError, match="x_end is invalid"):
+        helpers.valid_crop(2, 20, 2, 10, 10, 20)
+
+    # x_end is the first pixel
+    with pytest.raises(ValueError, match="x_end is invalid"):
+        helpers.valid_crop(0, 0, 2, 10, 20, 20)
+
+    # y_start is before the first pixel
+    with pytest.raises(ValueError, match="y_start is invalid"):
+        helpers.valid_crop(2, 10, -1, 10, 20, 20)
+
+    # y_start is on the last pixel
+    with pytest.raises(ValueError, match="y_start is invalid"):
+        helpers.valid_crop(2, 10, 40, 10, 20, 40)
+
+    # y_start is after the last pixel
+    with pytest.raises(ValueError, match="y_start is invalid"):
+        helpers.valid_crop(2, 10, 400, 20, 50, 50)
+
+    # y_end is the first pixel
+    with pytest.raises(ValueError, match="y_end is invalid"):
+        helpers.valid_crop(2, 10, 0, 0, 20, 20)
+
+    # y_end is after the last pixel
+    with pytest.raises(ValueError, match="y_end is invalid"):
+        helpers.valid_crop(2, 10, 20, 400, 20, 50)
+
+    # y_end is before the first pixel
+    with pytest.raises(ValueError, match="y_end is invalid"):
+        helpers.valid_crop(2, 10, 1, -1, 50, 50)
+
+    # x_start == x_end
+    with pytest.raises(ValueError, match="An image of no pixels is not an image"):
+        helpers.valid_crop(2, 2, 5, 10, 20, 20)
+
+    # y_start == y_end
+    with pytest.raises(ValueError, match="An image of no pixels is not an image"):
+        helpers.valid_crop(2, 10, 5, 5, 20, 20)
+
+    # Successful crop
+    assert helpers.valid_crop(2, 4, 1, 4, 100, 100) is True
