@@ -11,6 +11,8 @@ from server.helpers import get_user_by_email, valid_email, valid_name, \
     get_user_by_reset_code, remove_reset, add_reset, activate_token, \
          deactive_token, get_new_u_id, add_user, first_user
 
+MINIMUM_PASSWORD_LENGTH = 6
+
 def auth_login(email, password):
     '''
     Given a registered user's email and password function generates and
@@ -137,7 +139,7 @@ def auth_passwordreset_reset(reset_code, new_password):
 
 def valid_password(password):
     ''' Checks if a password is a valid password to be registered'''
-    return len(password) >= 6
+    return len(password) >= MINIMUM_PASSWORD_LENGTH
 
 def get_token(u_id):
     ''' Encodes a user id to create a token '''
