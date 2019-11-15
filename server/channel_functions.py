@@ -12,6 +12,7 @@ from server.helpers import get_channel_by_channel_id, valid_token, \
 # Constants
 MAX_MESSAGES = 50
 MAX_CHANNEL_LENGTH = 20
+LIKE_REACT = 1
 LIKE_REACT_INDEX = 0
 
 @valid_token
@@ -105,7 +106,7 @@ def channel_messages(token, channel_id, start):
         # Add information regarding if user has reacted to this message
         reacts = message.reacts
         reacts[LIKE_REACT_INDEX]["is_this_user_reacted"] = \
-            message.user_has_reacted(decode_token(token))
+            message.user_has_reacted(decode_token(token), LIKE_REACT )
 
         # Append message dictionary into messages list
         messages.append({
