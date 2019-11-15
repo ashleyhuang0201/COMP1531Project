@@ -8,6 +8,10 @@ import os
 from server.message_functions import message_send
 import server.helpers as helpers
 
+LIKE_REACT = 1
+LIKE_REACT_INDEX = 0
+
+
 # Dictionary list containing all global data
 data = {
     "users": [],
@@ -105,7 +109,7 @@ class Message:
         self.message = message
         self.channel = channel_id
         self.time_created = datetime.datetime.now().timestamp()
-        self.reacts = [{"react_id": 1, "u_ids": []}]
+        self.reacts = [{"react_id": LIKE_REACT, "u_ids": []}]
         self.is_pinned = False
 
     # Checks if u_id was the sender of the message
@@ -116,9 +120,9 @@ class Message:
             return False
 
     # Checks if u_id is currently reacted to the message
-    def user_has_reacted(self, u_id):
+    def user_has_reacted(self, u_id, react_id):
         for react in self.reacts:
-            if react["react_id"] == 1:
+            if react["react_id"] == react_id:
                 if u_id in react["u_ids"]:
                     return True
                 else:
@@ -129,15 +133,15 @@ class Message:
         self.message = message
 
     # Adds a reaction to the message
-    def add_react(self, u_id):
+    def add_react(self, u_id, react_id):
         for react in self.reacts:
-            if react["react_id"] == 1:
+            if react["react_id"] == react_id:
                 react["u_ids"].append(u_id)
 
     # Remove a reaction to the message
-    def remove_react(self, u_id):
+    def remove_react(self, u_id, react_id):
         for react in self.reacts:
-            if react["react_id"] == 1:
+            if react["react_id"] == react_id:
                 react["u_ids"].remove(u_id)
 
     # Sets a message to be pinned
@@ -238,8 +242,8 @@ class Channel:
         for message in self.messages:
             if (message.message).find(substring) != -1:
                 reacts = message.reacts
-                reacts[0]["is_this_user_reacted"] = \
-                message.user_has_reacted(helpers.decode_token(token))
+                reacts[LIKE_REACT_INDEX]["is_this_user_reacted"] = \
+                message.user_has_reacted(helpers.decode_token(token), LIKE_REACT)
 
                 # Append message dictionary into list
                 messages.append({

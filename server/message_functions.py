@@ -171,7 +171,7 @@ def message_react(token, message_id, react_id):
         raise ValueError("Invalid React ID")
 
     # Message already has an react iD
-    if message_obj.user_has_reacted(user.u_id):
+    if message_obj.user_has_reacted(user.u_id, react_id):
         raise ValueError("Message contains an active react")
 
     # User is not a member of the channel
@@ -179,7 +179,7 @@ def message_react(token, message_id, react_id):
         raise AccessError("Authorised user is not a member of the channel")
 
     # Adding react to message
-    message_obj.add_react(user.u_id)
+    message_obj.add_react(user.u_id, react_id)
 
     return {}
 
@@ -203,7 +203,7 @@ def message_unreact(token, message_id, react_id):
         raise ValueError("Invalid React ID")
 
     # Message already has an react iD
-    if not message_obj.user_has_reacted(user.u_id):
+    if not message_obj.user_has_reacted(user.u_id, react_id):
         raise ValueError("Message does not contain an active react")
 
     # User is not a member of the channel
@@ -211,7 +211,7 @@ def message_unreact(token, message_id, react_id):
         raise AccessError("Authorised user is not a member of the channel")
 
     # Removing react from message
-    message_obj.remove_react(user.u_id)
+    message_obj.remove_react(user.u_id, react_id)
 
     return {}
 
