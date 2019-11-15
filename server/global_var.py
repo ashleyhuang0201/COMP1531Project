@@ -4,6 +4,7 @@ File for all global variables, classes and functions
 import datetime
 import hashlib
 import random
+import os
 from server.message_functions import message_send
 import server.helpers as helpers
 
@@ -81,8 +82,12 @@ class User:
         self.handle = handle_str
 
     # Uploads a photo
-    def upload_photo(self, img_path):
-        self.has_photo = f"http://localhost:5001/imgurl/{img_path}"
+    def upload_photo(self, img_addr):
+        # Remove old photo and upload new one
+        if self.has_photo:
+            index = self.has_photo.rfind("/")
+            os.remove(f"server/assets/images/{self.has_photo[index:]}")
+        self.has_photo = f"{img_addr}"
 
     # Removes a photo
     def remove_photo(self):

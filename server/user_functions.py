@@ -7,6 +7,8 @@ import urllib
 from urllib.request import urlopen, Request
 from urllib.error import URLError, HTTPError
 from PIL import Image
+from flask import request
+
 from server.Error import AccessError, ValueError
 import server.global_var as global_var
 from server.helpers import get_user_by_u_id, get_user_by_token, valid_user_id,\
@@ -30,11 +32,11 @@ def user_profile(token, u_id):
     user = get_user_by_u_id(u_id)
 
     user_profile_return = {
-        "u_id": u_id, 
+        "u_id": user.u_id, 
         "email": user.email,
         "name_first": user.name_first, 
         "name_last": user.name_last,
-        "handle_str": user.handle, 
+        "handle_str": user.handle,
         "profile_img_url": user.has_photo
     }
 
@@ -158,7 +160,12 @@ def user_profiles_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
     cropped = imageObject.crop((x_start, y_start, x_end, y_end))
     cropped.save(img_file)
 
-    user.upload_photo(img_file_path)
+    # Use request in running server context and give default url for unit tests
+    try:
+        url = request.host_url
+    except:
+        url = "http://localhost:5001/"
+    user.upload_photo(f"{url}imgurl/{img_file_path}")
 
     return {}
 
@@ -171,10 +178,14 @@ def users_all(token):
     all_users = []
 
     for user in global_var.data["users"]:
-        user_profile_return = {"u_id": user.u_id, "email": user.email, \
-         "name_first": user.name_first, "name_last": user.name_last, \
-              "handle_str": user.handle, "profile_img_url": \
-              user.has_photo}
+        user_profile_return = {
+            "u_id": user.u_id, 
+            "email": user.email,
+            "name_first": user.name_first, 
+            "name_last": user.name_last,
+            "handle_str": user.handle, 
+            "profile_img_url":user.has_photo
+        }
         all_users.append(user_profile_return)
 
     return {"users": all_users}
