@@ -8,14 +8,14 @@ from flask_mail import Message
 import server.global_var as data
 from server.Error import AccessError, ValueError
 from server.helpers import get_user_by_email, valid_email, valid_name, \
-     get_user_by_reset_code, remove_reset, add_reset
-
+    get_user_by_reset_code, remove_reset, add_reset
 
 def auth_login(email, password):
     '''
     Given a registered user's email and password function generates and
     returns a user_id and token assigned to the account
     '''
+
     user = get_user_by_email(email)
 
     # Check validity of login

@@ -376,46 +376,47 @@ def test_get_message_by_message_id():
     # Assert that channel id is the same as given by message
     assert helpers.get_message_by_message_id(0).message == "Hello Everyone"
 
-def test_generate_handle(name_first, name_last, u_id):
+def test_generate_handle():
     # Initialisation
     global_var.initialise_all()
     
     # First instance of handle in server
     user1 = auth_functions.auth_register("test1@gmail.com", "pass123", \
         "Ashley", "Huang")
-  	user1 = get_user_by_token(user1["token"])
-    assert user1.handle == "AshleyHuang"
+    user1 = helpers.get_user_by_token(user1["token"])
+    assert user1.handle == "ashleyhuang"
     
     # Non-first instance of handle in server - substitute found
     user2 = auth_functions.auth_register("test2@gmail.com", "pass123", \
     	"Ashley", "Huang")
-    user2 = get_user_by_token(user2["token"])
-    assert user2.handle == "2AshleyHuang"
+    user2 = helpers.get_user_by_token(user2["token"])
+    assert user2.handle == "1ashleyhuang"
     
     # Non-first instance of handle in server - first no substitute found
-    auth_functions.auth_register("test@gmail.com", "pass123", \
-        "4Ashley", "Huang")
-    user4 = auth_functions.auth_register("test@gmail.com", "pass123", \
+    auth_functions.auth_register("test3@gmail.com", "pass123", \
+        "3Ashley", "Huang")
+    user4 = auth_functions.auth_register("test4@gmail.com", "pass123", \
         "Ashley", "Huang")
-    user4 = get_user_by_token(user4["token"])
-    assert user4.handle == "1"
+    user4 = helpers.get_user_by_token(user4["token"])
+    assert user4.handle == "0"
 
     # Non-first instance of handle in server - second no substitute found
-    auth_functions.auth_register("test@gmail.com", "pass123", \
-        "6Ashley", "Huang")
-    user6 = auth_functions.auth_register("test@gmail.com", "pass123", \
+    auth_functions.auth_register("test5@gmail.com", "pass123", \
+        "5Ashley", "Huang")
+    user6 = auth_functions.auth_register("test6@gmail.com", "pass123", \
         "Ashley", "Huang")
-    user6 = get_user_by_token(user6["token"])
-    assert user6.handle == "2"
+    user6 = helpers.get_user_by_token(user6["token"])
+    assert user6.handle == "1"
     
-def test_unique_handle(handle):
+def test_unique_handle():
     # Initialisation
     global_var.initialise_all()
 
     # Testing unique handle
-    assert unique_handle("AshleyHuang") is True
+    assert helpers.unique_handle("AshleyHuang") is True
     
     # Testing not unique handle
-  	user = auth_functions.auth_register("ashley@gmail.com", "pass123", \
+    user = auth_functions.auth_register("ashley@gmail.com", "pass123", \
         "Ashley", "Huang")
-    assert unique_handle("AshleyHuang") is not not not True
+
+    assert helpers.unique_handle("ashleyhuang") is False
