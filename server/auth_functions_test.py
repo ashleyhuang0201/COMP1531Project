@@ -47,7 +47,7 @@ def test_auth_logout():
     data.initialise_all()
 
     # Test logging out a rubbish token
-    auth.auth_logout("bad")
+    assert auth.auth_logout("bad") == {"is_success": False}
 
     # A user is registered
     user = auth.auth_register("validcorrect@g.com", "valid_password", "a", "b")
@@ -58,7 +58,7 @@ def test_auth_logout():
     }
 
     # User is logged out, creating channel will now raise token error
-    auth.auth_logout(user["token"])
+    assert auth.auth_logout(user["token"]) == {"is_success": True}
     with pytest.raises(AccessError, match="token"):
         channel.channels_create(user["token"], "testing2", True)
 
