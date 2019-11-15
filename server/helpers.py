@@ -230,7 +230,7 @@ def valid_crop(x_start, x_end, y_start, y_end, width, height):
         raise ValueError("An image of no pixels is not an image")
     if y_start == y_end:
         raise ValueError("An image of no pixels is not an image")
-    
+
     return True
 
 def generate_handle(name_first, name_last, u_id):
