@@ -8,6 +8,7 @@ from urllib.request import urlopen, Request
 from urllib.error import URLError, HTTPError
 from PIL import Image
 from flask import request
+import os
 
 from server.Error import ValueError
 import server.global_var as global_var
@@ -150,8 +151,12 @@ def user_profiles_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
     # Obtaining user_id (user_id will be the unique filename)
     user = get_user_by_token(token)
 
-    img_file_path = f"server/assets/images/{create_photo_path(user)}.jpg"
+    # Creating file path if it doesn't already exist
+    if not os.path.exists("server/assets/images/"):
+        os.makedirs("server/assets/images/")
 
+    # File path
+    img_file_path = f"server/assets/images/{create_photo_path(user)}.jpg"
 
     # Gets image from url and saves it in images folder
     urllib.request.urlretrieve(img_url, img_file_path)
