@@ -15,8 +15,8 @@ from server.Error import AccessError, ValueError
 MIN_NAME_LENGTH = 1
 MAX_NAME_LENGTH = 50
 MAX_HANDLE_LENGTH = 20
-SLACKER_OWNER = 1
-SLACKER_ADMIN = 2
+SLACKR_OWNER = 1
+SLACKR_ADMIN = 2
 SLACKR_USER = 3
 
 def valid_token(function):
@@ -68,7 +68,7 @@ def add_user(user):
 def token_is_admin(token):
     ''' Checks if a token is  an admin '''
     user = get_user_by_token(token)
-    if user.permission == SLACKER_ADMIN:
+    if user.permission == SLACKR_ADMIN:
         return True
     return False
 
@@ -76,7 +76,7 @@ def token_is_admin(token):
 def token_is_owner(token):
     ''' Checks if a token is  an owner '''
     user = get_user_by_token(token)
-    if user.permission == SLACKER_OWNER:
+    if user.permission == SLACKR_OWNER:
         return True
     return False
 
@@ -102,7 +102,7 @@ def valid_user_id(u_id):
 
 def valid_permission_id(permission_id):
     ''' Checks if a permission is valid '''
-    if permission_id < SLACKER_OWNER or permission_id > SLACKR_USER:
+    if permission_id < SLACKR_OWNER or permission_id > SLACKR_USER:
         return False
     return True
 

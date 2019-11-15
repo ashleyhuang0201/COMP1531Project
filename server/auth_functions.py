@@ -13,7 +13,7 @@ from server.helpers import get_user_by_email, valid_email, valid_name, \
               encode_token_for_u_id
 
 MINIMUM_PASSWORD_LENGTH = 6
-SLACKER_OWNER = 1
+SLACKR_OWNER = 1
 
 def auth_login(email, password):
     '''
@@ -85,7 +85,7 @@ def auth_register(email, password, name_first, name_last):
 
     # Make the first user slackr owner
     if first_user():
-        user.change_permissions(SLACKER_OWNER)
+        user.change_permissions(SLACKR_OWNER)
 
     # Appends user to data
     add_user(user)
