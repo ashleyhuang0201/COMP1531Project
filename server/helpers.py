@@ -39,6 +39,31 @@ def encode_token_for_u_id(u_id):
         "u_id": u_id
         }, data.SECRET, algorithm='HS256').decode("utf-8")
 
+def activate_token(token):
+    ''' Sets a token as an active token '''
+    data.data["tokens"].append(token)
+
+def deactive_token(token):
+    ''' Sets a token as inactive '''
+    if token in data.data["tokens"]:
+        data.data["tokens"].remove(token)
+        return True
+    return False
+
+def first_user():
+    ''' Returns true if user is first slackr user '''
+    if not data.data["users"]:
+        return True
+    return False
+
+def get_new_u_id():
+    ''' Returns a new u_id '''
+    return len(data.data["users"])
+
+def add_user(user):
+    ''' Appends a new user object to the data '''
+    data.data["users"].append(user)
+
 @valid_token
 def token_is_admin(token):
     ''' Checks if a token is  an admin '''
@@ -142,7 +167,6 @@ def remove_reset(code):
 
 def add_reset(code, user):
     ''' Adds a new reset code '''
-
     data.data["reset_code"].append({"reset_code": code, "user": user})
 
 def get_channel_by_channel_id(channel_id):

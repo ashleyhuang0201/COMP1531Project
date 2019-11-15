@@ -8,7 +8,8 @@ from flask_mail import Message
 import server.global_var as data
 from server.Error import AccessError, ValueError
 from server.helpers import get_user_by_email, valid_email, valid_name, \
-    get_user_by_reset_code, remove_reset, add_reset
+    get_user_by_reset_code, remove_reset, add_reset, activate_token, \
+         deactive_token, get_new_u_id, add_user, first_user
 
 def auth_login(email, password):
     '''
@@ -28,7 +29,10 @@ def auth_login(email, password):
         raise ValueError("Password Incorrect")
 
     token = get_token(user.u_id)
-    data.data["tokens"].append(token)
+
+    # Sets token as an active token
+    activate_token(token)
+
     return {"u_id": user.u_id, "token": token}
 
 def auth_logout(token):
@@ -37,9 +41,8 @@ def auth_logout(token):
     non-valid token, does nothing
     '''
 
-    # Deleting token
-    if token in data.data["tokens"]:
-        data.data["tokens"].remove(token)
+    # Deletes a token
+    if deactive_token(token):
         return {"is_success": True}
 
     return {"is_success": False}
@@ -70,18 +73,21 @@ def auth_register(email, password, name_first, name_last):
         raise ValueError("Invalid Last Name")
 
     # Adding new user details
-    new_u_id = len(data.data["users"])
+    new_u_id = get_new_u_id()
     token = get_token(new_u_id)
 
-    user = data.User(new_u_id, email, hash_password(password), name_first, name_last)
+    user = data.User(new_u_id, email, hash_password(password), \
+         name_first, name_last)
 
     # Make the first user slackr owner
-    if not data.data["users"]:
+    if first_user():
         user.change_permissions(1)
 
-    data.data["users"].append(user)
+    # Appends user to data
+    add_user(user)
 
-    data.data["tokens"].append(token)
+    # Sets token as active (user is logged in)
+    activate_token(token)
 
     return {"u_id": new_u_id, "token": token}
 
@@ -140,7 +146,6 @@ def get_token(u_id):
 def hash_password(password):
     ''' Creates a hashed password to store '''
     return hashlib.sha256(password.encode()).hexdigest()
-
 
 def generate_reset_code(user):
     ''' Generate reset code '''
