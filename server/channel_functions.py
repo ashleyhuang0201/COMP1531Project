@@ -9,6 +9,11 @@ from server.helpers import get_channel_by_channel_id, valid_token, \
      decode_token, valid_user_id, get_user_by_token, token_is_admin, \
          token_is_owner
 
+# Constants
+MAX_MESSAGES = 50
+MAX_CHANNEL_LENGTH = 20
+LIKE_REACT_INDEX = 0
+
 @valid_token
 def channel_invite(token, channel_id, u_id):
     '''
@@ -63,12 +68,12 @@ def channel_details(token, channel_id):
 @valid_token
 def channel_messages(token, channel_id, start):
     '''
-    return up to 50 messages between index "start" and "start + 50".
+    Returns up to 50 messages between index "start" and "start + 50".
     Message with 0 index is the most recent message
 
     end = start + 50
 
-    if function has returned the least recent messages in the channel
+    If function has returned the least recent messages in the channel
     returns -1 in "end" to indicate there are no more msgs to load
 
     '''
@@ -89,18 +94,20 @@ def channel_messages(token, channel_id, start):
 
     messages = []
 
-    for i in range(50):
+    for i in range(MAX_MESSAGES):
+        # End index of -1 to indicate there are no more messages to load
         if start + i >= len(channel.messages):
-            # End index is -1 to indicate there are no more messages to load
             return {"messages": messages, "start": start, "end": -1}
-        # Gets message object at index
+
+        # Gets message object
         message = channel.messages[start + i]
-        # Insert additional information regarding reacts
+
+        # Add information regarding if user has reacted to this message
         reacts = message.reacts
-        reacts[0]["is_this_user_reacted"] = \
+        reacts[LIKE_REACT_INDEX]["is_this_user_reacted"] = \
             message.user_has_reacted(decode_token(token))
 
-        # Append message dictionary into list
+        # Append message dictionary into messages list
         messages.append({
             "message_id": message.id,
             "u_id": message.sender,
@@ -110,8 +117,9 @@ def channel_messages(token, channel_id, start):
             "is_pinned": message.is_pinned,
         })
 
-    # End index is the 50th message
-    return {"messages": messages, "start": start, "end": start + 49}
+    # End index is the last message returned
+    return {"messages": messages, "start": start, \
+                                             "end": start + MAX_MESSAGES - 1}
 
 @valid_token
 def channel_leave(token, channel_id):
@@ -146,9 +154,9 @@ def channel_join(token, channel_id):
     if channel is None:
         raise ValueError("Channel does not exist")
 
-    # channel is private so invite is required
+    # User does not have permission to join channel without invite
     if not channel.is_public and \
-            not token_is_admin(token)and \
+         not token_is_admin(token) and \
             not token_is_owner(token):
         raise AccessError("Channel is private and user is not admin")
 
@@ -173,6 +181,7 @@ def channel_addowner(token, channel_id, u_id):
     if channel.is_owner(u_id):
         raise ValueError("User is already an owner of the channel")
 
+    # User does not have permission to add owner
     if not channel.is_owner(decode_token(token)) and \
             not token_is_admin(token) and \
             not token_is_owner(token):
@@ -248,10 +257,9 @@ def channels_create(token, name, is_public):
     '''
 
     # Exception raised
-    if len(name) > 20:
+    if len(name) > MAX_CHANNEL_LENGTH:
         raise ValueError("Name is longer than 20 characters")
 
-    # token is decoded to find user id
     user = get_user_by_token(token)
 
     # A channel object is created

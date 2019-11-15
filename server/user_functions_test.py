@@ -11,6 +11,8 @@ import server.global_var as global_var
 from server.Error import AccessError, ValueError
 from server.helpers import get_user_by_token, encode_token_for_u_id
 
+STRING_LENGTH = 50
+
 def test_user_profile():
     '''
     Returns information about their email, first name, last name, and handle
@@ -72,15 +74,15 @@ def test_profile_setname():
     }
 
     # A name of 50 length is valid
-    assert funcs.user_profile_setname(token, "a"*50, "a"*50) == {}
+    assert funcs.user_profile_setname(token, "a"*STRING_LENGTH, "a"*STRING_LENGTH) == {}
 
     # First name too long
     with pytest.raises(ValueError, match="Name too long"):
-        funcs.user_profile_setname(token, "a"*50 + "a", "Smith")
+        funcs.user_profile_setname(token, "a"*STRING_LENGTH + "a", "Smith")
 
     # Lasts name too long
     with pytest.raises(ValueError, match="Name too long"):
-        funcs.user_profile_setname(token, "Raydon", "a"*50 + "a")
+        funcs.user_profile_setname(token, "Raydon", "a"*STRING_LENGTH + "a")
 
     # An exception occurs when token is invalid
     with pytest.raises(AccessError, match="Invalid token"):
@@ -155,7 +157,7 @@ def test_profile_sethandle():
 
     # An invalid handle is given (50 characters)
     with pytest.raises(ValueError, match="Invalid Handle"):
-        funcs.user_profile_sethandle(token, "a"*50)
+        funcs.user_profile_sethandle(token, "a"*STRING_LENGTH)
 
     # An invalid handle is given (2 characters)
     with pytest.raises(ValueError, match="Invalid Handle"):

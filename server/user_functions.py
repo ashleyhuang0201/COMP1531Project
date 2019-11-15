@@ -15,6 +15,10 @@ from server.helpers import get_user_by_u_id, get_user_by_token, valid_user_id,\
     valid_email, valid_token, get_user_by_email, valid_crop, unique_handle, \
     create_photo_path
 
+MAX_LENGTH_NAME = 50
+MAX_HANDLE_LENGTH = 20
+MIN_HANDLE_LENGTH = 3
+
 @valid_token
 def user_profile(token, u_id):
     """
@@ -52,9 +56,9 @@ def user_profile_setname(token, name_first, name_last):
     - name_last is more than 50 characters
     """
 
-    if len(name_first) > 50:
+    if len(name_first) > MAX_LENGTH_NAME:
         raise ValueError("Name too long")
-    if len(name_last) > 50:
+    if len(name_last) > MAX_LENGTH_NAME:
         raise ValueError("Name too long")
 
     user = get_user_by_token(token)
@@ -97,7 +101,7 @@ def user_profile_sethandle(token, handle_str):
     """
     Update the authorised user's handle
     """
-    if len(handle_str) > 20 or len(handle_str) < 3:
+    if len(handle_str) > MAX_HANDLE_LENGTH or len(handle_str) < MIN_HANDLE_LENGTH:
         raise ValueError("Invalid Handle")
     if not unique_handle(handle_str):
         raise ValueError("Handle Taken")
