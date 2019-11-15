@@ -442,15 +442,17 @@ def test_valid_crop():
     """
   	# Initalistion
     global_var.initialise_all()
-
+    '''
+X START, X END, Y START, Y END, WIDTH, HEIGHT
+    '''
     # Test errors
     # x_start is before the first pixel
     with pytest.raises(ValueError, match="x_start is invalid"):
-    	helpers.valid_crop(-2, 2, 2, 2, 100, 100)
+    	helpers.valid_crop(-2, 2, 2, 4, 100, 100)
 
     # x_start is on the last pixel
     with pytest.raises(ValueError, match="x_start is invalid"):
-      	helpers.valid_crop(100, 100, 2, 20, 200, 400)
+      	helpers.valid_crop(100, 100, 2, 20, 100, 400)
 
     # x_start is after the last pixel
     with pytest.raises(ValueError, match="x_start is invalid"):
@@ -458,47 +460,47 @@ def test_valid_crop():
 
     # x_end is before the first pixel
     with pytest.raises(ValueError, match="x_end is invalid"):
-        helpers.valid_crop(20, 5, 10, 20, 10, 40)
+        helpers.valid_crop(20, -1, 10, 20, 100, 40)
 
     # x_end is after the last pixel
     with pytest.raises(ValueError, match="x_end is invalid"):
-        helpers.valid_crop()
+        helpers.valid_crop(2, 20, 2, 10, 10, 20)
 
     # x_end is the first pixel
     with pytest.raises(ValueError, match="x_end is invalid"):
-        helpers.valid_crop()
+        helpers.valid_crop(0, 0, 2, 10, 20, 20)
 
     # y_start is before the first pixel
     with pytest.raises(ValueError, match="y_start is invalid"):
-        helpers.valid_crop()
+        helpers.valid_crop(2, 10, -1, 10, 20, 20)
 
     # y_start is on the last pixel
     with pytest.raises(ValueError, match="y_start is invalid"):
-        helpers.valid_crop()
+        helpers.valid_crop(2, 10, 40, 10, 20, 40)
 
     # y_start is after the last pixel
     with pytest.raises(ValueError, match="y_start is invalid"):
-        helpers.valid_crop()
+        helpers.valid_crop(2, 10, 400, 20, 50, 50)
 
     # y_end is the first pixel
     with pytest.raises(ValueError, match="y_end is invalid"):
-        helpers.valid_crop()
+        helpers.valid_crop(2, 10, 0, 0, 20, 20)
 
     # y_end is after the last pixel
     with pytest.raises(ValueError, match="y_end is invalid"):
-        helpers.valid_crop()
+        helpers.valid_crop(2, 10, 20, 400, 20, 50)
 
     # y_end is before the first pixel
     with pytest.raises(ValueError, match="y_end is invalid"):
-        helpers.valid_crop()
+        helpers.valid_crop(2, 10, 1, -1, 50, 50)
 
     # x_start == x_end
     with pytest.raises(ValueError, match="An image of no pixels is not an image"):
-        helpers.valid_crop()
+        helpers.valid_crop(2, 2, 5, 10, 20, 20)
 
     # y_start == y_end
     with pytest.raises(ValueError, match="An image of no pixels is not an image"):
-        helpers.valid_crop()
+        helpers.valid_crop(2, 10, 5, 5, 20, 20)
 
-    # Successful crop e.g. 2, 4, 1, 4, 100, 100
+    # Successful crop
     assert helpers.valid_crop(2, 4, 1, 4, 100, 100) is True
