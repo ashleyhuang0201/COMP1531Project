@@ -9,9 +9,11 @@ import server.global_var as data
 from server.Error import AccessError, ValueError
 from server.helpers import get_user_by_email, valid_email, valid_name, \
     get_user_by_reset_code, remove_reset, add_reset, activate_token, \
-         deactive_token, get_new_u_id, add_user, first_user
+         deactive_token, get_new_u_id, add_user, first_user, \
+              encode_token_for_u_id
 
 MINIMUM_PASSWORD_LENGTH = 6
+SLACKER_OWNER = 1
 
 def auth_login(email, password):
     '''
@@ -30,7 +32,7 @@ def auth_login(email, password):
     if not user.password == hash_password(password):
         raise ValueError("Password Incorrect")
 
-    token = get_token(user.u_id)
+    token = encode_token_for_u_id(user.u_id)
 
     # Sets token as an active token
     activate_token(token)
@@ -76,14 +78,14 @@ def auth_register(email, password, name_first, name_last):
 
     # Adding new user details
     new_u_id = get_new_u_id()
-    token = get_token(new_u_id)
+    token = encode_token_for_u_id(new_u_id)
 
     user = data.User(new_u_id, email, hash_password(password), \
          name_first, name_last)
 
     # Make the first user slackr owner
     if first_user():
-        user.change_permissions(1)
+        user.change_permissions(SLACKER_OWNER)
 
     # Appends user to data
     add_user(user)
@@ -140,10 +142,6 @@ def auth_passwordreset_reset(reset_code, new_password):
 def valid_password(password):
     ''' Checks if a password is a valid password to be registered'''
     return len(password) >= MINIMUM_PASSWORD_LENGTH
-
-def get_token(u_id):
-    ''' Encodes a user id to create a token '''
-    return jwt.encode({"u_id": u_id}, data.SECRET, algorithm='HS256').decode("utf-8")
 
 def hash_password(password):
     ''' Creates a hashed password to store '''
