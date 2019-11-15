@@ -10,14 +10,8 @@ from hashlib import sha256
 
 from server import global_var as data
 from server.Error import AccessError, ValueError
-
-#Constants
-MIN_NAME_LENGTH = 1
-MAX_NAME_LENGTH = 50
-MAX_HANDLE_LENGTH = 20
-SLACKR_OWNER = 1
-SLACKR_ADMIN = 2
-SLACKR_USER = 3
+from server.constants import MAX_NAME_LENGTH, MIN_NAME_LENGTH, \
+    MAX_HANDLE_LENGTH, SLACKR_ADMIN, SLACKR_OWNER, SLACKR_USER
 
 def valid_token(function):
     ''' Decorator for checking if a token is valid '''

@@ -7,10 +7,7 @@ import random
 import os
 from server.message_functions import message_send
 import server.helpers as helpers
-
-LIKE_REACT = 1
-LIKE_REACT_INDEX = 0
-
+from server.constants import LIKE_REACT, LIKE_REACT_INDEX
 
 # Dictionary list containing all global data
 data = {

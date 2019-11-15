@@ -10,8 +10,7 @@ import server.auth_functions as auth_functions
 import server.global_var as global_var
 from server.Error import AccessError, ValueError
 from server.helpers import get_user_by_token, encode_token_for_u_id
-
-STRING_LENGTH = 50
+from server.constants import STRING_LENGTH
 
 def test_user_profile():
     '''

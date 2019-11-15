@@ -11,9 +11,8 @@ from server.helpers import get_user_by_email, valid_email, valid_name, \
     get_user_by_reset_code, remove_reset, add_reset, activate_token, \
          deactive_token, get_new_u_id, add_user, first_user, \
               encode_token_for_u_id
+from server.constants import MINIMUM_PASSWORD_LENGTH, SLACKR_OWNER
 
-MINIMUM_PASSWORD_LENGTH = 6
-SLACKR_OWNER = 1
 
 def auth_login(email, password):
     '''
