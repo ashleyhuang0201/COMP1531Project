@@ -3,6 +3,7 @@ Standup Functions
 '''
 from threading import Timer
 import datetime
+
 from server.Error import AccessError, ValueError
 import server.global_var as data
 from server.helpers import get_channel_by_channel_id, get_user_by_token, \
@@ -25,17 +26,17 @@ def standup_start(token, channel_id, length):
 
     if channel is None:
         raise ValueError("Channel Does Not Exist")
-    if channel.in_standup is not False:
+    if channel.standup_running() is not False:
         raise ValueError("Standup Already Running")
     if not channel.is_member(user.u_id):
         raise AccessError("Cannot Access Channel")
 
     # Start standup and after length seconds end the standup
-    channel.start_standup(length)
-    Timer(length, channel.end_standup, args=[token]).start()
     time = datetime.datetime.now() + datetime.timedelta(seconds=length)
+    channel.start_standup(time.timestamp())
+    Timer(length, channel.end_standup, args=[token]).start()
 
-    return {"time" : time.timestamp()}
+    return {"time_finish" : time.timestamp()}
 
 @valid_token
 def standup_send(token, channel_id, message):
@@ -53,7 +54,7 @@ def standup_send(token, channel_id, message):
         raise ValueError("Message Too Long")
     if not channel.is_member(user.u_id):
         raise AccessError("Cannot Access Channel")
-    if channel.in_standup is False:
+    if channel.standup_running() is False:
         raise ValueError("Not Currently In Standup")
 
     channel.add_standup_message(token, message)
@@ -75,14 +76,13 @@ def standup_active(token, channel_id):
         raise ValueError("Channel Does Not Exist")
 
     # If standup is active
-    if channel.in_standup:
+    if channel.standup_running():
         return {
             "is_active": True,
-            "time_finish": channel.time_left_standup()
+            "time_finish": channel.get_standup_end()
         }
     # Standup is not active
     return {
         "is_active": False,
         "time_finish": None
     }
-
