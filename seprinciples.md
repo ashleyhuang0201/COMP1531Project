@@ -20,3 +20,7 @@ than adjusting each value throughout the code. In addition, it also improves
 code readability and clarity with constant names that reflect the code's 
 purpose, rather than just a number.
 
+Abstraction of our classes have been improved by removing references to a 
+classes variables outside of that class, instead we have used "get" style 
+methods to access these methods. For the most case this just means returning
+the variable however this allows the function to be less rigid to change.
