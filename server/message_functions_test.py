@@ -278,6 +278,10 @@ def test_message_react():
         "Bob", "Sally")
     token_2 = user_2["token"]
 
+    with pytest.raises(ValueError, match=\
+    "Authorised user is not a member of the channel"):
+        funcs.message_react(token, 0, 1)
+
     #User creates a channel
     channel = channel_functions.channels_create(token, "Name", True)
     channel_id = channel["channel_id"]
