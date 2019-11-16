@@ -442,9 +442,7 @@ def test_valid_crop():
     """
   	# Initalistion
     global_var.initialise_all()
-    '''
-X START, X END, Y START, Y END, WIDTH, HEIGHT
-    '''
+
     # Test errors
     # x_start is before the first pixel
     with pytest.raises(ValueError, match="x_start is invalid"):
