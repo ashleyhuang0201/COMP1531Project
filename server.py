@@ -477,9 +477,11 @@ def search():
     Given a query string, return a collection of messages in all of the
     channels that the user has joined that match the query
     '''
+    # Obtaining variables for searching
     token = request.args.get("token")
     query = request.args.get("query_str")
 
+    # Returning search query
     return dumps(
         Search.search(token, query)
     )

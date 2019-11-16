@@ -224,8 +224,12 @@ class Channel:
         '''
 
         messages = []
+
+        # Checking all messages in channel
         for message in self.messages:
+            # If message contains substring
             if (message.message).find(str(substring)) != -1:
+                # Returning message
                 reacts = message.reacts
                 reacts[LIKE_REACT_INDEX]["is_this_user_reacted"] = \
                 message.user_has_reacted(helpers.decode_token(token), LIKE_REACT)
