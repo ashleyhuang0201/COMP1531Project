@@ -331,6 +331,9 @@ def test_message_unreact():
     user = auth_functions.auth_register("test@gmail.com", "pass123", \
          "Rayden", "Smith")
     token = user["token"]
+    user_2 = auth_functions.auth_register("test2@gmail.com", "password", \
+        "Bob", "Sally")
+    token_2 = user_2["token"]
 
     #User creates a channel
     channel = channel_functions.channels_create(token, "Name", True)

@@ -194,13 +194,9 @@ def message_unreact(token, message_id, react_id):
     if not valid_react_id(react_id):
         raise ValueError("Invalid React ID")
 
-    # Message already has an react iD
+    # Message already has an react id by the given user
     if not message_obj.user_has_reacted(user.u_id, react_id):
         raise ValueError("Message does not contain an active react")
-
-    # User is not a member of the channel
-    if not channel.is_member(user.u_id):
-        raise AccessError("Authorised user is not a member of the channel")
 
     # Removing react from message
     message_obj.remove_react(user.u_id, react_id)
