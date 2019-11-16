@@ -278,15 +278,9 @@ def test_message_react():
         "Bob", "Sally")
     token_2 = user_2["token"]
 
-    with pytest.raises(ValueError, match=\
-    "Authorised user is not a member of the channel"):
-        funcs.message_react(token, 0, 1)
-
     #User creates a channel
     channel = channel_functions.channels_create(token, "Name", True)
     channel_id = channel["channel_id"]
-
-    channel_functions.channel_join(token_2, channel_id)
 
     #user sends 3 messages
     assert funcs.message_send(token, channel_id, "This is a valid message") \
@@ -296,6 +290,13 @@ def test_message_react():
     assert funcs.message_send(token, channel_id, \
          "This is your message") == {"message_id" : 2}
     #Initialisation finished
+
+    # User not a member of channel
+    with pytest.raises(AccessError, match=\
+    "Authorised user is not a member of the channel"):
+        funcs.message_react(token_2, 0, 1)
+
+    channel_functions.channel_join(token_2, channel_id)
 
     #An invalid token is sent to the function
     with pytest.raises(AccessError, match="Invalid token"):

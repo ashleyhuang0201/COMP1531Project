@@ -133,7 +133,7 @@ def test_token_is_owner():
     # Creating a user
     user = auth.auth_register("test@gmail.com", "pass123", "Raydon", "Smith")
 
-    with pytest.raises(AccessError, match="Invalid token"):
+    with pytest.raises(AccessError, match="Invalid Token"):
         helpers.token_is_owner("-1")
 
     token = user["token"]
