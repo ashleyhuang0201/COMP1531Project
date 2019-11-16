@@ -5,10 +5,7 @@ Gets data
 '''
 import re
 import datetime as dt
-import re
 from hashlib import sha256
-import jwt
-
 import jwt
 
 import server.global_var as data
@@ -210,12 +207,12 @@ def valid_crop(x_start, x_end, y_start, y_end, width, height):
     return True
 
 def generate_handle(name_first, name_last, u_id):
-    """
+    '''
     A handle is generated that is the concatentation of a lowercase-only first
     name and last name. If the concatenation is longer than 20 characters, it
     is cutoff at 20 characters. If the handle is already taken, you may modify
     the handle in any way you see fit to make it unique.
-    """
+    '''
     # A handle is the concatentation of lower-case first_name and last_name
     handle = str(name_first.lower()) + str(name_last.lower())
 
@@ -251,25 +248,28 @@ def create_photo_path(user):
     return sha256(f"{to_hash}".encode()).hexdigest()
 
 def to_int(val):
-    if val == None:
+    ''' Typecasting to integer '''
+    if val is None:
         raise ValueError("Value was missing - please check you input")
     try:
         return int(val)
     except:
-        raise ValueError("Value entered was not of type int - please check your input")
+        raise ValueError("Value entered was not of type int")
 
 def to_bool(val):
-    if val == None:
+    ''' Typecasting to bool '''
+    if val is None:
         raise ValueError("Value was missing - please check you input")
     try:
         return bool(val)
     except:
-        raise ValueError("Value entered was not of type bool - please check your input")
+        raise ValueError("Value entered was not of type bool")
 
 def to_float(val):
-    if val == None:
+    ''' Typecasting to float'''
+    if val is None:
         raise ValueError("Value was missing - please check you input")
     try:
-        return bool(val)
+        return float(val)
     except:
-        raise ValueError("Value entered was not of type float - please check your input")
+        raise ValueError("Value entered was not of type float")
