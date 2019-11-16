@@ -4,7 +4,7 @@ Functions to test helper
 import pytest
 from server import auth_functions as auth
 import server.global_var as global_var
-from server import (auth_functions, channel_functions, helpers,
+from server import (channel_functions, helpers,
                     message_functions)
 from server.Error import AccessError, ValueError
 
