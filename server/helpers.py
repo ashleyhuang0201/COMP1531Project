@@ -8,7 +8,7 @@ import jwt
 import datetime as dt
 from hashlib import sha256
 
-from server import global_var as data
+import server.global_var as data
 from server.Error import AccessError, ValueError
 from server.constants import MAX_NAME_LENGTH, MIN_NAME_LENGTH, \
     MAX_HANDLE_LENGTH, SLACKR_ADMIN, SLACKR_OWNER, SLACKR_USER
@@ -266,3 +266,27 @@ def unique_handle(handle):
 def create_photo_path(user):
     to_hash = f"{user.email}{user.password}{dt.datetime.now().timestamp()}"
     return(sha256(f"{to_hash}".encode()).hexdigest())
+get_channel_by_channel_id
+def to_int(val):
+    if val == None:
+        raise ValueError("Value was missing - please check you input")
+    try:
+        return int(val)
+    except:
+        raise ValueError("Value entered was not of type int - please check your input")
+
+def to_bool(val):
+    if val == None:
+        raise ValueError("Value was missing - please check you input")
+    try:
+        return bool(val)
+    except:
+        raise ValueError("Value entered was not of type bool - please check your input")
+
+def to_float(val):
+    if val == None:
+        raise ValueError("Value was missing - please check you input")
+    try:
+        return bool(val)
+    except:
+        raise ValueError("Value entered was not of type float - please check your input")

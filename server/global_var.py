@@ -8,7 +8,7 @@ import os
 from flask import request
 
 import server.helpers as helpers
-from server.message_functions import message_send
+import server.message_functions as msg
 from server.constants import LIKE_REACT, LIKE_REACT_INDEX, SLACKR_USER, \
     DEFAULT_PIC
 
@@ -274,7 +274,7 @@ class Channel:
             line = ': '.join([m['user'], m['message']])
             message = '\n'.join([message, line])
         self.standup_messages = []
-        message_send(token, self.id, message)
+        msg.message_send(token, self.id, message)
 
     def add_standup_message(self, token, message):
         self.standup_messages.append({
