@@ -7,7 +7,7 @@ import random
 import os
 from server.message_functions import message_send
 import server.helpers as helpers
-from server.constants import LIKE_REACT, LIKE_REACT_INDEX
+from server.constants import LIKE_REACT, LIKE_REACT_INDEX, SLACKR_USER
 
 # Dictionary list containing all global data
 data = {
@@ -37,9 +37,7 @@ def initialise_all():
 
     message_id_ticker = 0
 
-'''
-Object class for storing an user's data
-'''
+''' Object class for storing an user's data '''
 class User:
     def __init__(self, u_id, email, password, name_first, name_last):
         self.u_id = u_id
@@ -48,15 +46,8 @@ class User:
         self.name_first = name_first
         self.name_last = name_last
         self.handle = helpers.generate_handle(name_first, name_last, u_id)
-        self.permission = 3
+        self.permission = SLACKR_USER
         self.has_photo = None
-
-        '''
-        An owner of slackr is an owner in every channel # 1
-        An admin of slackr is an owner in every channel # 2
-        A member of slackr is a member in channels they are not owners of
-        and an owner in channels they are owners of # 3
-        '''
 
     # Change permission of user
     def change_permissions(self, permission_id):
@@ -94,9 +85,7 @@ class User:
     def remove_photo(self):
         self.has_photo = None
 
-'''
-Object class for storing a message's data
-'''
+''' Object class for storing a message's data '''
 class Message:
     def __init__(self, u_id, message, channel_id):
         global message_id_ticker
@@ -149,9 +138,7 @@ class Message:
     def unpin_message(self):
         self.is_pinned = False
 
-'''
-Object class for storing a channel's data
-'''
+''' Object class for storing a channel's data '''
 class Channel:
     def __init__(self, name, u_id, is_public):
         self.name = name
@@ -220,7 +207,7 @@ class Channel:
                       "profile_img_url": user.has_photo})
         return owners
 
-    # Adds a message to the channel
+    # Adds a message to the channel (New messages are at the front)
     def add_message(self, message):
         self.messages.insert(0, message)
 
@@ -268,7 +255,8 @@ class Channel:
     def time_left_standup(self):
         if self.in_standup is False:
             return 0
-        return round(self.standup_duration - (datetime.datetime.utcnow() - self.in_standup).total_seconds())
+        return round(self.standup_duration - (datetime.datetime.utcnow() - \
+                                             self.in_standup).total_seconds())
 
     def end_standup(self, token):
         self.in_standup = False
