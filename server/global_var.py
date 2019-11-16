@@ -222,9 +222,10 @@ class Channel:
         '''
         Given a query string, return a list of messages in the channel
         '''
+
         messages = []
         for message in self.messages:
-            if (message.message).find(substring) != -1:
+            if (message.message).find(str(substring)) != -1:
                 reacts = message.reacts
                 reacts[LIKE_REACT_INDEX]["is_this_user_reacted"] = \
                 message.user_has_reacted(helpers.decode_token(token), LIKE_REACT)
