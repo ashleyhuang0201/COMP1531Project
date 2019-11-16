@@ -86,7 +86,8 @@ class User:
         # Remove old photo and upload new one
         if self.has_photo:
             index = self.has_photo.rfind("/")
-            os.remove(f"server/assets/images/{self.has_photo[index:]}")
+            if self.has_photo[index:] != "/default.jpg":
+                os.remove(f"server/assets/images{self.has_photo[index:]}")
         self.has_photo = f"{img_addr}"
 
     # Removes a photo

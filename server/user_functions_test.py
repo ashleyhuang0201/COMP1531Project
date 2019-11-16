@@ -32,7 +32,7 @@ def test_user_profile():
         "name_first":'Raydon',
         "name_last":'Smith',
         "handle_str":'raydonsmith',
-        "profile_img_url": None
+        "profile_img_url": 'http://localhost:5001/imgurl/server/assets/images/default.jpg'
     }
 
     # An exception occurs when the user_id is invalid
@@ -69,7 +69,7 @@ def test_profile_setname():
         "name_first":'Hello',
         "name_last":'World',
         "handle_str":'raydensmith',
-        "profile_img_url": None
+        "profile_img_url": 'http://localhost:5001/imgurl/server/assets/images/default.jpg'
     }
 
     # A name of 50 length is valid
@@ -114,7 +114,7 @@ def test_profile_setemail():
         "name_first":'Rayden',
         "name_last":'Smith',
         "handle_str":'raydensmith',
-        "profile_img_url": None
+        "profile_img_url": 'http://localhost:5001/imgurl/server/assets/images/default.jpg'
     }
 
     # A invalid email is given
@@ -151,7 +151,7 @@ def test_profile_sethandle():
         "name_first":"Rayden",
         "name_last":"Smith",
         "handle_str":"new handle",
-        "profile_img_url": None
+        "profile_img_url": 'http://localhost:5001/imgurl/server/assets/images/default.jpg'
     }
 
     # An invalid handle is given (50 characters)
@@ -247,7 +247,9 @@ def test_profiles_uploadphoto():
     # Clean up test images
     files = glob.glob('server/assets/images/*')
     for f in files:
-        os.remove(f)
+        # Don't delete default image
+        if f != "server/assets/images/default.jpg":
+            os.remove(f)
 
 def test_users_all():
     '''
@@ -269,7 +271,7 @@ def test_users_all():
                 "name_first":'Rayden',
                 "name_last":'Smith',
                 "handle_str":'raydensmith',
-                "profile_img_url": None
+                "profile_img_url": 'http://localhost:5001/imgurl/server/assets/images/default.jpg'
             }
         ]
     }
@@ -286,7 +288,7 @@ def test_users_all():
                 "name_first":'Rayden',
                 "name_last":'Smith',
                 "handle_str":'raydensmith',
-                "profile_img_url": None
+                "profile_img_url": 'http://localhost:5001/imgurl/server/assets/images/default.jpg'
             },
             {
                 "u_id": 1,
@@ -294,7 +296,7 @@ def test_users_all():
                 "name_first":'Mary',
                 "name_last":'Lamb',
                 "handle_str":'marylamb',
-                "profile_img_url": None
+                "profile_img_url": 'http://localhost:5001/imgurl/server/assets/images/default.jpg'
             }
         ]
     }

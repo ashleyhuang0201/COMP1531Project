@@ -83,7 +83,7 @@ def test_channel_details():
         "u_id": 0,
         "name_first": "valid_correct_first_name",
         "name_last": "valid_correct_last_name",
-        "profile_img_url": None
+        "profile_img_url": 'http://localhost:5001/imgurl/server/assets/images/default.jpg'
     }
 
     user2 = auth_register("valid_correct_email2@test.com", \
@@ -94,7 +94,7 @@ def test_channel_details():
         "u_id": 1,
         "name_first": "valid_correct_first_name",
         "name_last": "valid_correct_last_name",
-        "profile_img_url": None
+        "profile_img_url": 'http://localhost:5001/imgurl/server/assets/images/default.jpg'
     }
 
     #token1 creates a channel and is automatically part of it as the owner
@@ -107,18 +107,22 @@ def test_channel_details():
     "Authorised user is not a member of the channel"):
         func.channel_details(token2, channel_id)
 
-    assert func.channel_details(token1, channel_id) == \
-    {"name" : "TestChannel", "owner_members": [userdict1], \
-         "all_members": [userdict1]}
+    assert func.channel_details(token1, channel_id) == {
+        "name" : "TestChannel", 
+        "owner_members": [userdict1],
+        "all_members": [userdict1]
+    }
 
     # If a user changes names, this is reflected in channel_details
     user_profile_setname(token1, "another", "name")
     userdict1["name_first"] = "another"
     userdict1["name_last"] = "name"
 
-    assert func.channel_details(token1, channel_id) == \
-    {"name" : "TestChannel", "owner_members": [userdict1], \
-         "all_members": [userdict1]}
+    assert func.channel_details(token1, channel_id) == {
+        "name" : "TestChannel", 
+        "owner_members": [userdict1],
+        "all_members": [userdict1]
+    }
 
     #if given an invalid channel_id
     with pytest.raises(ValueError, match="Channel does not exist"):
@@ -131,9 +135,11 @@ def test_channel_details():
     # A second user joins the channel
     func.channel_join(token2, channel_id)
 
-    assert func.channel_details(token1, channel_id) == \
-    {"name" : "TestChannel", "owner_members": [userdict1], \
-         "all_members": [userdict1, userdict2]}
+    assert func.channel_details(token1, channel_id) == {
+        "name" : "TestChannel",
+        "owner_members": [userdict1],
+        "all_members": [userdict1, userdict2]
+    }
 
 def test_channel_messages():
     '''
@@ -173,16 +179,26 @@ def test_channel_messages():
     assert messages["messages"][0]["u_id"] == user1["u_id"]
     assert messages["messages"][0]["message"] == "1 message"
     assert not messages["messages"][0]["is_pinned"]
-    assert messages["messages"][0]["reacts"] == \
-         [{"react_id": 1, "u_ids": [], "is_this_user_reacted": False}]
+    assert messages["messages"][0]["reacts"] == [
+        {
+            "react_id": 1, 
+            "u_ids": [], 
+            "is_this_user_reacted": False
+        }
+    ]
 
     # Check details return is changed when the message is reacted and pinned
     message_react(token1, 0, 1)
     message_pin(token1, 0)
 
     messages = func.channel_messages(token1, channel_id, 0)
-    assert messages["messages"][0]["reacts"] == \
-         [{"react_id": 1, "u_ids": [user_id1], "is_this_user_reacted": True}]
+    assert messages["messages"][0]["reacts"] == [
+        {
+            "react_id": 1, 
+            "u_ids": [user_id1], 
+            "is_this_user_reacted": True
+        }
+    ]
     assert messages["messages"][0]["is_pinned"]
 
     # send a message to the channel and check that return is correct
@@ -246,7 +262,7 @@ def test_channel_leave():
     assert func.channel_leave(token1, channel_id) == {}
 
     with pytest.raises(AccessError, \
-         match="Authorised user is not a member of the channel"):
+        match="Authorised user is not a member of the channel"):
         message_send(token1, channel_id, "can't send message")
 
 
@@ -274,7 +290,7 @@ def test_channel_join():
 
     user1 = auth_register("valid_correct_email@test.com", \
     "valid_correct_password", "valid_correct_first_name",\
-     "valid_correct_last_name")
+    "valid_correct_last_name")
     token1 = user1["token"]
 
     user2 = auth_register("valid_correct_email@test2.com", \
@@ -327,13 +343,13 @@ def test_channel_addowner():
 
     user1 = auth_register("valid_correct_email@test1.com", \
     "valid_correct_password", "valid_correct_first_name",\
-     "valid_correct_last_name")
+    "valid_correct_last_name")
     token1 = user1["token"]
     userid1 = user1["u_id"]
 
     user2 = auth_register("valid_correct_email@test2.com",\
-     "valid_correct_password", "valid_correct_first_name", \
-     "valid_correct_last_name")
+    "valid_correct_password", "valid_correct_first_name", \
+    "valid_correct_last_name")
     userid2 = user2["u_id"]
     token2 = user2["token"]
 
@@ -352,8 +368,7 @@ def test_channel_addowner():
     func.channel_join(token2, channel_id)
 
     #token1 is not an owner of the channel
-    with pytest.raises(AccessError, match=\
-    "User is not an owner of the channel"):
+    with pytest.raises(AccessError, match="User is not an owner of the channel"):
         func.channel_addowner(token1, channel_id, userid2)
 
     # owner successfully promotes user to owner
@@ -363,8 +378,7 @@ def test_channel_addowner():
     assert func.channel_addowner(token1, channel_id, userid2) == {}
 
     #token1/userid1 is already an owner of the channel
-    with pytest.raises(ValueError, match=\
-    "User is already an owner of the channel"):
+    with pytest.raises(ValueError, match="User is already an owner of the channel"):
         func.channel_addowner(token_owner, channel_id, userid1)
 
     # The function is called using a invalid token
@@ -451,18 +465,40 @@ def test_channels_list():
     #user2 create a channel
     func.channels_create(token2, "TestChannel2", True)
 
-    assert func.channels_list(token1) == {"channels": [{"channel_id" : 0,\
-     "name" : "TestChannel"}]}
+    assert func.channels_list(token1) == {
+        "channels": [
+            {
+                "channel_id" : 0,
+                "name" : "TestChannel"
+            }
+        ]
+    }
 
-    assert func.channels_list(token2) == {"channels": [{"channel_id" : 1,\
-     "name" : "TestChannel2"}]}
+    assert func.channels_list(token2) == {
+        "channels": [
+            {
+                "channel_id" : 1,
+                "name" : "TestChannel2"
+            }
+        ]
+    }
 
     #user2 creates another channel
     func.channels_create(token2, "TestChannel3", True)
 
     #assert token2 is in two channels
-    assert func.channels_list(token2) == {"channels" :[{"channel_id" : 1, \
-    "name" : "TestChannel2"}, {"channel_id" : 2, "name" : "TestChannel3"}]}
+    assert func.channels_list(token2) == {
+        "channels" : [
+            {
+                "channel_id" : 1,
+                "name" : "TestChannel2"
+            }, 
+            {
+                "channel_id" : 2, 
+                "name" : "TestChannel3"
+            }
+        ]
+    }
 
     # The function is called using a invalid token
     with pytest.raises(AccessError, match="Invalid token"):
@@ -496,22 +532,51 @@ def test_channels_listall():
 
     func.channels_create(token1, "TestChannel1", True)
 
-    assert func.channels_listall(token1) == {"channels": [{"channel_id" : 0,\
-     "name" : "TestChannel1"}]}
+    assert func.channels_listall(token1) == {
+        "channels": [
+            {
+                "channel_id" : 0,
+                "name" : "TestChannel1"
+            }
+        ]
+    }
 
     #creating another channel
     func.channels_create(token1, "TestChannel2", False)
 
-    assert func.channels_listall(token1) == {"channels" :[{"channel_id" : 0, \
-    "name" : "TestChannel1"}, {"channel_id" : 1, "name" : "TestChannel2"}]}
+    assert func.channels_listall(token1) == {
+        "channels" : [
+            {
+                "channel_id" : 0, 
+                "name" : "TestChannel1"
+            }, 
+            {
+                "channel_id" : 1, 
+                "name" : "TestChannel2"
+            }
+        ]
+    }
 
     # user 2 creates a channel
     func.channels_create(token2, "TestChannel3", True)
 
     # displays channels the user is not apart of
-    assert func.channels_listall(token1) == {"channels" :[{"channel_id" : 0, \
-    "name" : "TestChannel1"}, {"channel_id" : 1, "name" : "TestChannel2"}, \
-        {"channel_id": 2, "name": "TestChannel3"}]}
+    assert func.channels_listall(token1) == {
+        "channels" : [
+            {
+                "channel_id" : 0,
+                "name" : "TestChannel1"
+            }, 
+            {
+                "channel_id" : 1,
+                "name" : "TestChannel2"
+            },
+            {
+                "channel_id": 2, 
+                "name": "TestChannel3"
+            }
+        ]
+    }
 
 
 def test_channels_create():
