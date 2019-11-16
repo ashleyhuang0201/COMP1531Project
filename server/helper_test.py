@@ -40,20 +40,31 @@ def test_encode_token_for_u_id():
     assert encoded == "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1X2lkIj"\
     "p7InVfaWQiOiIyNTIxIn19.AIupr3YzISaUBZq5b-osrslwhZyOaOlAEaMy0ECUWbc"
 
-def activate_token():
-    ''' Sets a token as an active token '''
-    data.data["tokens"].append(token)
+def test_activate_token():
+    '''
+    Tests activate token
+    '''
+    # Initialisation
+    global_var.initialise_all()
+
+    # Successfully adding token
+    helpers.activate_token("token")
+    assert global_var.data["tokens"][0] == "token"
 
 def deactive_token():
     '''
-    Sets a token as inactive
+    Tests a token as inactive
     '''
 
-    assert deactive_token
-    if token in data.data["tokens"]:
-        data.data["tokens"].remove(token)
-        return True
-    return False
+    # Initialisation
+    global_var.initialise_all()
+
+    # Adding token
+    helpers.activate_token("token")
+
+    # Removing token
+    helpers.deactive_token("token")
+    assert len(global_var.data["tokens"]) == 0
 
 def test_first_user():
     '''
@@ -63,17 +74,20 @@ def test_first_user():
     # Initialisation
     global_var.initialise_all()
 
+    # No user yet
     assert helpers.first_user() is True
 
     # Creating a user
     user = auth.auth_register("test@gmail.com", "pass123", "Raydon", "Smith")
 
+    # First user spot taken
     assert helpers.first_user() is False
 
 def test_get_new_u_id():
     '''
     Returns a new u_id
     '''
+
     # Initialisation
     global_var.initialise_all()
 
@@ -83,7 +97,7 @@ def test_get_new_u_id():
     assert helpers.get_new_u_id() == 1
 
     # Creating a user
-    user_2 = auth.auth_register("test123@gmail.com", "pass1234", "Kevin", "Zhu")
+    user_2 = auth.auth_register("test12@gmail.com", "pass1234", "Kevin", "Zhu")
 
     assert helpers.get_new_u_id() == 2
 
@@ -95,11 +109,10 @@ def test_add_user():
     # Initialisation
     global_var.initialise_all()
 
-    # Creating a user
-    user = auth.auth_register("test@gmail.com", "pass123", "Raydon", "Smith")
+    # Adding user
+    helpers.add_user("user")
 
-    assert helpers.add_user(user).
-    data.data["users"].append(user)
+    assert global_var.data["users"][0] == "user"
 
 # Test token is admin
 def test_token_is_admin():
@@ -131,12 +144,12 @@ def test_token_is_owner():
 
 	# Initialisation
     global_var.initialise_all()
-    assert global_var.data["users"] == []
+
     # Creating a user
     user = auth.auth_register("test@gmail.com", "pass123", "Raydon", "Smith")
 
     with pytest.raises(AccessError, match="Invalid token"):
-        helpers.token_is_owner("12345")
+        helpers.token_is_owner("-1")
 
     token = user["token"]
     user = helpers.get_user_by_token(token)
@@ -169,13 +182,15 @@ def test_valid_name():
     '''
     Ensures that a user's name is valid
     '''
-    # Successful case
+    # Successful case - name within range
     assert helpers.valid_name("a") is True
     assert helpers.valid_name("a" * 30) is True
     assert helpers.valid_name("a" * 50) is True
 
-    # Unsuccessful case
+    # No name
     assert helpers.valid_name("") is False
+
+    # Name too long
     assert helpers.valid_name("a" * 51) is False
     assert helpers.valid_name("a" * 212) is False
 
@@ -187,6 +202,7 @@ def test_valid_user_id():
     '''
     # Initialisation
     global_var.initialise_all()
+
     assert global_var.data["users"] == []
     # Creating a user
     user = auth.auth_register("test@gmail.com", "pass123", "Raydon", "Smith")
@@ -194,7 +210,6 @@ def test_valid_user_id():
 
     assert helpers.valid_user_id(u_id) is True
     assert helpers.valid_user_id(-1) is False
-
 
 # Changed valid_token to decorator. Not sure if it's possible to test like this
 '''
@@ -214,8 +229,8 @@ def test_valid_token():
 
     assert helpers.valid_token(token) is True
     assert helpers.valid_token("12345") is False
-
 '''
+
 # Testing possible permissions
 def test_valid_permission_id():
     '''
@@ -242,7 +257,7 @@ def test_get_user_by_u_id():
     '''
     # Initialisation
     global_var.initialise_all()
-    assert global_var.data["users"] == []
+
     # Creating a user
     user = auth.auth_register("test@gmail.com", "pass123", "Raydon", "Smith")
     u_id = user["u_id"]
@@ -252,33 +267,32 @@ def test_get_user_by_u_id():
     with pytest.raises(ValueError, match="Invalid User ID"):
         helpers.get_user_by_u_id(-1)
 
-
 def test_get_user_by_token():
     '''
     Ensures that the correct user is obtained by get_user_by_token
     '''
+
     # Initialisation
     global_var.initialise_all()
-    assert global_var.data["users"] == []
 
     # Creating a user
     user = auth.auth_register("test@gmail.com", "pass123", "Raydon", "Smith")
     u_id = user["u_id"]
     token = user["token"]
 
-    assert (helpers.get_user_by_token(token)).u_id == u_id
+    assert helpers.get_user_by_token(token).u_id == u_id
 
     with pytest.raises(AccessError, match="Invalid token"):
         helpers.get_user_by_token("invalid_token")
-
 
 def test_get_user_token_by_u_id():
     '''
     Ensures that the correct token is obtained by get_user_token_by_u_id
     '''
+
     # Initialisation
     global_var.initialise_all()
-    assert global_var.data["users"] == []
+
     # Creating a user
     user = auth.auth_register("test@gmail.com", "pass123", "Raydon", "Smith")
     token = user["token"]
@@ -289,7 +303,6 @@ def test_get_user_token_by_u_id():
     with pytest.raises(AccessError, match="Invalid token"):
         helpers.get_user_by_token(-1)
 
-
 def test_get_user_by_reset_code():
     '''
     Ensures that get_user_by_reset_code obtains the correct user u_id
@@ -298,8 +311,6 @@ def test_get_user_by_reset_code():
     # Initialisation
     global_var.initialise_all()
 
-    assert global_var.data["users"] == []
-
     # Creating a user
     user = auth.auth_register("test@gmail.com", "pass123", "Raydon", "Smith")
     u_id = user["u_id"]
@@ -307,7 +318,7 @@ def test_get_user_by_reset_code():
     auth.auth_passwordreset_request("test@gmail.com")
     reset_code = auth.generate_reset_code(u_id)
 
-    assert u_id == helpers.get_user_by_reset_code(reset_code)
+    assert helpers.get_user_by_reset_code(reset_code) == u_id
 
 def test_get_user_by_email():
     '''
@@ -317,12 +328,13 @@ def test_get_user_by_email():
     global_var.initialise_all()
 
   	# Testing unsuccessful case
-    assert None is helpers.get_user_by_email("2132@gmail.com")
+    assert helpers.get_user_by_email("2132@gmail.com") is None
 
   	# Testing successful case
     user = auth.auth_register("test@gmail.com", "pass123", "Raydon", "Smith")
     u_id = user["u_id"]
     user_object = helpers.get_user_by_email("test@gmail.com")
+
     assert u_id == user_object.u_id
 
 def test_remove_reset():
