@@ -4,12 +4,14 @@ Team: You_Things_Can_Choose
 '''
 
 import pytest
+
 import server.global_var as global_var
 from server import channel_functions as func
 from server.auth_functions import auth_register
 from server.Error import AccessError, ValueError
-from server.message_functions import message_send, message_react, message_pin
+from server.message_functions import message_pin, message_react, message_send
 from server.user_functions import user_profile_setname
+
 
 def test_channel_invite():
     '''
@@ -65,7 +67,7 @@ def test_channel_invite():
         func.channel_invite(token_3, channel_id, userid_2)
 
     # If user being invited is not an user
-    with pytest.raises(ValueError, match="User id is not valid"):
+    with pytest.raises(ValueError, match="Invalid User ID"):
         func.channel_invite(token_1, channel_id, 111111)
 
 def test_channel_details():
@@ -108,7 +110,7 @@ def test_channel_details():
         func.channel_details(token2, channel_id)
 
     assert func.channel_details(token1, channel_id) == {
-        "name" : "TestChannel", 
+        "name" : "TestChannel",
         "owner_members": [userdict1],
         "all_members": [userdict1]
     }
@@ -119,7 +121,7 @@ def test_channel_details():
     userdict1["name_last"] = "name"
 
     assert func.channel_details(token1, channel_id) == {
-        "name" : "TestChannel", 
+        "name" : "TestChannel",
         "owner_members": [userdict1],
         "all_members": [userdict1]
     }
@@ -149,7 +151,7 @@ def test_channel_messages():
     #Initialisation
     global_var.initialise_all()
 
-    user1 = auth_register("channel_messages@test.com", "password", \
+    user1 = auth_register("channel_messages@test.com", "passworuser.d", \
     "channel_messages", "test")
     user_id1 = user1["u_id"]
     token1 = user1["token"]
@@ -184,8 +186,8 @@ def test_channel_messages():
     assert not messages["messages"][0]["is_pinned"]
     assert messages["messages"][0]["reacts"] == [
         {
-            "react_id": 1, 
-            "u_ids": [], 
+            "react_id": 1,
+            "u_ids": [],
             "is_this_user_reacted": False
         }
     ]
@@ -197,8 +199,8 @@ def test_channel_messages():
     messages = func.channel_messages(token1, channel_id, 0)
     assert messages["messages"][0]["reacts"] == [
         {
-            "react_id": 1, 
-            "u_ids": [user_id1], 
+            "react_id": 1,
+            "u_ids": [user_id1],
             "is_this_user_reacted": True
         }
     ]
@@ -244,7 +246,7 @@ def test_channel_messages():
     assert messages["end"] == -1
     assert messages["messages"][0]["message"] == "24"
     assert messages["messages"][24]["message"] == "0"
-    
+
     # Test exceptions
     with pytest.raises(ValueError, match="Channel does not exist"):
         func.channel_messages(token1, -1, 0)
@@ -513,9 +515,9 @@ def test_channels_list():
             {
                 "channel_id" : 1,
                 "name" : "TestChannel2"
-            }, 
+            },
             {
-                "channel_id" : 2, 
+                "channel_id" : 2,
                 "name" : "TestChannel3"
             }
         ]
@@ -568,11 +570,11 @@ def test_channels_listall():
     assert func.channels_listall(token1) == {
         "channels" : [
             {
-                "channel_id" : 0, 
+                "channel_id" : 0,
                 "name" : "TestChannel1"
-            }, 
+            },
             {
-                "channel_id" : 1, 
+                "channel_id" : 1,
                 "name" : "TestChannel2"
             }
         ]
@@ -587,13 +589,13 @@ def test_channels_listall():
             {
                 "channel_id" : 0,
                 "name" : "TestChannel1"
-            }, 
+            },
             {
                 "channel_id" : 1,
                 "name" : "TestChannel2"
             },
             {
-                "channel_id": 2, 
+                "channel_id": 2,
                 "name": "TestChannel3"
             }
         ]

@@ -2,13 +2,17 @@
 Test functions for standup_*
 '''
 import datetime as dt
-import pytest
 import time
-from server.standup_functions import standup_send, standup_start, standup_active
+
+import pytest
+
 import server.auth_functions as auth
-from server.Error import AccessError, ValueError
 import server.channel_functions as channel_func
 import server.global_var as data
+from server.Error import AccessError, ValueError
+from server.standup_functions import (standup_active, standup_send,
+                                      standup_start)
+
 
 def test_standup_start():
     '''
@@ -151,7 +155,7 @@ def test_standup_active():
     standup = standup_start(owner["token"], channel["channel_id"], length)
     assert standup_active(owner["token"], channel["channel_id"]) == {
         "is_active": True,
-        "time_finish": standup['time_finish'] 
+        "time_finish": standup['time_finish']
     }
 
     time.sleep(1)
@@ -160,7 +164,7 @@ def get_standup_end(length):
     '''
     Get the time that standup ends
     '''
-    return dt.datetime.now().timestamp() + length 
+    return dt.datetime.now().timestamp() + length
 
 def same_time(expected_time, actual_time):
     '''

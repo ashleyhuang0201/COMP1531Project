@@ -2,12 +2,14 @@
 Test functions for auth_*
 '''
 import pytest
+
 import server.auth_functions as auth
 import server.channel_functions as channel
-from server.helpers import get_user_by_email, get_user_token_by_u_id, \
-     get_reset_code_from_email, get_user_by_token
 import server.global_var as data
 from server.Error import AccessError, ValueError
+from server.helpers import (get_reset_code_from_email, get_user_by_email,
+                            get_user_by_token, get_user_token_by_u_id)
+
 
 # Testing Functions
 def test_auth_login():
@@ -136,7 +138,7 @@ def test_auth_passwordreset_reset():
 
     # Password reset request is sent to valid email
     auth.auth_passwordreset_request("comp1531receive@gmail.com")
-    
+
     # Password is reset when valid reset code and password is given
     reset_code = get_reset_code_from_email("comp1531receive@gmail.com")
     auth.auth_passwordreset_reset(reset_code, "new_password")

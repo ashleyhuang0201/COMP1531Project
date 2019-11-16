@@ -1,14 +1,15 @@
 '''
 Standup Functions
 '''
-from threading import Timer
 import datetime
+from threading import Timer
 
-from server.Error import AccessError, ValueError
 import server.global_var as data
-from server.helpers import get_channel_by_channel_id, get_user_by_token, \
-     valid_token
 from server.constants import MAX_MESSAGE_LENGTH
+from server.Error import AccessError, ValueError
+from server.helpers import (get_channel_by_channel_id, get_user_by_token,
+                            valid_token)
+
 
 @valid_token
 def standup_start(token, channel_id, length):

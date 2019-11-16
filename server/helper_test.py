@@ -2,12 +2,12 @@
 Functions to test helper
 '''
 import pytest
-from server import auth_functions
+
 import server.global_var as global_var
+from server import (auth_functions, channel_functions, helpers,
+                    message_functions)
 from server.Error import AccessError, ValueError
-from server import helpers
-from server import channel_functions
-from server import message_functions
+
 
 # Tests decode_token
 def test_decode_token():
@@ -51,7 +51,7 @@ def test_token_is_admin():
     user = auth_functions.auth_register("test@gmail.com", "pass123", \
          "Raydon", "Smith")
 
-    with pytest.raises(AccessError, match="Invalid token"):
+    with pytest.raises(AccessError, match="Invalid Token"):
         helpers.token_is_admin("12345")
 
     token = user["token"]
@@ -75,7 +75,7 @@ def test_token_is_owner():
     user = auth_functions.auth_register("test@gmail.com", "pass123", \
          "Raydon", "Smith")
 
-    with pytest.raises(AccessError, match="Invalid token"):
+    with pytest.raises(AccessError, match="Invalid Token"):
         helpers.token_is_owner("12345")
 
     token = user["token"]
@@ -118,23 +118,6 @@ def test_valid_name():
     assert helpers.valid_name("") is False
     assert helpers.valid_name("a"*51) is False
     assert helpers.valid_name("a"*212) is False
-
-# Tests valid_user_id
-def test_valid_user_id():
-    """
-    Ensures that a user's u_id is valid when in data
-    and not valid when not in data
-    """
-    # Initialisation
-    global_var.initialise_all()
-    assert global_var.data["users"] == []
-    # Creating a user
-    user = auth_functions.auth_register("test@gmail.com", "pass123", \
-         "Raydon", "Smith")
-    u_id = user["u_id"]
-
-    assert helpers.valid_user_id(u_id) is True
-    assert helpers.valid_user_id(-1) is False
 
 
 # Changed valid_token to decorator. Not sure if it's possible to test like this
@@ -211,7 +194,7 @@ def test_get_user_by_token():
 
     assert (helpers.get_user_by_token(token)).u_id == u_id
 
-    with pytest.raises(AccessError, match="Invalid token"):
+    with pytest.raises(AccessError, match="Invalid Token"):
         helpers.get_user_by_token("invalid_token")
 
 
@@ -230,7 +213,7 @@ def test_get_user_token_by_u_id():
 
     assert helpers.get_user_token_by_u_id(u_id) == token
 
-    with pytest.raises(AccessError, match="Invalid token"):
+    with pytest.raises(AccessError, match="Invalid Token"):
         helpers.get_user_by_token(-1)
 
 

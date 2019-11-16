@@ -3,14 +3,15 @@ File for all global variables, classes and functions
 '''
 import datetime
 import hashlib
-import random
 import os
+import random
+
 from flask import request
 
 import server.helpers as helpers
 import server.message_functions as msg
-from server.constants import LIKE_REACT, LIKE_REACT_INDEX, SLACKR_USER, \
-    DEFAULT_PIC
+from server.constants import (DEFAULT_PIC, LIKE_REACT, LIKE_REACT_INDEX,
+                              SLACKR_USER)
 
 # Dictionary list containing all global data
 data = {

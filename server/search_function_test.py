@@ -5,13 +5,15 @@ message in channel, one result from one channel, two results from one channel,
 results from multiple channels)
 """
 import pytest
+
+import server.global_var as global_var
 import server.search_function as search
-from server.Error import AccessError
-from server.message_functions import message_send
 from server.auth_functions import auth_register
 from server.channel_functions import channels_create
+from server.Error import AccessError
 from server.helpers import get_user_token_by_u_id
-import server.global_var as global_var
+from server.message_functions import message_send
+
 
 # Search given invalid token
 def test_search_invalid_token():

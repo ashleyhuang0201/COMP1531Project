@@ -3,15 +3,18 @@ Helper functions
 Checks user validity
 Gets data
 '''
-import re
-import jwt
 import datetime as dt
+import re
 from hashlib import sha256
 
+import jwt
+
 import server.global_var as data
+from server.constants import (MAX_HANDLE_LENGTH, MAX_NAME_LENGTH,
+                              MIN_NAME_LENGTH, SLACKR_ADMIN, SLACKR_OWNER,
+                              SLACKR_USER)
 from server.Error import AccessError, ValueError
-from server.constants import MAX_NAME_LENGTH, MIN_NAME_LENGTH, \
-    MAX_HANDLE_LENGTH, SLACKR_ADMIN, SLACKR_OWNER, SLACKR_USER
+
 
 def valid_token(function):
     ''' Decorator for checking if a token is valid '''
@@ -25,7 +28,10 @@ def valid_token(function):
 
 def decode_token(token):
     ''' Decodes a token using jwt '''
-    return jwt.decode(token, data.SECRET, algorithms=['HS256'])["u_id"]
+    try:
+        return jwt.decode(token, data.SECRET, algorithms=['HS256'])["u_id"]
+    except:
+        raise AccessError("Invalid Token")
 
 def encode_token_for_u_id(u_id):
     ''' Encodes a token using jwt '''
@@ -44,12 +50,6 @@ def deactive_token(token):
         return True
     return False
 
-def first_user():
-    ''' Returns true if user is first slackr user '''
-    if not data.data["users"]:
-        return True
-    return False
-
 def get_new_u_id():
     ''' Returns a new u_id '''
     return len(data.data["users"])
@@ -58,7 +58,6 @@ def add_user(user):
     ''' Appends a new user object to the data '''
     data.data["users"].append(user)
 
-@valid_token
 def token_is_admin(token):
     ''' Checks if a token is  an admin '''
     user = get_user_by_token(token)
@@ -66,7 +65,6 @@ def token_is_admin(token):
         return True
     return False
 
-@valid_token
 def token_is_owner(token):
     ''' Checks if a token is  an owner '''
     user = get_user_by_token(token)
@@ -87,13 +85,6 @@ def valid_name(name):
         return True
     return False
 
-def valid_user_id(u_id):
-    ''' Checking if a user_id is valid '''
-    for user in data.data["users"]:
-        if user.u_id == u_id:
-            return True
-    return False
-
 def valid_permission_id(permission_id):
     ''' Checks if a permission is valid '''
     if permission_id < SLACKR_OWNER or permission_id > SLACKR_USER:
@@ -102,38 +93,26 @@ def valid_permission_id(permission_id):
 
 def get_user_by_u_id(u_id):
     ''' Returns user class according to their user identification '''
-    # Checking validity of u_id
-    if not valid_user_id(u_id):
-        raise ValueError("Invalid User ID")
-
     # Finding user object using u_id
     for user in data.data["users"]:
         if user.u_id == u_id:
             return user
-    return None
+    raise ValueError("Invalid User ID")
 
-@valid_token
 def get_user_by_token(token):
     ''' Returns user object according to their token '''
 
     # Decoding token
     u_id = decode_token(token)
-
-    # Finding user corresponding to user_id
-    for user in data.data["users"]:
-        if user.u_id == u_id:
-            return user
-    return None
+    return get_user_by_u_id(u_id)
 
 
 def get_user_token_by_u_id(u_id):
     ''' Returns user token according to their token '''
 
     # Checking validity of u_id
-    if not valid_user_id(u_id):
-        raise ValueError("Invalid u_id to find token")
-
-    return encode_token_for_u_id(u_id)
+    user = get_user_by_u_id(u_id)
+    return encode_token_for_u_id(user.u_id)
 
 def get_user_by_reset_code(reset_code):
     ''' Returns u_id from users who currently have an active reset_code '''
@@ -156,6 +135,8 @@ def remove_reset(code):
         if entry["reset_code"] == code:
             code_deleted = True
             data.data["reset_code"].remove(entry)
+            break
+
     if code_deleted is False:
         raise ValueError("No code was deleted")
 
@@ -266,7 +247,7 @@ def unique_handle(handle):
 def create_photo_path(user):
     to_hash = f"{user.email}{user.password}{dt.datetime.now().timestamp()}"
     return(sha256(f"{to_hash}".encode()).hexdigest())
-get_channel_by_channel_id
+
 def to_int(val):
     if val == None:
         raise ValueError("Value was missing - please check you input")

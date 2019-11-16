@@ -3,7 +3,8 @@ Search functions
 search: Search for a message using a substring
 """
 import server.global_var as data
-from server.helpers import valid_token, get_user_by_token
+from server.helpers import get_user_by_token, valid_token
+
 
 @valid_token
 def search(token, query_str):
