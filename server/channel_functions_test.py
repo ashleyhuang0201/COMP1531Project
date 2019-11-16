@@ -217,7 +217,7 @@ def test_channel_messages():
 
     messages = func.channel_messages(token1, channel_id, 0)
     assert messages["start"] == 0
-    assert messages["end"] == 50
+    assert messages["end"] == -1
     assert messages["messages"][0]["message"] == "50 message"
     assert messages["messages"][49]["message"] == "1 message"
 

@@ -114,9 +114,12 @@ def channel_messages(token, channel_id, start):
             "is_pinned": message.is_pinned,
         })
 
-    # End index is the last message returned
-    return {"messages": messages, "start": start, \
-                                             "end": start + MAX_MESSAGES}
+    # Check which
+    if start + MAX_MESSAGES >= len(channel.messages):
+        end = -1
+    else:
+        end = start + MAX_MESSAGES
+    return {"messages": messages, "start": start, "end": end}
 
 @valid_token
 def channel_leave(token, channel_id):
