@@ -4,12 +4,13 @@ Team: You_Things_Can_Choose
 '''
 
 import server.global_var as global_var
+from server.constants import (LIKE_REACT, LIKE_REACT_INDEX, MAX_CHANNEL_LENGTH,
+                              MAX_MESSAGES)
 from server.Error import AccessError, ValueError
-from server.helpers import get_channel_by_channel_id, valid_token, \
-     decode_token, valid_user_id, get_user_by_token, token_is_admin, \
-         token_is_owner
-from server.constants import MAX_MESSAGES, MAX_CHANNEL_LENGTH, LIKE_REACT, \
-    LIKE_REACT_INDEX
+from server.helpers import (decode_token, get_channel_by_channel_id,
+                            get_user_by_token, get_user_by_u_id,
+                            token_is_admin, token_is_owner, valid_token)
+
 
 @valid_token
 def channel_invite(token, channel_id, u_id):
@@ -28,7 +29,7 @@ def channel_invite(token, channel_id, u_id):
         raise AccessError("Authorised user is not a member of the channel")
 
     # u_id is not a user
-    if not valid_user_id(u_id):
+    if not get_user_by_u_id(u_id):
         raise ValueError("User id is not valid")
 
     # User is added as a member

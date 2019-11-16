@@ -13,6 +13,10 @@ message can be displayed correctly on the frontend. Instead of using the
 standard python parsers (int() etc) we abstracted this as to_int() to allow it
 for this exception handling once rather than checking each input individually
 
+Removed nearly duplicate function "valid_u_id" which found a user and returned
+either true or false and instead just use "get_user_by_u_id" and check whether
+an actual user was returned or not. This function was also run 
+
 
 #Decorators
 Decorators allow us to add functionality to a function without altering the 

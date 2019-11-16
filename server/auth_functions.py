@@ -3,15 +3,18 @@ Authorisation functions abstracted from the HTTP routes
 '''
 import hashlib
 import random
+
 import jwt
 from flask_mail import Message
+
 import server.global_var as data
-from server.Error import AccessError, ValueError
-from server.helpers import get_user_by_email, valid_email, valid_name, \
-    get_user_by_reset_code, remove_reset, add_reset, activate_token, \
-         deactive_token, get_new_u_id, add_user, first_user, \
-              encode_token_for_u_id
 from server.constants import MINIMUM_PASSWORD_LENGTH, SLACKR_OWNER
+from server.Error import AccessError, ValueError
+from server.helpers import (activate_token, add_reset, add_user,
+                            deactive_token, encode_token_for_u_id,
+                            get_new_u_id, get_user_by_email,
+                            get_user_by_reset_code, remove_reset, valid_email,
+                            valid_name)
 
 
 def auth_login(email, password):
@@ -83,7 +86,7 @@ def auth_register(email, password, name_first, name_last):
          name_first, name_last)
 
     # Make the first user slackr owner
-    if first_user():
+    if new_u_id == 0:
         user.change_permissions(SLACKR_OWNER)
 
     # Appends user to data

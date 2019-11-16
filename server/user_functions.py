@@ -3,20 +3,22 @@ User functions Iteration 2 implementations
 Team: You_Things_Can_Choose
 '''
 
-import urllib
-from urllib.request import urlopen, Request
-from urllib.error import URLError, HTTPError
 import os
-from PIL import Image
-from flask import request
+import urllib
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
 
-from server.Error import ValueError
+from flask import request
+from PIL import Image
+
 import server.global_var as global_var
-from server.helpers import get_user_by_u_id, get_user_by_token, valid_user_id,\
-    valid_email, valid_token, get_user_by_email, valid_crop, unique_handle, \
-        create_photo_path
-from server.constants import MAX_NAME_LENGTH, MAX_HANDLE_LENGTH, \
-    MIN_HANDLE_LENGTH
+from server.constants import (MAX_HANDLE_LENGTH, MAX_NAME_LENGTH,
+                              MIN_HANDLE_LENGTH)
+from server.Error import ValueError
+from server.helpers import (create_photo_path, get_user_by_email,
+                            get_user_by_token, get_user_by_u_id, unique_handle,
+                            valid_crop, valid_email, valid_token)
+
 
 @valid_token
 def user_profile(token, u_id):
@@ -28,11 +30,11 @@ def user_profile(token, u_id):
     - User with u_id is not a valid user
     '''
 
-    if valid_user_id(u_id) is False:
-        raise ValueError("Invalid User ID")
-
     # Get user object by u_id
     user = get_user_by_u_id(u_id)
+
+    if user is None:
+        raise ValueError("Invalid User ID")
 
     user_profile_return = {
         "u_id": user.u_id,
@@ -81,6 +83,7 @@ def user_profile_setemail(token, email):
     '''
 
     user = get_user_by_email(email)
+    
     if valid_email(email) is False:
         raise ValueError("Invalid email")
     if user:

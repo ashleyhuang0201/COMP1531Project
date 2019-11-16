@@ -5,12 +5,16 @@ invalid_token, successful case (permission changes by owner and admin, ability
 to change permission to any three states)
 """
 import pytest
-from server.admin_userpermission_change_function import admin_userpermission_change
-from server.helpers import get_user_token_by_u_id, get_user_by_u_id
-from server.auth_functions import auth_register
-from server.Error import AccessError, ValueError
+
 import server.global_var as global_var
+from server.admin_userpermission_change_function import \
+    admin_userpermission_change
+from server.auth_functions import auth_register
 from server.constants import SLACKR_ADMIN, SLACKR_OWNER, SLACKR_USER
+from server.Error import AccessError, ValueError
+from server.helpers import (get_user_by_u_id, get_user_token_by_u_id,
+                            valid_token)
+
 
 # Invalid token for admin_userpermission_change
 def test_admin_userpermission_change_invalid_token():
@@ -34,7 +38,7 @@ def test_admin_userpermission_change_invalid_user_id():
     '''
     Checks when an invalid user id is sent to admin_userpermission_change
     '''
-    with pytest.raises(ValueError, match='User ID is invalid'):
+    with pytest.raises(ValueError, match='Invalid User ID'):
         # Initialising
         global_var.initialise_all()
 

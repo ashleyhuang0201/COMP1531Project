@@ -5,14 +5,16 @@ Team: You_Things_Can_Choose
 
 #Import functions for testing
 import datetime
-import pytest
 import time
+
+import pytest
+
 import server.global_var as global_var
-from server.helpers import encode_token_for_u_id
+from server import auth_functions, channel_functions
 from server import message_functions as funcs
-from server import auth_functions
-from server import channel_functions
 from server.Error import AccessError, ValueError
+from server.helpers import encode_token_for_u_id
+
 
 def test_message_sendlater():
     '''

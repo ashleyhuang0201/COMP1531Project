@@ -4,10 +4,9 @@ Functions to test helper
 import pytest
 from server import auth_functions as auth
 import server.global_var as global_var
+from server import (auth_functions, channel_functions, helpers,
+                    message_functions)
 from server.Error import AccessError, ValueError
-from server import helpers
-from server import channel_functions
-from server import message_functions
 
 # Tests decode_token
 def test_decode_token():
@@ -128,7 +127,7 @@ def test_token_is_admin():
     # Creating a user
     user = auth.auth_register("test@gmail.com", "pass123", "Raydon", "Smith")
 
-    with pytest.raises(AccessError, match="Invalid token"):
+    with pytest.raises(AccessError, match="Invalid Token"):
         helpers.token_is_admin("12345")
 
     token = user["token"]
@@ -286,7 +285,7 @@ def test_get_user_by_token():
 
     assert helpers.get_user_by_token(token).u_id == u_id
 
-    with pytest.raises(AccessError, match="Invalid token"):
+    with pytest.raises(AccessError, match="Invalid Token"):
         helpers.get_user_by_token("invalid_token")
 
 def test_get_user_token_by_u_id():
@@ -302,7 +301,7 @@ def test_get_user_token_by_u_id():
 
     assert helpers.get_user_token_by_u_id(user["u_id"]) == user["token"]
 
-    with pytest.raises(AccessError, match="Invalid token"):
+    with pytest.raises(AccessError, match="Invalid Token"):
         helpers.get_user_by_token(-1)
 
 def test_get_user_by_reset_code():

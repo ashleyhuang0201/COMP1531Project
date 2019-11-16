@@ -2,14 +2,17 @@
 Testing user functions
 Team: You_Things_Can_Choose
 '''
-import os
 import glob
+import os
+
 import pytest
-import server.user_functions as funcs
+
 import server.auth_functions as auth_functions
 import server.global_var as global_var
-from server.Error import AccessError, ValueError
+import server.user_functions as funcs
 from server.constants import STRING_LENGTH
+from server.Error import AccessError, ValueError
+
 
 def test_user_profile():
     '''
