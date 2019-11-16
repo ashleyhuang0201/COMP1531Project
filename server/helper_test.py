@@ -357,11 +357,9 @@ def test_remove_reset():
     # Successful case
     helpers.add_reset("code1", 1)
     helpers.remove_reset("code1")
-    success = True
     for reset_code in global_var.data["reset_code"]:
         if reset_code["reset_code"] == "code1":
-            success = False
-    assert success is True
+            raise ValueError("Remove reset code unsuccessful")
 
 def test_add_reset():
     '''
@@ -371,23 +369,21 @@ def test_add_reset():
     # Initialisation
     global_var.initialise_all()
 
-    success = False
     helpers.add_reset("code1", 1)
 
     # Unsuccessful - Wrong reset code
     for reset_code in global_var.data["reset_code"]:
         if reset_code["reset_code"] == "invalid_reset_code" and \
         reset_code["user"] == 1:
-            success = True
-    assert success is False
+            raise ValueError("Wrong reset code")
 
     # Unsuccessful - Wrong user id
     for reset_code in global_var.data["reset_code"]:
         if reset_code["reset_code"] == "code1" and reset_code["user"] == -1:
-            success = True
-    assert success is False
+            raise ValueError("Wrong user id")
 
     # Testing successful entry
+    success = False
     for reset_code in global_var.data["reset_code"]:
         if reset_code["reset_code"] == "code1" and reset_code["user"] == 1:
             success = True
