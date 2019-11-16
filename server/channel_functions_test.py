@@ -155,6 +155,9 @@ def test_channel_messages():
     #create a channel
     channel = func.channels_create(token1, "TestChannel", True)
     channel_id = channel["channel_id"]
+
+    channel2 = func.channels_create(token1, "TestChannel2", True)
+    channel_id2 = channel2["channel_id"]
     # Initialisation finished
 
 
@@ -198,7 +201,7 @@ def test_channel_messages():
 
     messages = func.channel_messages(token1, channel_id, 0)
     assert messages["start"] == 0
-    assert messages["end"] == 49
+    assert messages["end"] == 50
     assert messages["messages"][0]["message"] == "50 message"
     assert messages["messages"][49]["message"] == "1 message"
 
@@ -208,6 +211,24 @@ def test_channel_messages():
     assert messages["messages"][0]["message"] == "49 message"
     assert messages["messages"][48]["message"] == "1 message"
 
+    for i in range(0, 125):
+        message_send(token1, channel_id2, f'{i}')
+    messages = func.channel_messages(token1, channel_id2, 0)
+    assert messages["start"] == 0
+    assert messages["end"] == 50
+    assert messages["messages"][0]["message"] == "124"
+    assert messages["messages"][49]["message"] == "75"
+    messages = func.channel_messages(token1, channel_id2, 50)
+    assert messages["start"] == 50
+    assert messages["end"] == 100
+    assert messages["messages"][0]["message"] == "74"
+    assert messages["messages"][49]["message"] == "25"
+    messages = func.channel_messages(token1, channel_id2, 100)
+    assert messages["start"] == 100
+    assert messages["end"] == -1
+    assert messages["messages"][0]["message"] == "24"
+    assert messages["messages"][24]["message"] == "0"
+    
     # Test exceptions
     with pytest.raises(ValueError, match="Channel does not exist"):
         func.channel_messages(token1, -1, 0)

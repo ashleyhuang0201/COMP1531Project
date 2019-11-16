@@ -116,7 +116,7 @@ def channel_messages(token, channel_id, start):
 
     # End index is the last message returned
     return {"messages": messages, "start": start, \
-                                             "end": start + MAX_MESSAGES - 1}
+                                             "end": start + MAX_MESSAGES}
 
 @valid_token
 def channel_leave(token, channel_id):
