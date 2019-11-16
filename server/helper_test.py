@@ -51,7 +51,7 @@ def test_activate_token():
     helpers.activate_token("token")
     assert global_var.data["tokens"][0] == "token"
 
-def deactive_token():
+def test_deactive_token():
     '''
     Tests a token as inactive
     '''
@@ -63,8 +63,11 @@ def deactive_token():
     helpers.activate_token("token")
 
     # Removing token
-    helpers.deactive_token("token")
+    assert helpers.deactive_token("token") is True
     assert len(global_var.data["tokens"]) == 0
+
+    # Removing token which doesn't exist
+    assert helpers.deactive_token("token") is False
 
 def test_first_user():
     '''
@@ -78,7 +81,7 @@ def test_first_user():
     assert helpers.first_user() is True
 
     # Creating a user
-    user = auth.auth_register("test@gmail.com", "pass123", "Raydon", "Smith")
+    auth.auth_register("test@gmail.com", "pass123", "Raydon", "Smith")
 
     # First user spot taken
     assert helpers.first_user() is False
@@ -92,12 +95,12 @@ def test_get_new_u_id():
     global_var.initialise_all()
 
     # Creating a user
-    user = auth.auth_register("test@gmail.com", "pass123", "Raydon", "Smith")
+    auth.auth_register("test@gmail.com", "pass123", "Raydon", "Smith")
 
     assert helpers.get_new_u_id() == 1
 
     # Creating a user
-    user_2 = auth.auth_register("test12@gmail.com", "pass1234", "Kevin", "Zhu")
+    auth.auth_register("test12@gmail.com", "pass1234", "Kevin", "Zhu")
 
     assert helpers.get_new_u_id() == 2
 
@@ -211,6 +214,7 @@ def test_valid_user_id():
     assert helpers.valid_user_id(u_id) is True
     assert helpers.valid_user_id(-1) is False
 
+# TODO
 # Changed valid_token to decorator. Not sure if it's possible to test like this
 '''
 # Checks if a token is valid
@@ -295,10 +299,8 @@ def test_get_user_token_by_u_id():
 
     # Creating a user
     user = auth.auth_register("test@gmail.com", "pass123", "Raydon", "Smith")
-    token = user["token"]
-    u_id = user["u_id"]
 
-    assert helpers.get_user_token_by_u_id(u_id) == token
+    assert helpers.get_user_token_by_u_id(user["u_id"]) == user["token"]
 
     with pytest.raises(AccessError, match="Invalid token"):
         helpers.get_user_by_token(-1)
@@ -320,10 +322,13 @@ def test_get_user_by_reset_code():
 
     assert helpers.get_user_by_reset_code(reset_code) == u_id
 
+    assert helpers.get_user_by_reset_code(-1) is None
+
 def test_get_user_by_email():
     '''
     Ensures the correct user is returned by email
     '''
+
     # Initialisation
     global_var.initialise_all()
 
@@ -341,6 +346,7 @@ def test_remove_reset():
     '''
     Ensures the reset is removed
     '''
+
     # Initialisation
     global_var.initialise_all()
 
@@ -361,6 +367,7 @@ def test_add_reset():
     '''
     Ensures add_reset is only successful if code and u_id match
     '''
+
     # Initialisation
     global_var.initialise_all()
 
@@ -390,24 +397,30 @@ def test_get_channel_by_channel_id():
     '''
     Ensures get_channel_by_channel_id returns correct channel id
     '''
+
     # Initialisation
     global_var.initialise_all()
 
     # Creating a user
     user = auth.auth_register("test@gmail.com", "pass123", "Raydon", "Smith")
-
     token = user["token"]
-    # Creating channels
+
     # Creating first channel
     channel_1 = channel_functions.channels_create(token, "Channel 1", True)
     channel_1_id = channel_1["channel_id"]
+
     # Creating second channel
     channel_2 = channel_functions.channels_create(token, "Channel 2", True)
     channel_2_id = channel_2["channel_id"]
+
     # Ensuring that first channel has id
     assert helpers.get_channel_by_channel_id(channel_1_id).id == 0
+
     # Ensuring that second channel has id
     assert helpers.get_channel_by_channel_id(channel_2_id).id == 1
+
+    # Checking no such channel_id
+    assert helpers.get_channel_by_channel_id(-1) is None
 
 def test_get_channel_by_message_id():
     '''
@@ -503,15 +516,15 @@ def test_valid_crop():
     # Test errors
     # x_start is before the first pixel
     with pytest.raises(ValueError, match="x_start is invalid"):
-    	helpers.valid_crop(-2, 2, 2, 4, 100, 100)
+        helpers.valid_crop(-2, 2, 2, 4, 100, 100)
 
     # x_start is on the last pixel
     with pytest.raises(ValueError, match="x_start is invalid"):
-      	helpers.valid_crop(100, 100, 2, 20, 100, 400)
+        helpers.valid_crop(100, 100, 2, 20, 100, 400)
 
     # x_start is after the last pixel
     with pytest.raises(ValueError, match="x_start is invalid"):
-      	helpers.valid_crop(200, 100, 2, 40, 100, 600)
+        helpers.valid_crop(200, 100, 2, 40, 100, 600)
 
     # x_end is before the first pixel
     with pytest.raises(ValueError, match="x_end is invalid"):

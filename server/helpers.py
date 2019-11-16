@@ -4,9 +4,9 @@ Checks user validity
 Gets data
 '''
 import re
-import jwt
 import datetime as dt
 from hashlib import sha256
+import jwt
 
 from server import global_var as data
 from server.Error import AccessError, ValueError
@@ -124,7 +124,6 @@ def get_user_by_token(token):
         if user.u_id == u_id:
             return user
     return None
-
 
 def get_user_token_by_u_id(u_id):
     ''' Returns user token according to their token '''
@@ -264,5 +263,6 @@ def unique_handle(handle):
     return True
 
 def create_photo_path(user):
+    ''' Create's a photo's path '''
     to_hash = f"{user.email}{user.password}{dt.datetime.now().timestamp()}"
-    return(sha256(f"{to_hash}".encode()).hexdigest())
+    return sha256(f"{to_hash}".encode()).hexdigest()
