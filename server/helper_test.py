@@ -68,23 +68,6 @@ def test_deactive_token():
     # Removing token which doesn't exist
     assert helpers.deactive_token("token") is False
 
-def test_first_user():
-    '''
-    Returns true if user is first slackr user
-    '''
-
-    # Initialisation
-    global_var.initialise_all()
-
-    # No user yet
-    assert helpers.first_user() is True
-
-    # Creating a user
-    auth.auth_register("test@gmail.com", "pass123", "Raydon", "Smith")
-
-    # First user spot taken
-    assert helpers.first_user() is False
-
 def test_get_new_u_id():
     '''
     Returns a new u_id
@@ -195,23 +178,6 @@ def test_valid_name():
     # Name too long
     assert helpers.valid_name("a" * 51) is False
     assert helpers.valid_name("a" * 212) is False
-
-# Tests valid_user_id
-def test_valid_user_id():
-    '''
-    Ensures that a user's u_id is valid when in data
-    and not valid when not in data
-    '''
-    # Initialisation
-    global_var.initialise_all()
-
-    assert global_var.data["users"] == []
-    # Creating a user
-    user = auth.auth_register("test@gmail.com", "pass123", "Raydon", "Smith")
-    u_id = user["u_id"]
-
-    assert helpers.valid_user_id(u_id) is True
-    assert helpers.valid_user_id(-1) is False
 
 # TODO
 # Changed valid_token to decorator. Not sure if it's possible to test like this
