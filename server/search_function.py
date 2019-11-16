@@ -13,12 +13,11 @@ def search(token, query_str):
     """
 
     messages = []
-
     # Searching for messages with query string
     for channel in data.data["channels"]:
         # Checking all channels which the user has joined
         if channel.user_in_channel(get_user_by_token(token).u_id):
-            # Returning all messages in channel
+            # Returning all messages in channel with substring
             messages = messages + channel.search_message(token, query_str)
 
     return {"messages": messages}
