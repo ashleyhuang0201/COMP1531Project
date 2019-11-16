@@ -21,19 +21,12 @@ def message_sendlater(token, channel_id, message, time_sent):
     channel = get_channel_by_channel_id(channel_id)
     user = get_user_by_token(token)
 
-    # create new message object and update send time
-    if type(message) == str:
-        message_object = global_var.Message(user.u_id, message, channel_id)
-        message_object.time_created = time_sent
-    else:
-        message_object = message
-
     # Channel_id does not refer to a valid channel
     if channel is None:
         raise ValueError("Invalid Channel ID")
 
     # Message is not of appropriate length
-    if valid_message(message_object.message):
+    if valid_message(message):
         raise ValueError("Message length too long")
 
     # Time to be sent is in the past
@@ -44,9 +37,12 @@ def message_sendlater(token, channel_id, message, time_sent):
     if not channel.is_member(user.u_id):
         raise AccessError("Authorised user is not a member of the channel")
 
+    # create new message object and update send time
+    message_object = global_var.Message(user.u_id, message, channel_id)
+    message_object.time_created = time_sent
 
     time_diff = time_sent - datetime.datetime.now().timestamp()
-    Timer(time_diff, message_send, args=[token, channel_id, message_object]).start()
+    Timer(time_diff, channel.add_message, args=[message_object]).start()
 
     return {
         "message_id": message_object.id
@@ -74,13 +70,7 @@ def message_send(token, channel_id, message):
     if not channel.is_member(user.u_id):
         raise AccessError("Authorised user is not a member of the channel")
 
-    # If passing a string then create a new message object otherwise use the
-    # message object given
-    if type(message) == str:
-        # Create new message object
-        message_object = global_var.Message(user.u_id, message, channel_id)
-    else:
-        message_object = message
+    message_object = global_var.Message(user.u_id, message, channel_id)
 
     # Append message to channel list
     channel.add_message(message_object)

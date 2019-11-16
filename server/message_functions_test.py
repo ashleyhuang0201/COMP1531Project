@@ -36,7 +36,7 @@ def test_message_sendlater():
 
     #User sends message to created channel
     assert funcs.message_sendlater(token, channel_id, \
-            "This is a valid message", datetime.datetime.now().timestamp() + 1)  \
+        "This is a valid message", datetime.datetime.now().timestamp() + 1) \
                                                         == {"message_id": 0}
     time.sleep(1)
 

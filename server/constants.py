@@ -23,4 +23,5 @@ LIKE_REACT_INDEX = 0
 # Number of pages for pagination
 MAX_MESSAGES = 50
 
-
+# Path to default profile picture
+DEFAULT_PIC = "server/assets/images/default.jpg"

@@ -5,9 +5,12 @@ import datetime
 import hashlib
 import random
 import os
-from server.message_functions import message_send
+from flask import request
+
 import server.helpers as helpers
-from server.constants import LIKE_REACT, LIKE_REACT_INDEX, SLACKR_USER
+from server.message_functions import message_send
+from server.constants import LIKE_REACT, LIKE_REACT_INDEX, SLACKR_USER, \
+    DEFAULT_PIC
 
 # Dictionary list containing all global data
 data = {
@@ -47,7 +50,12 @@ class User:
         self.name_last = name_last
         self.handle = helpers.generate_handle(name_first, name_last, u_id)
         self.permission = SLACKR_USER
-        self.has_photo = None
+        try:
+            url = request.host_url
+        except:
+            url = "http://localhost:5001/"
+        self.has_photo = f"{url}imgurl/{DEFAULT_PIC}"
+
 
     # Change permission of user
     def change_permissions(self, permission_id):
