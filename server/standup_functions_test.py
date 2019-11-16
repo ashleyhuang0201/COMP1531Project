@@ -26,7 +26,7 @@ def test_standup_start():
     # Testing return time
     end_ex = get_standup_end(length)
     end_ac = standup_start(owner["token"], channel1["channel_id"], length)
-    assert same_time(end_ex, end_ac["time"])
+    assert same_time(end_ex, end_ac["time_finish"])
     time.sleep(1)
 
     # A invalid token is used to access the function
@@ -44,7 +44,7 @@ def test_standup_start():
     channel_func.channel_join(user["token"], channel2["channel_id"])
     end_ex = get_standup_end(length)
     end_ac = standup_start(user["token"], channel2["channel_id"], length)
-    assert same_time(end_ex, end_ac["time"])
+    assert same_time(end_ex, end_ac["time_finish"])
 
     # Channel id given does not exist
     with pytest.raises(ValueError, match="Channel Does Not Exist"):
@@ -58,7 +58,7 @@ def test_standup_start():
     private = channel_func.channels_create(owner["token"], "Owner", False)
     end_ex = get_standup_end(length)
     end_ac = standup_start(owner["token"], private["channel_id"], length)
-    assert same_time(end_ex, end_ac["time"])
+    assert same_time(end_ex, end_ac["time_finish"])
     time.sleep(1)
 
 def test_standup_send():
@@ -74,7 +74,7 @@ def test_standup_send():
 
     channel = channel_func.channels_create(owner["token"], "Owner", True)
 
-    length = 3
+    length = 2
 
     # Channel is not currently in standup mode
     with pytest.raises(ValueError, match="Not Currently In Standup"):
@@ -118,7 +118,7 @@ def test_standup_send():
     assert standup_send(owner["token"], private["channel_id"], \
         "correct_and_valid_message") == {}
 
-    time.sleep(4)
+    time.sleep(2)
 
 def test_standup_active():
     '''
@@ -147,18 +147,14 @@ def test_standup_active():
         }
 
     # In standup
-    standup_start(owner["token"], channel["channel_id"], 3)
+    length = 1
+    standup = standup_start(owner["token"], channel["channel_id"], length)
     assert standup_active(owner["token"], channel["channel_id"]) == {
-            "is_active": True,
-            "time_finish": 3
-        }
-    time.sleep(1)
-    assert standup_active(owner["token"], channel["channel_id"]) == {
-            "is_active": True,
-            "time_finish": 2
-        }
+        "is_active": True,
+        "time_finish": standup['time_finish'] 
+    }
 
-    time.sleep(3)
+    time.sleep(1)
 
 def get_standup_end(length):
     '''

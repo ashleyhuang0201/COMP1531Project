@@ -5,11 +5,13 @@ Team: You_Things_Can_Choose
 import datetime
 from threading import Timer
 
-from server import global_var
+import server.global_var as global_var
 from server.Error import AccessError, ValueError
-from server.helpers import get_channel_by_channel_id, valid_token, \
-     get_user_by_token, get_channel_by_message_id, get_message_by_message_id, \
-         token_is_admin, token_is_owner
+from server.helpers import (get_channel_by_channel_id,
+                            get_channel_by_message_id,
+                            get_message_by_message_id, get_user_by_token,
+                            token_is_admin, token_is_owner, valid_token)
+
 
 @valid_token
 def message_sendlater(token, channel_id, message, time_sent):

@@ -8,7 +8,7 @@ import os
 from flask import request
 
 import server.helpers as helpers
-from server.message_functions import message_send
+import server.message_functions as msg
 from server.constants import LIKE_REACT, LIKE_REACT_INDEX, SLACKR_USER, \
     DEFAULT_PIC
 
@@ -157,7 +157,7 @@ class Channel:
         self.users = []
         self.is_public = is_public
         self.in_standup = False
-        self.standup_duration = 0
+        self.standup_end = None
         self.standup_messages = []
         self.add_owner(u_id)
         self.add_user(u_id)
@@ -262,25 +262,19 @@ class Channel:
                 message.reacts = message_object.reacts
                 message.is_pinned = message_object.is_pinned
 
-    def start_standup(self, length):
-        self.in_standup = datetime.datetime.utcnow()
-        self.standup_duration = length
-
-    def time_left_standup(self):
-        if self.in_standup is False:
-            return 0
-        return round(self.standup_duration - (datetime.datetime.utcnow() - \
-                                             self.in_standup).total_seconds())
+    def start_standup(self, standup_end):
+        self.in_standup = True
+        self.standup_end = standup_end
 
     def end_standup(self, token):
         self.in_standup = False
-        self.standup_duration = 0
+        self.standup_end = None
         message = ""
         for m in self.standup_messages:
             line = ': '.join([m['user'], m['message']])
             message = '\n'.join([message, line])
         self.standup_messages = []
-        message_send(token, self.id, message)
+        msg.message_send(token, self.id, message)
 
     def add_standup_message(self, token, message):
         self.standup_messages.append({
@@ -293,3 +287,11 @@ class Channel:
             return True
         # No such user
         return False
+
+    def standup_running(self):
+        if self.in_standup:
+            return True
+        return False
+
+    def get_standup_end(self):
+        return self.standup_end
