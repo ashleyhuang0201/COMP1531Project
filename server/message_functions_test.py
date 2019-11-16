@@ -497,12 +497,6 @@ def test_message_unpin():
 #Helper Functions
 #Creates a string of 1000 characters for testing purposes
 def create_long_string():
-    '''
-    Helper
-    '''
-    longstring = ""
-    for _ in range(1000):
-        longstring += "a"
-    assert len(longstring) == 1000
-
+    ''' Helper '''
+    longstring = "a" * 1000
     return longstring

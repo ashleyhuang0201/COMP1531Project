@@ -474,12 +474,14 @@ def standup_active():
 @APP.route('/search', methods = ['GET'])
 def search():
     '''
-    given a query, return matched messages in all of the channels that
-    the user is part of
+    Given a query string, return a collection of messages in all of the
+    channels that the user has joined that match the query
     '''
+    # Obtaining variables for searching
     token = request.args.get("token")
-    query = request.args.get("query")
-  
+    query = request.args.get("query_str")
+
+    # Returning search query
     return dumps(
         Search.search(token, query)
     )
