@@ -163,7 +163,7 @@ def generate_reset_code(user):
     Generate reset code
     '''
 
-    reset_code = hashlib.sha256(str(random.random()).encode()).hexdigest()
+    reset_code = str(hashlib.sha256(str(random.random()).encode()).hexdigest())
 
     # Access and place reset code into data
     add_reset(reset_code, user)

@@ -260,8 +260,6 @@ def to_bool(val):
     if val is None:
         raise ValueError("Value was missing - please check you input")
 
-    print(f"{val} is {type(val)}")
-
     if val == 'false':
         return False
     return True

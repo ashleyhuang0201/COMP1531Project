@@ -62,7 +62,6 @@ def message_send(token, channel_id, message):
 
     # Channel_id does not refer to a valid channel
     if channel is None:
-        print(f"tried to send to {channel_id}")
         raise ValueError("Invalid Channel ID")
 
     # Message is not of appropriate length
