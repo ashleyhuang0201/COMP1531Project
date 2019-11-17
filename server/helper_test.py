@@ -535,17 +535,70 @@ def test_valid_crop():
     # Successful crop
     assert helpers.valid_crop(2, 4, 1, 4, 100, 100) is True
 
-def test_get_reset_code_from_email(): 
-    ''' Returns a reset_code according to a user email ''' 
+def test_get_reset_code_from_email():
+    ''' Returns a reset_code according to a user email '''
 
     # Register a user
     user = auth.auth_register("registered@g.com", "passsword", "a", "b")
     user = helpers.get_user_by_token(user["token"])
 
     # No such email request
-    assert helpers.get_reset_code_from_email("-1@gmail.com") == None
+    assert helpers.get_reset_code_from_email("-1@gmail.com") is None
 
     # Reset email request
     auth.auth_passwordreset_request(user.email)
     assert helpers.get_reset_code_from_email(user.email) ==\
         global_var.data["reset_code"][0]["reset_code"]
+
+def test_to_int():
+    ''' Typecasting to int '''
+
+    with pytest.raises(ValueError, match=\
+        "Value was missing - please check you input"):
+        helpers.to_int(None)
+
+    with pytest.raises(ValueError, match="Value entered was not of type int"):
+        helpers.to_int("a")
+
+    with pytest.raises(ValueError, match="Value entered was not of type int"):
+        helpers.to_int("5a")
+
+    assert helpers.to_int(3.5) == 3
+    assert helpers.to_int(3.521) == 3
+    assert helpers.to_int(False) == 0
+    assert helpers.to_int(True) == 1
+    assert helpers.to_int(5) == 5
+    assert helpers.to_int("5") == 5
+
+def test_to_bool():
+    ''' Typecasting to bool '''
+
+    with pytest.raises(ValueError, match=\
+        "Value was missing - please check you input"):
+        helpers.to_bool(None)
+
+    with pytest.raises(ValueError, match="Value entered was not of type bool"):
+        helpers.to_int("a")
+
+    assert helpers.to_bool(True) is True
+    assert helpers.to_bool(False) is False
+    assert helpers.to_bool(True) == 1
+    assert helpers.to_bool("1") == 1
+    assert helpers.to_bool(1) is True
+    assert helpers.to_bool("") is False
+
+def test_to_float():
+    ''' Typecasting to float '''
+
+    with pytest.raises(ValueError, match=\
+        "Value was missing - please check you input"):
+        helpers.to_float(None)
+
+    with pytest.raises(ValueError, match="Value entered was not of type float"):
+        helpers.to_float("a")
+
+    assert helpers.to_float(5) == 5
+    assert helpers.to_float(True) == 1
+    assert helpers.to_float(False) == 0
+    assert helpers.to_float(3.521) == 3.521
+    assert helpers.to_float("5.231123123") == 5.231123123
