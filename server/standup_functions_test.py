@@ -171,6 +171,4 @@ def same_time(expected_time, actual_time):
     Check that standup end time expected and actual are within 1 second of
     each other
     '''
-    if expected_time - actual_time < 1:
-        return True
-    return False
+    return expected_time - actual_time < 1

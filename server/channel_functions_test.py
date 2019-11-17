@@ -11,6 +11,7 @@ from server.auth_functions import auth_register
 from server.Error import AccessError, ValueError
 from server.message_functions import message_pin, message_react, message_send
 from server.user_functions import user_profile_setname
+from server.constants import LIKE_REACT, HEART_REACT
 
 
 def test_channel_invite():
@@ -186,7 +187,12 @@ def test_channel_messages():
     assert not messages["messages"][0]["is_pinned"]
     assert messages["messages"][0]["reacts"] == [
         {
-            "react_id": 1,
+            "react_id": LIKE_REACT,
+            "u_ids": [],
+            "is_this_user_reacted": False
+        },
+        {
+            "react_id": HEART_REACT,
             "u_ids": [],
             "is_this_user_reacted": False
         }
@@ -199,9 +205,14 @@ def test_channel_messages():
     messages = func.channel_messages(token1, channel_id, 0)
     assert messages["messages"][0]["reacts"] == [
         {
-            "react_id": 1,
-            "u_ids": [user_id1],
+            "react_id": LIKE_REACT,
+            "u_ids": [0],
             "is_this_user_reacted": True
+        },
+        {
+            "react_id": HEART_REACT,
+            "u_ids": [],
+            "is_this_user_reacted": False
         }
     ]
     assert messages["messages"][0]["is_pinned"]

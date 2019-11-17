@@ -10,6 +10,7 @@ import server.global_var as global_var
 import server.search_function as search
 from server.auth_functions import auth_register
 from server.channel_functions import channels_create
+from server.constants import HEART_REACT, LIKE_REACT
 from server.Error import AccessError
 from server.helpers import get_user_token_by_u_id
 from server.message_functions import message_send
@@ -66,8 +67,18 @@ def test_search_all():
     assert not messages["messages"][1]["is_pinned"]
     assert messages["messages"][2]["message"] == "321"
     assert messages["messages"][3]["message"] == "121"
-    assert messages["messages"][3]["reacts"] == \
-         [{"react_id": 1, "u_ids": [], "is_this_user_reacted": False}]
+    assert messages["messages"][3]["reacts"] == [
+        {
+            "react_id": LIKE_REACT,
+            "u_ids": [],
+            "is_this_user_reacted": False
+        },
+        {
+            "react_id": HEART_REACT,
+            "u_ids": [],
+            "is_this_user_reacted": False
+        }
+    ]
 
     # Ensuring that no messages after all messages retrieved
     with pytest.raises(IndexError, match="list index out of range"):
@@ -163,9 +174,16 @@ def test_search_single_channel():
     user = auth_register('user@test.com', 'password', 'search', 'test')
     token = get_user_token_by_u_id(user["u_id"])
 
+    user2 = auth_register('user2@test.com', 'password', 'search', 'test')
+    token2 = get_user_token_by_u_id(user2["u_id"])
+
     # Creating channel
     channel = channels_create(token, "chat", True)
     channel_id = channel["channel_id"]
+
+    # Create channel from the second user which the searching user is not a 
+    # member of
+    channel2 = channels_create(token2, "chat", True)
 
     # Adding messages to channel
     message_send(token, channel_id, "121")

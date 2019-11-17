@@ -6,12 +6,13 @@ import datetime
 from threading import Timer
 
 import server.global_var as global_var
+from server.constants import HEART_REACT, LIKE_REACT, MAX_MESSAGE_LENGTH
 from server.Error import AccessError, ValueError
 from server.helpers import (get_channel_by_channel_id,
                             get_channel_by_message_id,
                             get_message_by_message_id, get_user_by_token,
                             token_is_admin, token_is_owner, valid_token)
-from server.constants import MAX_MESSAGE_LENGTH, LIKE_REACT
+
 
 @valid_token
 def message_sendlater(token, channel_id, message, time_sent):
@@ -288,6 +289,6 @@ def valid_message_id(message_id):
 
 def valid_react_id(react_id):
     ''' Checks the validity of a react id '''
-    if react_id == LIKE_REACT:
+    if react_id == LIKE_REACT or react_id == HEART_REACT:
         return True
     return False

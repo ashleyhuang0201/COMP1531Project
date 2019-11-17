@@ -12,9 +12,10 @@ import pytest
 import server.global_var as global_var
 from server import auth_functions, channel_functions
 from server import message_functions as funcs
+from server.constants import HEART_REACT, LIKE_REACT, MAX_MESSAGE_LENGTH
 from server.Error import AccessError, ValueError
 from server.helpers import encode_token_for_u_id
-from server.constants import LIKE_REACT, MAX_MESSAGE_LENGTH
+
 
 def test_message_sendlater():
     ''' Function tests for message_sendlater '''
@@ -294,8 +295,11 @@ def test_message_react():
     with pytest.raises(AccessError, match="Invalid token"):
         funcs.message_react("111111", 0, LIKE_REACT)
 
-    #An user successfully reacts
+    #A user successfully reacts
     assert funcs.message_react(token, 0, LIKE_REACT) == {}
+
+    #A user successfully reacts - with a different react (Not implemented in frontend)
+    assert funcs.message_react(token, 0, HEART_REACT) == {}
 
     #Another user also reacts to the same message
     assert funcs.message_react(token_2, 0, LIKE_REACT) == {}
@@ -343,6 +347,9 @@ def test_message_unreact():
     # A message is reacted to
     funcs.message_react(token, 0, LIKE_REACT)
 
+    #A user successfully reacts - with a different react (Not implemented in frontend)
+    funcs.message_react(token, 0, HEART_REACT)
+
     #A invalid token is sent to the function
     # (A invalid user is trying to use the function)
     with pytest.raises(AccessError, match="Invalid token"):
@@ -359,6 +366,7 @@ def test_message_unreact():
 
     #A user successfully unreacts
     assert funcs.message_unreact(token, 0, LIKE_REACT) == {}
+    assert funcs.message_unreact(token, 0, HEART_REACT) == {}
 
     assert funcs.message_unreact(token_2, 0, LIKE_REACT) == {}
 

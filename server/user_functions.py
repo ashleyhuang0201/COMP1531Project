@@ -132,9 +132,6 @@ def user_profiles_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
     # Checking if the img_url is an accessable URL
     try:
         response = urlopen(req)
-    except HTTPError as error:
-        print(error)
-        raise ValueError(f"The server cannot fulfil the request: {error.code}")
     except URLError as error:
         raise ValueError(f"The server cannot be reached: {error.reason}")
 

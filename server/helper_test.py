@@ -318,11 +318,9 @@ def test_remove_reset():
         helpers.remove_reset("code1")
 
     # Successful case
+    helpers.add_reset("code0", 0)
     helpers.add_reset("code1", 1)
     helpers.remove_reset("code1")
-    for reset_code in global_var.data["reset_code"]:
-        if reset_code["reset_code"] == "code1":
-            raise ValueError("Remove reset code unsuccessful")
 
 def test_add_reset():
     '''
@@ -332,18 +330,8 @@ def test_add_reset():
     # Initialisation
     global_var.initialise_all()
 
+    helpers.add_reset("code0", 0)
     helpers.add_reset("code1", 1)
-
-    # Unsuccessful - Wrong reset code
-    for reset_code in global_var.data["reset_code"]:
-        if reset_code["reset_code"] == "invalid_reset_code" and \
-        reset_code["user"] == 1:
-            raise ValueError("Wrong reset code")
-
-    # Unsuccessful - Wrong user id
-    for reset_code in global_var.data["reset_code"]:
-        if reset_code["reset_code"] == "code1" and reset_code["user"] == -1:
-            raise ValueError("Wrong user id")
 
     # Testing successful entry
     success = False
@@ -547,13 +535,17 @@ def test_get_reset_code_from_email():
     user = auth.auth_register("registered@g.com", "passsword", "a", "b")
     user = helpers.get_user_by_token(user["token"])
 
+    user2 = auth.auth_register("registered2@g.com", "passsword", "a", "b")
+    user2 = helpers.get_user_by_token(user2["token"])
+    auth.auth_passwordreset_request(user2.email)
+
     # No such email request
     assert helpers.get_reset_code_from_email("-1@gmail.com") is None
 
     # Reset email request
     auth.auth_passwordreset_request(user.email)
     assert helpers.get_reset_code_from_email(user.email) ==\
-        global_var.data["reset_code"][0]["reset_code"]
+        global_var.data["reset_code"][1]["reset_code"]
 
 def test_to_int():
     ''' Typecasting to int '''
@@ -582,12 +574,8 @@ def test_to_bool():
         "Value was missing - please check you input"):
         helpers.to_bool(None)
 
-    assert helpers.to_bool(True) is True
-    assert helpers.to_bool(False) is False
-    assert helpers.to_bool(True) == 1
-    assert helpers.to_bool("1") == 1
-    assert helpers.to_bool(1) is True
-    assert helpers.to_bool("") is False
+    assert helpers.to_bool('true') == True
+    assert helpers.to_bool('false') == False
 
 def test_to_float():
     ''' Typecasting to float '''

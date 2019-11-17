@@ -10,8 +10,8 @@ from flask import request
 
 import server.helpers as helpers
 import server.message_functions as msg
-from server.constants import (DEFAULT_PIC, LIKE_REACT, LIKE_REACT_INDEX,
-                              SLACKR_USER)
+from server.constants import (DEFAULT_PIC, HEART_REACT, LIKE_REACT,
+                              LIKE_REACT_INDEX, SLACKR_USER)
 
 # Dictionary list containing all global data
 data = {
@@ -85,14 +85,14 @@ class User:
     # Uploads a photo
     def upload_photo(self, img_addr):
         # Remove old photo and upload new one
-        if self.has_photo:
-            index = self.has_photo.rfind("/")
-            if self.has_photo[index:] != "/default.jpg":
-                os.remove(f"server/assets/images{self.has_photo[index:]}")
+        self.remove_photo()
         self.has_photo = f"{img_addr}"
 
     # Removes a photo
     def remove_photo(self):
+        index = self.has_photo.rfind("/")
+        if self.has_photo[index:] != "/default.jpg":
+            os.remove(f"server/assets/images{self.has_photo[index:]}")
         self.has_photo = None
 
 ''' Object class for storing a message's data '''
@@ -105,8 +105,20 @@ class Message:
         self.message = message
         self.channel = channel_id
         self.time_created = datetime.datetime.now().timestamp()
-        self.reacts = [{"react_id": LIKE_REACT, "u_ids": []}]
         self.is_pinned = False
+        # HEART_REACT is not implemented or used in frontend but exists as an
+        # Assurance that the react functionality can be extended further than
+        # Just a single react
+        self.reacts = [
+            {
+                "react_id": LIKE_REACT, 
+                "u_ids": []
+            }, 
+            {
+                "react_id": HEART_REACT, 
+                "u_ids": []
+            }
+        ]
 
     # Checks if u_id was the sender of the message
     def user_sent_message(self, u_id):
@@ -234,6 +246,7 @@ class Channel:
         '''
 
         messages = []
+        u_id = helpers.decode_token(token)
 
         # Checking all messages in channel
         for message in self.messages:
@@ -241,8 +254,9 @@ class Channel:
             if (message.message).find(str(substring)) != -1:
                 # Returning message
                 reacts = message.reacts
-                reacts[LIKE_REACT_INDEX]["is_this_user_reacted"] = \
-                message.user_has_reacted(helpers.decode_token(token), LIKE_REACT)
+                for react in reacts:
+                    react["is_this_user_reacted"] = \
+                    message.user_has_reacted(u_id, react['react_id'])
 
                 # Append message dictionary into list
                 messages.append({
@@ -255,13 +269,6 @@ class Channel:
                 })
 
         return messages
-
-    def update_message_object(self, message_id, message_object):
-        for message in self.messages:
-            if message_id == message.id:
-                message.message = message_object.message
-                message.reacts = message_object.reacts
-                message.is_pinned = message_object.is_pinned
 
     def start_standup(self, standup_end):
         self.in_standup = True

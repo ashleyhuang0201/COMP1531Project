@@ -19,6 +19,7 @@ MAX_MESSAGE_LENGTH = 1000
 
 # Like react
 LIKE_REACT = 1
+HEART_REACT = 2
 LIKE_REACT_INDEX = 0
 
 # Number of pages for pagination

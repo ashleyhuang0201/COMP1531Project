@@ -77,13 +77,14 @@ def channel_messages(token, channel_id, start):
     '''
 
     channel = get_channel_by_channel_id(channel_id)
+    u_id = decode_token(token)
 
     # channel_id does not refer to a valid channel
     if channel is None:
         raise ValueError("Channel does not exist")
 
     # user is not a member of the channel
-    if not channel.is_member(decode_token(token)):
+    if not channel.is_member(u_id):
         raise AccessError("Authorised user is not a member of the channel")
 
     # If the start is greater than the number of messages in the channel given
@@ -102,8 +103,9 @@ def channel_messages(token, channel_id, start):
 
         # Add information regarding if user has reacted to this message
         reacts = message.reacts
-        reacts[LIKE_REACT_INDEX]["is_this_user_reacted"] = \
-            message.user_has_reacted(decode_token(token), LIKE_REACT )
+        for react in reacts:
+            react["is_this_user_reacted"] = \
+                message.user_has_reacted(u_id, react['react_id'])
 
         # Append message dictionary into messages list
         messages.append({
