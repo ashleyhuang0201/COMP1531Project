@@ -179,26 +179,25 @@ def test_valid_name():
     assert helpers.valid_name("a" * 51) is False
     assert helpers.valid_name("a" * 212) is False
 
-# TODO
-# Changed valid_token to decorator. Not sure if it's possible to test like this
-'''
+
 # Checks if a token is valid
 def test_valid_token():
-
+    '''
     Ensures that a user's token is valid
+    '''
+    # Defining test function
+    @helpers.valid_token
+    def function(token):
+        return token
 
+    # Invalid token
+    with pytest.raises(AccessError, match="Invalid token"):
+        function("-1")
 
-    # Initialisation
-    global_var.initialise_all()
-    assert global_var.data["users"] == []
-    # Creating a user
-    user = auth.auth_register("test@gmail.com", "pass123", \
-            "Raydon", "Smith")
-    token = user["token"]
-
-    assert helpers.valid_token(token) is True
-    assert helpers.valid_token("12345") is False
-'''
+    # Valid token
+    user = auth.auth_register("ashley@gmail.com", "secure_password", \
+        "Ashley", "Huang")
+    assert function(user["token"]) == user["token"]
 
 # Testing possible permissions
 def test_valid_permission_id():
