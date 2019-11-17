@@ -1,11 +1,10 @@
-"""
+'''
 Tests for channel functions
 search: Invalid token, successful case (empty search, no such message, no
 message in channel, one result from one channel, two results from one channel,
 results from multiple channels)
-"""
+'''
 import pytest
-
 import server.global_var as global_var
 import server.search_function as search
 from server.auth_functions import auth_register
@@ -15,12 +14,11 @@ from server.Error import AccessError
 from server.helpers import get_user_token_by_u_id
 from server.message_functions import message_send
 
-
 # Search given invalid token
 def test_search_invalid_token():
-    """
+    '''
     Testing search with an invalid token
-    """
+    '''
     with pytest.raises(AccessError, match="Invalid token"):
         # Initialising
         global_var.initialise_all()
@@ -37,9 +35,9 @@ def test_search_invalid_token():
 
 # Search for all
 def test_search_all():
-    """
+    '''
     Testing search with a search for all messages request
-    """
+    '''
     # Initialising
     global_var.initialise_all()
 
@@ -86,9 +84,9 @@ def test_search_all():
 
 # Search for message that does not exist
 def test_search_no_match():
-    """
+    '''
     Testing search with a search for no such message
-    """
+    '''
 
     # Initialising
     global_var.initialise_all()
@@ -111,9 +109,9 @@ def test_search_no_match():
 
 # Search for message with the channel being empty
 def test_search_empty_channel():
-    """
+    '''
     Test search with a search on an empty channel
-    """
+    '''
     # Initialising
     global_var.initialise_all()
 
@@ -128,9 +126,9 @@ def test_search_empty_channel():
 
 # Search and get one message back
 def test_search_one():
-    """
+    '''
     Testing successful case for a search for one message
-    """
+    '''
 
     # Initialising
     global_var.initialise_all()
@@ -162,10 +160,10 @@ def test_search_one():
 
 # Search and get 2 messages from the same channel back
 def test_search_single_channel():
-    """
+    '''
     Testing successful case for search with a channel having two messages
     and returning two messages
-    """
+    '''
 
     # Initialising
     global_var.initialise_all()
@@ -181,9 +179,9 @@ def test_search_single_channel():
     channel = channels_create(token, "chat", True)
     channel_id = channel["channel_id"]
 
-    # Create channel from the second user which the searching user is not a 
+    # Create channel from the second user which the searching user is not a
     # member of
-    channel2 = channels_create(token2, "chat", True)
+    channels_create(token2, "chat", True)
 
     # Adding messages to channel
     message_send(token, channel_id, "121")
@@ -205,10 +203,10 @@ def test_search_single_channel():
 
 # Search and get 2 messages from different channels back
 def test_search_multi_channel():
-    """
+    '''
     Testing successful case of being able to obtain messages from multiple
     channels that the user is apart of
-    """
+    '''
     # Initialising
     global_var.initialise_all()
 

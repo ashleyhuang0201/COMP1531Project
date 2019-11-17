@@ -1,5 +1,6 @@
 '''
-File for all global constants
+Team: You_Things_Can_Choose
+Global constrants for easier manipulation of settings
 '''
 
 # Slackr-wide permissions

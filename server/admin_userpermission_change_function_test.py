@@ -1,20 +1,18 @@
-"""
-Tests for admin
+'''
+Team: You_Things_Can_Choose
+Tests for admin_userpermission_change_function
 admin_userpermission_change: Invalid user, invalid permission, user_member,
 invalid_token, successful case (permission changes by owner and admin, ability
 to change permission to any three states)
-"""
+'''
 import pytest
-
 import server.global_var as global_var
 from server.admin_userpermission_change_function import \
     admin_userpermission_change
 from server.auth_functions import auth_register
 from server.constants import SLACKR_ADMIN, SLACKR_OWNER, SLACKR_USER
 from server.Error import AccessError, ValueError
-from server.helpers import (get_user_by_u_id, get_user_token_by_u_id,
-                            valid_token)
-
+from server.helpers import get_user_by_u_id, get_user_token_by_u_id
 
 # Invalid token for admin_userpermission_change
 def test_admin_userpermission_change_invalid_token():
@@ -73,7 +71,7 @@ def test_admin_userpermission_change_user_member():
     Checks when an unauthorised user is sent to admin_userpermission_change
     '''
     with pytest.raises(AccessError, \
-                                 match='Current user is not an admin or owner'):
+                                match='Current user is not an admin or owner'):
         # Initialising
         global_var.initialise_all()
 
@@ -162,7 +160,6 @@ def test_admin_userpermission_change_user_owner():
     admin_userpermission_change(get_user_token_by_u_id(owner1["u_id"]), \
                                                 owner2["u_id"], SLACKR_ADMIN)
     assert get_user_by_u_id(owner2["u_id"]).permission == SLACKR_ADMIN
-
 
 def test_admin_userpermission_change_user_permission_possible_permissions():
     '''
