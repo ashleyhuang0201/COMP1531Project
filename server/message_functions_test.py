@@ -135,7 +135,6 @@ def test_message_send():
             match="Authorised user is not a member of the channel"):
         funcs.message_send(token, channel_id, "This is a valid message")
 
-
 def test_message_remove():
     '''
     Function tests for message_remove
@@ -356,8 +355,19 @@ def test_message_unreact():
     with pytest.raises(AccessError, match="Invalid token"):
         funcs.message_unreact("111111", 0, 1)
 
+    # User not a member of channel
+    with pytest.raises(AccessError, match=\
+    "Authorised user is not a member of the channel"):
+        funcs.message_unreact(token_2, 0, 1)
+
+    channel_functions.channel_join(token_2, channel_id)
+
+    funcs.message_react(token_2, 0, 1)
+
     #A user successfully unreacts
     assert funcs.message_unreact(token, 0, 1) == {}
+
+    assert funcs.message_unreact(token_2, 0, 1) == {}
 
     #A user tries to unreact to a invalid message based on message_id
     with pytest.raises(ValueError, match="Message does not exist"):
