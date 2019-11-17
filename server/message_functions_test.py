@@ -14,12 +14,10 @@ from server import auth_functions, channel_functions
 from server import message_functions as funcs
 from server.Error import AccessError, ValueError
 from server.helpers import encode_token_for_u_id
-
+from server.constants import LIKE_REACT, MAX_MESSAGE_LENGTH
 
 def test_message_sendlater():
-    '''
-    Function tests for message_sendlater
-    '''
+    ''' Function tests for message_sendlater '''
 
     #Initialisation
     global_var.initialise_all()
@@ -59,7 +57,7 @@ def test_message_sendlater():
 
     #The channel based on ID does not exist
     with pytest.raises(ValueError, match="Invalid Channel ID"):
-        funcs.message_sendlater(token, 99, "This is a valid message", \
+        funcs.message_sendlater(token, -1, "This is a valid message", \
             datetime.datetime.now().timestamp() + 1)
 
     #Time sent is a time in the past
@@ -69,7 +67,7 @@ def test_message_sendlater():
 
     #All errors (Token error is caught first)
     with pytest.raises(AccessError, match="Invalid token"):
-        funcs.message_sendlater("111111", 99, "1" + create_long_string(), \
+        funcs.message_sendlater("111111", -1, "1" + create_long_string(), \
             datetime.datetime.now().timestamp() + 1)
 
     #User leaves channel
@@ -82,9 +80,7 @@ def test_message_sendlater():
             datetime.datetime.now().timestamp() + 1)
 
 def test_message_send():
-    '''
-    Function tests for message_send
-    '''
+    ''' Function tests for message_send '''
 
     #Initialisation
     global_var.initialise_all()
@@ -113,7 +109,7 @@ def test_message_send():
 
     #The channel based on ID does not exist
     with pytest.raises(ValueError, match="Invalid Channel ID"):
-        funcs.message_send(token, 99, "This is a valid message")
+        funcs.message_send(token, -1, "This is a valid message")
 
     #Sending a message of length 1000 is valid
     assert funcs.message_send(token, channel_id, create_long_string()) \
@@ -125,7 +121,7 @@ def test_message_send():
 
     #Thrown multiple errors, token error is caught first
     with pytest.raises(AccessError, match="Invalid token"):
-        funcs.message_send("111111", 99, "1" + create_long_string())
+        funcs.message_send("111111", -1, "1" + create_long_string())
 
     #User leaves channel
     channel_functions.channel_leave(token, channel_id)
@@ -135,11 +131,8 @@ def test_message_send():
             match="Authorised user is not a member of the channel"):
         funcs.message_send(token, channel_id, "This is a valid message")
 
-
 def test_message_remove():
-    '''
-    Function tests for message_remove
-    '''
+    ''' Function tests for message_remove '''
 
     #Initialisation
     global_var.initialise_all()
@@ -187,11 +180,11 @@ def test_message_remove():
 
     #A owner tries to remove a invalid message based on message_id
     with pytest.raises(ValueError, match="Message does not exist"):
-        funcs.message_remove(owner_token, 99)
+        funcs.message_remove(owner_token, -1)
 
     #A user tries to remove a invalid message based on message_id
     with pytest.raises(ValueError, match="Message does not exist"):
-        funcs.message_remove(token, 99)
+        funcs.message_remove(token, -1)
 
     #user is unable to remove a message not his/her's
     with pytest.raises(AccessError, match="User does not have permission"):
@@ -248,11 +241,11 @@ def test_message_edit():
 
     #A owner tries to edit a invalid message based on message_id
     with pytest.raises(ValueError, match="Message does not exist"):
-        funcs.message_edit(owner_token, 99, "This is a valid edit")
+        funcs.message_edit(owner_token, -1, "This is a valid edit")
 
     #A user tries to edit a invalid message based on message_id
     with pytest.raises(ValueError, match="Message does not exist"):
-        funcs.message_edit(token, 99, "A valid message edit")
+        funcs.message_edit(token, -1, "A valid message edit")
 
     #A user tries to edit a message not his
     with pytest.raises(AccessError, match="User does not have permission"):
@@ -261,7 +254,6 @@ def test_message_edit():
     #The edited message was too long
     with pytest.raises(ValueError, match="Message length too long"):
         funcs.message_edit(owner_token, 0, "1" + create_long_string())
-
 
 def test_message_react():
     '''
@@ -294,31 +286,31 @@ def test_message_react():
     # User not a member of channel
     with pytest.raises(AccessError, match=\
     "Authorised user is not a member of the channel"):
-        funcs.message_react(token_2, 0, 1)
+        funcs.message_react(token_2, 0, LIKE_REACT)
 
     channel_functions.channel_join(token_2, channel_id)
 
     #An invalid token is sent to the function
     with pytest.raises(AccessError, match="Invalid token"):
-        funcs.message_react("111111", 0, 1)
+        funcs.message_react("111111", 0, LIKE_REACT)
 
     #An user successfully reacts
-    assert funcs.message_react(token, 0, 1) == {}
+    assert funcs.message_react(token, 0, LIKE_REACT) == {}
 
     #Another user also reacts to the same message
-    assert funcs.message_react(token_2, 0, 1) == {}
+    assert funcs.message_react(token_2, 0, LIKE_REACT) == {}
 
     #An user tries to react to a invalid message based on message_id
     with pytest.raises(ValueError, match="Message does not exist"):
-        funcs.message_react(token, 99, 1)
+        funcs.message_react(token, -1, LIKE_REACT)
 
     #An user tries to react to a message already reacted to
     with pytest.raises(ValueError, match="Message contains an active react"):
-        funcs.message_react(token, 0, 1)
+        funcs.message_react(token, 0, LIKE_REACT)
 
     #An user uses a invalid react id
     with pytest.raises(ValueError, match="Invalid React ID"):
-        funcs.message_react(token, 1, 99)
+        funcs.message_react(token, 1, -1)
 
 # message_unreact(token, message_id, react_id)
 def test_message_unreact():
@@ -349,30 +341,41 @@ def test_message_unreact():
     #Init finished
 
     # A message is reacted to
-    funcs.message_react(token, 0, 1)
+    funcs.message_react(token, 0, LIKE_REACT)
 
     #A invalid token is sent to the function
     # (A invalid user is trying to use the function)
     with pytest.raises(AccessError, match="Invalid token"):
-        funcs.message_unreact("111111", 0, 1)
+        funcs.message_unreact("111111", 0, LIKE_REACT)
+
+    # User not a member of channel
+    with pytest.raises(AccessError, match=\
+    "Authorised user is not a member of the channel"):
+        funcs.message_unreact(token_2, 0, LIKE_REACT)
+
+    channel_functions.channel_join(token_2, channel_id)
+
+    funcs.message_react(token_2, 0, LIKE_REACT)
 
     #A user successfully unreacts
-    assert funcs.message_unreact(token, 0, 1) == {}
+    assert funcs.message_unreact(token, 0, LIKE_REACT) == {}
+
+    assert funcs.message_unreact(token_2, 0, LIKE_REACT) == {}
 
     #A user tries to unreact to a invalid message based on message_id
     with pytest.raises(ValueError, match="Message does not exist"):
-        funcs.message_unreact(token, 99, 1)
+        funcs.message_unreact(token, -1, LIKE_REACT)
 
     #A user tries to unreact to a message that is not reacted to
     with pytest.raises(ValueError, match=\
          "Message does not contain an active react"):
-        funcs.message_unreact(token, 1, 1)
+        funcs.message_unreact(token, 1, LIKE_REACT)
 
     # message is reacted to again
-    funcs.message_react(token, 0, 1)
+    funcs.message_react(token, 0, LIKE_REACT)
     #A user uses a invalid unreact id
     with pytest.raises(ValueError, match="Invalid React ID"):
-        funcs.message_unreact(token, 0, 99)
+        funcs.message_unreact(token, 0, -1)
 
 # message_pin(token, message_id)
 def test_message_pin():
@@ -422,7 +425,7 @@ def test_message_pin():
 
     #Message is invalid based on message_id
     with pytest.raises(ValueError, match="Message does not exist"):
-        funcs.message_pin(owner_token, 99)
+        funcs.message_pin(owner_token, -1)
 
     #Message is already pinned
     with pytest.raises(ValueError, match="Message is currently pinned"):
@@ -492,7 +495,7 @@ def test_message_unpin():
 
     #Message is invalid based on message_id
     with pytest.raises(ValueError, match="Message does not exist"):
-        funcs.message_unpin(owner_token, 99)
+        funcs.message_unpin(owner_token, -1)
 
     assert funcs.message_pin(owner_token, 1) == {}
 
@@ -505,8 +508,8 @@ def test_message_unpin():
         funcs.message_unpin(owner_token, 1)
 
 #Helper Functions
-#Creates a string of 1000 characters for testing purposes
+#Creates a string of max message length characters for testing purposes
 def create_long_string():
     ''' Helper '''
-    longstring = "a" * 1000
+    longstring = "a" * (MAX_MESSAGE_LENGTH)
     return longstring

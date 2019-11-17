@@ -11,7 +11,7 @@ from server.helpers import (get_channel_by_channel_id,
                             get_channel_by_message_id,
                             get_message_by_message_id, get_user_by_token,
                             token_is_admin, token_is_owner, valid_token)
-
+from server.constants import MAX_MESSAGE_LENGTH, LIKE_REACT
 
 @valid_token
 def message_sendlater(token, channel_id, message, time_sent):
@@ -83,9 +83,7 @@ def message_send(token, channel_id, message):
 
 @valid_token
 def message_remove(token, message_id):
-    '''
-    Given a message ID, the message is removed
-    '''
+    ''' Given a message ID, the message is removed '''
 
     channel = get_channel_by_message_id(message_id)
     message = get_message_by_message_id(message_id)
@@ -110,7 +108,8 @@ def message_remove(token, message_id):
 @valid_token
 def message_edit(token, message_id, message):
     '''
-    Given a message, update it's text with new text. If the new message is an empty string, the message is deleted.
+    Given a message, update it's text with new text. If the new message is an
+    empty string, the message is deleted.
     '''
 
     channel = get_channel_by_message_id(message_id)
@@ -146,8 +145,8 @@ def message_edit(token, message_id, message):
 @valid_token
 def message_react(token, message_id, react_id):
     '''
-    Given a message within a channel the authorised user is part of, add a "react"
-    to that particular message
+    Given a message within a channel the authorised user is part of,
+    add a "react" to that particular message
     '''
 
     channel = get_channel_by_message_id(message_id)
@@ -158,6 +157,10 @@ def message_react(token, message_id, react_id):
     if not valid_message_id(message_id):
         raise ValueError("Message does not exist")
 
+    # User is not a member of the channel
+    if not channel.is_member(user.u_id):
+        raise AccessError("Authorised user is not a member of the channel")
+
     # React_id does not refer to a valid react
     if not valid_react_id(react_id):
         raise ValueError("Invalid React ID")
@@ -165,10 +168,6 @@ def message_react(token, message_id, react_id):
     # Message already has an react iD
     if message_obj.user_has_reacted(user.u_id, react_id):
         raise ValueError("Message contains an active react")
-
-    # User is not a member of the channel
-    if not channel.is_member(user.u_id):
-        raise AccessError("Authorised user is not a member of the channel")
 
     # Adding react to message
     message_obj.add_react(user.u_id, react_id)
@@ -189,6 +188,10 @@ def message_unreact(token, message_id, react_id):
     # Message_id does not refer to an existing message
     if not valid_message_id(message_id):
         raise ValueError("Message does not exist")
+
+    # User is not a member of the channel
+    if not channel.is_member(user.u_id):
+        raise AccessError("Authorised user is not a member of the channel")
 
     # React_id does not refer to a valid react
     if not valid_react_id(react_id):
@@ -271,16 +274,12 @@ def message_unpin(token, message_id):
     return {}
 
 def valid_message(message):
-    '''
-    Checks the validity of a message
-    '''
-    return len(message) > 1000
+    ''' Checks the validity of a message '''
+    return len(message) > MAX_MESSAGE_LENGTH
 
 
 def valid_message_id(message_id):
-    '''
-    Checks the validity of a message id
-    '''
+    ''' Checks the validity of a message id '''
     for channel in global_var.data["channels"]:
         for message in channel.messages:
             if message.id == message_id:
@@ -288,9 +287,7 @@ def valid_message_id(message_id):
     return False
 
 def valid_react_id(react_id):
-    '''
-    Checks the validity of a react id
-    '''
-    if react_id == 1:
+    ''' Checks the validity of a react id '''
+    if react_id == LIKE_REACT:
         return True
     return False
