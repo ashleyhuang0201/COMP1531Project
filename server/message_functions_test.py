@@ -302,7 +302,7 @@ def test_message_react():
 
     #An user tries to react to a invalid message based on message_id
     with pytest.raises(ValueError, match="Message does not exist"):
-        funcs.message_react(token, 99, LIKE_REACT)
+        funcs.message_react(token, -1, LIKE_REACT)
 
     #An user tries to react to a message already reacted to
     with pytest.raises(ValueError, match="Message contains an active react"):
