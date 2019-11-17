@@ -1,22 +1,20 @@
 '''
+Team: You_Things_Can_Choose
 Authorisation functions abstracted from the HTTP routes
 '''
+
 import hashlib
 import random
-
-import jwt
 from flask_mail import Message
 from flask import request
-
 import server.global_var as data
 from server.constants import MINIMUM_PASSWORD_LENGTH, SLACKR_OWNER
-from server.Error import AccessError, ValueError
+from server.Error import ValueError
 from server.helpers import (activate_token, add_reset, add_user,
                             deactive_token, encode_token_for_u_id,
                             get_new_u_id, get_user_by_email,
                             get_user_by_reset_code, remove_reset, valid_email,
                             valid_name)
-
 
 def auth_login(email, password):
     '''
@@ -31,7 +29,6 @@ def auth_login(email, password):
         raise ValueError("Invalid Email")
     if not user:
         raise ValueError("Email not registered")
-
     if not user.password == hash_password(password):
         raise ValueError("Password Incorrect")
 
@@ -47,12 +44,12 @@ def auth_logout(token):
     Given an active token, invalidates the taken to log the user out. Given a
     non-valid token, does nothing
     '''
+
     # Deletes a token
     if deactive_token(token):
         return {"is_success": True}
 
     return {"is_success": False}
-
 
 def auth_register(email, password, name_first, name_last):
     '''
@@ -115,6 +112,7 @@ def auth_passwordreset_request(email):
         redirect_url = f"{request.headers['Origin']}/reset_password"
     except:
         redirect_url = "http://127.0.0.1:8001/reset_password"
+
     # Creating mail to send
     msg = Message("Website Reset Request",
                   sender="comp1531shared@gmail.com",
@@ -147,16 +145,26 @@ def auth_passwordreset_reset(reset_code, new_password):
 # Helper Functions specific to auth
 
 def valid_password(password):
-    ''' Checks if a password is a valid password to be registered'''
+    '''
+    Checks if a password is a valid password to be registere
+    '''
+
     return len(password) >= MINIMUM_PASSWORD_LENGTH
 
 def hash_password(password):
-    ''' Creates a hashed password to store '''
+    '''
+    Creates a hashed password to store
+    '''
+
     return hashlib.sha256(password.encode()).hexdigest()
 
 def generate_reset_code(user):
-    ''' Generate reset code '''
+    '''
+    Generate reset code
+    '''
+
     reset_code = hashlib.sha256(str(random.random()).encode()).hexdigest()
+
     # Access and place reset code into data
     add_reset(reset_code, user)
 
