@@ -19,7 +19,7 @@ def admin_userpermission_change(token, u_id, permission_id):
 
     # Checking validity of permission change request
     if not user:
-        raise ValueError('User ID is invalid')
+        raise ValueError('Invalid User ID')
     if not valid_permission_id(permission_id):
         raise ValueError('Permission ID is invalid')
     if not (token_is_admin(token) or token_is_owner(token)):
