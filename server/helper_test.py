@@ -578,7 +578,7 @@ def test_to_bool():
         helpers.to_bool(None)
 
     with pytest.raises(ValueError, match="Value entered was not of type bool"):
-        helpers.to_int("a")
+        helpers.to_bool("a")
 
     assert helpers.to_bool(True) is True
     assert helpers.to_bool(False) is False
