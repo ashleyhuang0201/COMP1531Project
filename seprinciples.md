@@ -33,6 +33,12 @@ than adjusting each value throughout the code. In addition, it also improves
 code readability and clarity with constant names that reflect the code's 
 purpose, rather than just a number.
 
+Since the only react implemented on the frontend was 'like' there were some
+instances where we were using this by always accessing and comparing to the one
+element on the reacts array. This has been changed to allow more reacts to be 
+added by looping over the reacts array and stopping when the ID matches the 
+react we are looking for
+
 
 Abstraction of our classes have been improved by removing references to a 
 classes variables outside of that class, instead we have used "get" style 
