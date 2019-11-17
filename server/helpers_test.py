@@ -232,7 +232,7 @@ def test_get_user_by_u_id():
 
     assert helpers.get_user_by_u_id(u_id).u_id == u_id
 
-    assert helpers.get_user_by_u_id(-1) == None
+    assert helpers.get_user_by_u_id(-1) is None
 
 def test_get_user_by_token():
     '''
@@ -574,8 +574,8 @@ def test_to_bool():
         "Value was missing - please check you input"):
         helpers.to_bool(None)
 
-    assert helpers.to_bool('true') == True
-    assert helpers.to_bool('false') == False
+    assert helpers.to_bool('true') is True
+    assert helpers.to_bool('false') is False
 
 def test_to_float():
     ''' Typecasting to float '''
