@@ -3,9 +3,10 @@ Helper functions
 Checks user validity
 Gets data
 '''
-import re
 import datetime as dt
+import re
 from hashlib import sha256
+
 import jwt
 
 import server.global_var as data
@@ -13,6 +14,7 @@ from server.constants import (MAX_HANDLE_LENGTH, MAX_NAME_LENGTH,
                               MIN_NAME_LENGTH, SLACKR_ADMIN, SLACKR_OWNER,
                               SLACKR_USER)
 from server.Error import AccessError, ValueError
+
 
 def valid_token(function):
     ''' Decorator for checking if a token is valid '''
