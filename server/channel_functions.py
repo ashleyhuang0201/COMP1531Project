@@ -30,7 +30,7 @@ def channel_invite(token, channel_id, u_id):
 
     # u_id is not a user
     if not get_user_by_u_id(u_id):
-        raise ValueError("User id is not valid")
+        raise ValueError("Invalid User ID")
 
     # User is added as a member
     channel.add_user(u_id)

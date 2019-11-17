@@ -232,8 +232,7 @@ def test_get_user_by_u_id():
 
     assert helpers.get_user_by_u_id(u_id).u_id == u_id
 
-    with pytest.raises(ValueError, match="Invalid User ID"):
-        helpers.get_user_by_u_id(-1)
+    assert helpers.get_user_by_u_id(-1) == None
 
 def test_get_user_by_token():
     '''

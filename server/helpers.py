@@ -95,7 +95,7 @@ def get_user_by_u_id(u_id):
     for user in data.data["users"]:
         if user.u_id == u_id:
             return user
-    raise ValueError("Invalid User ID")
+    return None
 
 def get_user_by_token(token):
     ''' Returns user object according to their token '''
