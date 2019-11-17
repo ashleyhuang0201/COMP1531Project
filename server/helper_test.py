@@ -577,9 +577,6 @@ def test_to_bool():
         "Value was missing - please check you input"):
         helpers.to_bool(None)
 
-    with pytest.raises(ValueError, match="Value entered was not of type bool"):
-        helpers.to_bool("a")
-
     assert helpers.to_bool(True) is True
     assert helpers.to_bool(False) is False
     assert helpers.to_bool(True) == 1

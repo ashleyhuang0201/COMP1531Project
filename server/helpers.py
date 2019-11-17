@@ -259,10 +259,8 @@ def to_bool(val):
     ''' Typecasting to bool '''
     if val is None:
         raise ValueError("Value was missing - please check you input")
-    try:
+    else:
         return bool(val)
-    except:
-        raise ValueError("Value entered was not of type bool")
 
 def to_float(val):
     ''' Typecasting to float'''
