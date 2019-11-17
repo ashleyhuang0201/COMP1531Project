@@ -6,6 +6,7 @@ import random
 
 import jwt
 from flask_mail import Message
+from flask import request
 
 import server.global_var as data
 from server.constants import MINIMUM_PASSWORD_LENGTH, SLACKR_OWNER
@@ -46,7 +47,6 @@ def auth_logout(token):
     Given an active token, invalidates the taken to log the user out. Given a
     non-valid token, does nothing
     '''
-
     # Deletes a token
     if deactive_token(token):
         return {"is_success": True}
@@ -111,12 +111,17 @@ def auth_passwordreset_request(email):
     # Preparing reset code
     user = get_user_by_email(email)
     reset_code = generate_reset_code(user)
-
+    try:
+        redirect_url = f"{request.headers['Origin']}/reset_password"
+    except:
+        redirect_url = "http://127.0.0.1:8001/reset_password"
     # Creating mail to send
     msg = Message("Website Reset Request",
                   sender="comp1531shared@gmail.com",
                   recipients=[email])
-    msg.body = f"Your reset code is: {reset_code}"
+    msg.html = ("<p>Your reset code is:</p>"
+                f"<p>\n<b>{reset_code}</b>\n</p>"
+                f"<p>Copy this code into the field at {redirect_url}</p>")
 
     # Empty dictionary is manually returned in server.py
     return msg
