@@ -14,7 +14,6 @@ from server.constants import (MAX_HANDLE_LENGTH, MAX_NAME_LENGTH,
                               SLACKR_USER)
 from server.Error import AccessError, ValueError
 
-
 def valid_token(function):
     ''' Decorator for checking if a token is valid '''
     def wrapper(*args, **kwargs):
@@ -260,10 +259,8 @@ def to_bool(val):
     ''' Typecasting to bool '''
     if val is None:
         raise ValueError("Value was missing - please check you input")
-    try:
+    else:
         return bool(val)
-    except:
-        raise ValueError("Value entered was not of type bool")
 
 def to_float(val):
     ''' Typecasting to float'''
