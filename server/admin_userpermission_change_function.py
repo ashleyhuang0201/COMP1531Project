@@ -3,6 +3,9 @@ Team: You_Things_Can_Choose
 Admin Functions
 admin_userpermission_change: Change user's permission
 '''
+
+# DO NOT REMOVE GLOBAL IMPORT PLEASE
+import server.global_var as global_var
 from server.Error import AccessError, ValueError
 from server.helpers import (get_user_by_u_id, token_is_admin, token_is_owner,
                             valid_permission_id, valid_token)
