@@ -32,12 +32,12 @@ def test_encode_token_for_u_id():
     global_var.initialise_all()
 
     encoded = helpers.encode_token_for_u_id({"u_id": "1"})
-    assert encoded == "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1X2lkIj"\
-    "p7InVfaWQiOiIxIn19.jFcUwcBtXw6pUWh8-K_cBgdYVouYebtuptYD55LEk4Y"
+    assert encoded == "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1X2lkIjp7InVf" \
+        "aWQiOiIxIn19.CyUh5Ad_kzwekv5mXBLGceHjFo9v9Vn5Qc0D8U9baVc"
 
     encoded = helpers.encode_token_for_u_id({"u_id": "2521"})
-    assert encoded == "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1X2lkIj"\
-    "p7InVfaWQiOiIyNTIxIn19.AIupr3YzISaUBZq5b-osrslwhZyOaOlAEaMy0ECUWbc"
+    assert encoded == "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1X2lkIjp7InVf" \
+        "aWQiOiIyNTIxIn19.IwXtLDhRo60zX4SA4o6tQAV7b3I9Y-4GQ-gPxvMWwiY"
 
 def test_activate_token():
     '''
@@ -232,7 +232,7 @@ def test_get_user_by_u_id():
 
     assert helpers.get_user_by_u_id(u_id).u_id == u_id
 
-    assert helpers.get_user_by_u_id(-1) is None
+    assert helpers.get_user_by_u_id(-1) == None
 
 def test_get_user_by_token():
     '''
@@ -574,8 +574,8 @@ def test_to_bool():
         "Value was missing - please check you input"):
         helpers.to_bool(None)
 
-    assert helpers.to_bool('true') is True
-    assert helpers.to_bool('false') is False
+    assert helpers.to_bool('true') == True
+    assert helpers.to_bool('false') == False
 
 def test_to_float():
     ''' Typecasting to float '''
