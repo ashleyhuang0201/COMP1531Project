@@ -401,6 +401,9 @@ def test_get_channel_by_message_id():
 	# Check message obtain from first message
     assert helpers.get_channel_by_message_id(0).id == channel_id
 
+    # Checking no such message_id
+    assert helpers.get_channel_by_message_id(-1) is None
+
 def test_get_message_by_message_id():
     '''
     Ensures get_message_by_message_id returns the correct message
@@ -421,6 +424,9 @@ def test_get_message_by_message_id():
 
     # Assert that channel id is the same as given by message
     assert helpers.get_message_by_message_id(0).message == "Hello Everyone"
+
+    # Checking no such message_id
+    assert helpers.get_message_by_message_id(-1) is None
 
 def test_generate_handle():
     '''
