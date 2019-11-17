@@ -22,7 +22,7 @@ data = {
 }
 
 # jwt secret
-SECRET = "token_hash"
+SECRET = "aa6c0c4a20e8dd6198f4826cd7a162bc206da8133fbd0f2d547b9bb03d1893d2"
 
 # global message id
 message_id_ticker = 0
