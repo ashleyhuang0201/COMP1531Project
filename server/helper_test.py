@@ -534,3 +534,18 @@ def test_valid_crop():
 
     # Successful crop
     assert helpers.valid_crop(2, 4, 1, 4, 100, 100) is True
+
+def test_get_reset_code_from_email(): 
+    ''' Returns a reset_code according to a user email ''' 
+
+    # Register a user
+    user = auth.auth_register("registered@g.com", "passsword", "a", "b")
+    user = helpers.get_user_by_token(user["token"])
+
+    # No such email request
+    assert helpers.get_reset_code_from_email("-1@gmail.com") == None
+
+    # Reset email request
+    auth.auth_passwordreset_request(user.email)
+    assert helpers.get_reset_code_from_email(user.email) ==\
+        global_var.data["reset_code"][0]["reset_code"]
