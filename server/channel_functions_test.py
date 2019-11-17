@@ -615,6 +615,11 @@ def test_channels_create():
     "valid_correct_last_name")
     token1 = user1["token"]
 
+    user2 = auth_register("valid_correct_email1@t.com", \
+    "valid_correct_password", "valid_correct_first_name",\
+    "valid_correct_last_name")
+    token2 = user2["token"]
+
     #user1 create a channel
     func.channels_create(token1, "TestChannel", True)
     # Initialisation finished
@@ -623,6 +628,14 @@ def test_channels_create():
     {"channel_id" : 1}
     assert func.channels_create(token1, "Channel2", False) == \
     {"channel_id" : 2}
+
+    # User can join public channel
+    assert func.channel_join(token2, 1) == {}
+
+    # User cannot join private channel
+    with pytest.raises(AccessError, \
+        match="Channel is private and user is not admin"):
+        func.channel_join(token2, 2)
 
     # Channel cannot be created by an invalid token
     with pytest.raises(AccessError, match="Invalid token"):
