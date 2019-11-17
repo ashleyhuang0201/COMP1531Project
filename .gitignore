@@ -126,3 +126,7 @@ dmypy.json
 # Other
 *.py~
 .vscode
+
+# Ignore Docker files
+*Dockerfile
+requirements.txt

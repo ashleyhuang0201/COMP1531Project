@@ -2,11 +2,14 @@
 Test functions for auth_*
 '''
 import pytest
+
 import server.auth_functions as auth
 import server.channel_functions as channel
-import server.helpers as helpers
 import server.global_var as data
-from server.Error import AccessError
+from server.Error import AccessError, ValueError
+from server.helpers import (get_reset_code_from_email, get_user_by_email,
+                            get_user_by_token, get_user_token_by_u_id)
+
 
 # Testing Functions
 def test_auth_login():
@@ -23,8 +26,8 @@ def test_auth_login():
     login = auth.auth_login("registered@g.com", "registered_password") \
 
     # Check database for id and token
-    user_id = helpers.get_user_by_email("registered@g.com").u_id
-    user_token = helpers.get_user_token_by_u_id(user_id)
+    user_id = get_user_by_email("registered@g.com").u_id
+    user_token = get_user_token_by_u_id(user_id)
 
     assert login == {"u_id": user_id, "token": user_token}
 
@@ -46,7 +49,7 @@ def test_auth_logout():
     data.initialise_all()
 
     # Test logging out a rubbish token
-    auth.auth_logout("bad")
+    assert auth.auth_logout("bad") == {"is_success": False}
 
     # A user is registered
     user = auth.auth_register("validcorrect@g.com", "valid_password", "a", "b")
@@ -57,7 +60,7 @@ def test_auth_logout():
     }
 
     # User is logged out, creating channel will now raise token error
-    auth.auth_logout(user["token"])
+    assert auth.auth_logout(user["token"]) == {"is_success": True}
     with pytest.raises(AccessError, match="token"):
         channel.channels_create(user["token"], "testing2", True)
 
@@ -72,8 +75,8 @@ def test_auth_register():
     user = auth.auth_register("registered@g.com", "valid_password", "a", "b")
 
     # Check database for id and token
-    user_id = helpers.get_user_by_email("registered@g.com").u_id
-    user_token = helpers.get_user_token_by_u_id(user_id)
+    user_id = get_user_by_email("registered@g.com").u_id
+    user_token = get_user_token_by_u_id(user_id)
 
     # confirm that register returned the correct ID and token
     assert user == {"u_id": user_id, "token": user_token}
@@ -94,6 +97,17 @@ def test_auth_register():
     # Last name is invalid
     with pytest.raises(ValueError, match="Invalid Last Name"):
         auth.auth_register("validcorrect@g.com", "valid_password", "a", invalid)
+
+    # Testing unique handle
+    # Creating user: first_name="asd", last_name="dsa"
+    user1 = auth.auth_register("g@g.com", "valid_password", "asd", "dsa")
+    user1 = get_user_by_token(user1["token"])
+    assert user1.handle == "asddsa"
+
+    # Creating user: first_name="asd", last_name="dsa"
+    user2 = auth.auth_register("a@g.com", "valid_password", "asd", "dsa")
+    user2 = get_user_by_token(user2["token"])
+    assert user2.handle == "2asddsa"
 
 def test_auth_passwordreset_request():
     '''
@@ -124,9 +138,9 @@ def test_auth_passwordreset_reset():
 
     # Password reset request is sent to valid email
     auth.auth_passwordreset_request("comp1531receive@gmail.com")
-    
+
     # Password is reset when valid reset code and password is given
-    reset_code = helpers.get_reset_code_from_email("comp1531receive@gmail.com")
+    reset_code = get_reset_code_from_email("comp1531receive@gmail.com")
     auth.auth_passwordreset_reset(reset_code, "new_password")
     # Reset code is invalid
     with pytest.raises(ValueError, match="Invalid Reset Code"):
